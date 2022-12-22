@@ -152,7 +152,6 @@ public abstract class Collisions {
 
 	public static List<Point> detectCollision(Shape s1, Shape s2, boolean all) {
 		List<Point> collisions = null;
-
 		if (s1 instanceof Polygon && s2 instanceof Polygon) {
 			collisions = _detectCollision((Polygon) s1, (Polygon) s2, all);
 		} else if (s1 instanceof Circle && s2 instanceof Circle) {
