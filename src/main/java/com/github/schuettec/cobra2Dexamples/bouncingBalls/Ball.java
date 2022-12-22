@@ -26,6 +26,12 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 	}
 
 	@Override
+	public void update(Controller controller, List<Collision> collisions) {
+		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		this.setPosition(nextPosition);
+	}
+
+	@Override
 	public void render(Graphics2D graphics, Point position) {
 		Circle collisionShape = getCollisionShape();
 		renderCircle(collisionShape, graphics, position);
@@ -39,12 +45,6 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 	@Override
 	public Color getDrawColor() {
 		return Color.white;
-	}
-
-	@Override
-	public void update(Controller controller, List<Collision> collisions) {
-		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-		this.setPosition(nextPosition);
 	}
 
 }
