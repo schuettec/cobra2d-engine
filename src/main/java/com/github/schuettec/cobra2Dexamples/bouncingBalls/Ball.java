@@ -3,17 +3,21 @@ package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.Collisions;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class Ball extends BasicCircleEntity implements CircleRenderable, Updatable {
+public class Ball extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
 	double VELOCITY = 2.0;
 
@@ -27,8 +31,20 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 	@Override
 	public void update(Controller controller, List<Collision> collisions) {
-		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-		this.setPosition(nextPosition);
+
+		Optional<Collision> wallCollision = collisions.stream()
+		    .filter(c -> c.getOpponent() instanceof WallEntity)
+		    .findFirst();
+
+		if (wallCollision.isPresent()) {
+			// Berechne Einfallswinkel.
+			Collision collision = wallCollision.get();
+			HasCollisionShape opponent = collision.getOpponent();
+			Collisions.detectCollision(getCollisionShape(), opponent.getCollisionShape(), false);
+		} else {
+			Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+			this.setPosition(nextPosition);
+		}
 	}
 
 	@Override
