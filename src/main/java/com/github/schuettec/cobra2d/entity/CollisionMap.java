@@ -48,6 +48,12 @@ public class CollisionMap implements Serializable {
 		return flatList.isEmpty();
 	}
 
+	public void addCollisionsUnidirectional(Collision collision) {
+		if (nonNull(collision)) {
+			_addCollision(collision);
+		}
+	}
+
 	public void addCollisionsBidirectional(Collision collision, Collision reverse) {
 		if (nonNull(collision)) {
 			_addCollision(collision);

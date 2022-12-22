@@ -1,9 +1,5 @@
 package com.github.schuettec.cobra2d.entity;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
-import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
@@ -14,7 +10,7 @@ import com.github.schuettec.cobra2d.math.Point;
  *
  * @author schuettec
  */
-public class BasicCircleEntity extends BasicEntity implements CircleRenderable, HasCollisionShape {
+public class BasicCircleEntity extends BasicEntity implements HasCollisionShape {
 
 	/**
 	 *
@@ -28,6 +24,7 @@ public class BasicCircleEntity extends BasicEntity implements CircleRenderable, 
 
 	public BasicCircleEntity(Point worldCoordinates, double radius) {
 		super(worldCoordinates);
+		// Keep the collision shape in a local coordinate system. Do not use the world coordinates for the origin shape.
 		this.circle = new Circle(new Point(0, 0), radius);
 	}
 
@@ -40,22 +37,6 @@ public class BasicCircleEntity extends BasicEntity implements CircleRenderable, 
 
 	public double getRadius() {
 		return circle.getRadius();
-	}
-
-	@Override
-	public void render(Graphics2D graphics, Point position) {
-		Circle collisionShape = getCollisionShape();
-		renderCircle(collisionShape, graphics, position);
-	}
-
-	@Override
-	public int getLayer() {
-		return 0;
-	}
-
-	@Override
-	public Color getDrawColor() {
-		return Color.white;
 	}
 
 }

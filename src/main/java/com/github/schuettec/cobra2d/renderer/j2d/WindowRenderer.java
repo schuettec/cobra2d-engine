@@ -210,6 +210,7 @@ public class WindowRenderer implements Renderer {
 						// frame.setResizable(false);
 						frame.setSize(resolutionX + CORRECTION_X + 5, resolutionY + CORRECTION_Y + 5);
 						frame.requestFocus();
+						frame.setResizable(false);
 						frame.setVisible(true);
 					}
 				}

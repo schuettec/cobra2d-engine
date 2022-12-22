@@ -363,4 +363,17 @@ public class Math2D {
 		}
 	}
 
+	/**
+	 * Compares two doubles with a tolerance.
+	 * 
+	 * @param d1 double 1
+	 * @param d2 double 2
+	 * @return Returns <code>true</code> if the doubles equal with a tolerance of 0.000001d. Otherwise <code>false</code>
+	 *         is returned.
+	 */
+	public static boolean compareDouble(double d1, double d2) {
+		double epsilon = 0.000001d;
+		return Math.abs(d1 - d2) < epsilon;
+	}
+
 }

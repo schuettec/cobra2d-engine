@@ -183,7 +183,7 @@ public class Map {
 		}
 
 		// Detect all collisions in the set of obstacles
-		detectCollision(this.detectedCollision, obstacles, calculateFullEntityCollisionPoints);
+		detectCollision(this.detectedCollision, obstacles, calculateFullEntityCollisionPoints, true);
 
 		cameraCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras
@@ -191,7 +191,7 @@ public class Map {
 			CollisionMap map = new CollisionMap();
 			Set<Camera> cameraSet = new HashSet<>();
 			cameraSet.add(camera);
-			detectCollision(map, cameraSet, renderables, calculateFullCameraCollisionPoints);
+			detectCollision(map, cameraSet, renderables, calculateFullCameraCollisionPoints, false);
 			List<Collision> cameraCollisions = map.getCollisions();
 			cameraCollisionMap.put(camera, cameraCollisions);
 		}

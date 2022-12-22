@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2Dexamples;
 
+import java.awt.Dimension;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
@@ -26,12 +27,13 @@ public class Main {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		BallEntity c1 = new BallEntity(new Point(200, 200), 80, false);
-		BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
+		BallEntity c1 = new BallEntity(new Point(200, 200), 120, false);
+		// BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
+		TestPolygonEntity p = new TestPolygonEntity(new Point(200, 200), new Dimension(100, 100), true);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), 800);
+		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), 400);
 
-		engine.addEntity(c1, c2);
+		engine.addEntity(c1, p);
 		engine.addEntity(camera);
 		engine.start();
 	}

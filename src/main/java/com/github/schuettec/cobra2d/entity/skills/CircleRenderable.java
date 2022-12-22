@@ -10,6 +10,7 @@ import com.github.schuettec.cobra2d.math.Point;
 public interface CircleRenderable extends Renderable {
 
 	default void renderCircle(Circle circle, final Graphics2D graphics, final Point position) {
+		Color oldColor = graphics.getColor();
 		graphics.setColor(getDrawColor());
 		// Translate world coordinates to screen coordinates
 		Circle circleOnScreen = circle.clone()
@@ -22,6 +23,7 @@ public interface CircleRenderable extends Renderable {
 
 		int adjustedRadius = Math2D.saveRound(2 * circle.getRadius());
 		graphics.drawOval(drawPositionX, drawPositionY, adjustedRadius, adjustedRadius);
+		graphics.setColor(oldColor);
 	}
 
 	/**

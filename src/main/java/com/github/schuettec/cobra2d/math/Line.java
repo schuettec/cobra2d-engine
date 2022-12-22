@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.math;
 
+import static java.util.Objects.isNull;
+
 /**
  * This class describes a geometric line in a 2D coordinate system. It is
  * basically a representation of the formula <code>g(x) = m * x + b</code>
@@ -73,7 +75,7 @@ public class Line implements Shape, Cloneable {
 		}
 
 		// 4. Fall === (gleiche Steigung; parallel zueinander)
-		if (this.getM() == l.getM()) {
+		if (Math2D.compareDouble(this.getM(), l.getM())) {
 			if (this.isDefined(l.getX1())) {
 				return new Point(l.getX1().x, l.getX1().y);
 			}
@@ -202,10 +204,10 @@ public class Line implements Shape, Cloneable {
 	public void setX1(final Point x1) {
 		this.x1 = x1;
 
-		if (this.x2 == null) {
+		if (isNull(this.x2)) {
 			return;
 		}
-		if (x1.x == this.x2.x) {
+		if (Math2D.compareDouble(x1.x, this.x2.x)) {
 			this.parallelY = true;
 		}
 	}
@@ -213,7 +215,7 @@ public class Line implements Shape, Cloneable {
 	public void setX2(final Point x2) {
 		this.x2 = x2;
 
-		if (this.x1.x == x2.x) {
+		if (Math2D.compareDouble(this.x1.x, x2.x)) {
 			this.parallelY = true;
 		}
 	}

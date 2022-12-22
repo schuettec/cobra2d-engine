@@ -9,21 +9,18 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
+import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
-import com.github.schuettec.cobra2d.math.Math2D;
+import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class BasicMapCamera extends BasicCircleEntity implements Camera {
+public class BasicMapCamera extends BasicCircleEntity implements CircleRenderable, Camera {
 
 	public BasicMapCamera(Point worldCoordinates, double radius) {
 		super(worldCoordinates, radius);
-		// super(worldCoordinates, new Point(worldCoordinates.getX(), worldCoordinates.getY()),
-		// new Point(worldCoordinates.getX() + dimension.getWidth(), worldCoordinates.getY()),
-		// new Point(worldCoordinates.getX() + dimension.getWidth(), worldCoordinates.getY() + dimension.getHeight()),
-		// new Point(worldCoordinates.getX(), worldCoordinates.getY() + dimension.getHeight()));
 	}
 
 	@Override
@@ -31,23 +28,15 @@ public class BasicMapCamera extends BasicCircleEntity implements Camera {
 		List<Point> collisionPoints = new LinkedList<>();
 
 		// IF SHAPE COLLISION DETECTION WORKS, THE NEXT TWO LINES ARE CORRET:
-		// for (Collision c : capturedEntities) {
-		// Entity entity = c.getOpponent();
-		for (Entity entity : map.getObstacles()) {
+		for (Collision c : capturedEntities) {
+			Entity entity = c.getOpponent();
+			// for (Entity entity : map.getObstacles()) {
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
 				renderable.render(graphics, new Point(0, 0));
 				Point center = renderable.getPosition();
 				// .translate(getPosition());
 				drawPoint(graphics, center, Color.BLUE);
-
-				if (entity instanceof BasicCircleEntity) {
-					BasicCircleEntity c = (BasicCircleEntity) entity;
-					double radius = c.getRadius();
-					Point debug = Math2D.getCircle(center, radius, 0);
-					drawPoint(graphics, debug, Color.YELLOW);
-				}
-
 			}
 			if (entity instanceof Obstacle) {
 				if (map.hasCollision(entity)) {
@@ -63,7 +52,23 @@ public class BasicMapCamera extends BasicCircleEntity implements Camera {
 		collisionPoints.stream()
 		    .forEach(p -> drawPoint(graphics, p, Color.RED));
 
-		this.render(graphics, getPosition());
+		this.render(graphics, new Point(0, 0));
+	}
+
+	@Override
+	public void render(Graphics2D graphics, Point position) {
+		Circle collisionShape = getCollisionShape();
+		renderCircle(collisionShape, graphics, position);
+	}
+
+	@Override
+	public int getLayer() {
+		return 0;
+	}
+
+	@Override
+	public Color getDrawColor() {
+		return Color.white;
 	}
 
 	private void drawPoint(Graphics2D graphics, Point point, Color color) {
