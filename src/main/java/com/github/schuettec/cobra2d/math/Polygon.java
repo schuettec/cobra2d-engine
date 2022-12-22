@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * This class describes a geometric polygon in a 2D coordinate system. It is
- * basically a list of {@link Line}.
+ * basically a closed path of {@link Line}s.
  *
  * @author Chris
  *

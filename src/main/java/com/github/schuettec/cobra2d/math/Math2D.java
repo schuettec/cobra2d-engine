@@ -199,7 +199,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double x = aktPoint.x;
+			final double x = Math.abs(aktPoint.x);
 
 			if (x < minX) {
 				minX = x;
@@ -265,7 +265,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double y = aktPoint.y;
+			final double y = Math.abs(aktPoint.y);
 
 			if (y < minY) {
 				minY = y;
@@ -281,7 +281,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double y = aktPoint.y;
+			final double y = Math.abs(aktPoint.y);
 
 			if (y > maxY) {
 				maxY = y;
@@ -298,8 +298,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double x = aktPoint.x;
-
+			final double x = Math.abs(aktPoint.x);
 			if (x > maxX) {
 				maxX = x;
 				anchorMaxDistToX = aktPoint;

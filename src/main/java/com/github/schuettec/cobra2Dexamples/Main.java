@@ -27,7 +27,7 @@ public class Main {
 		engine.initialize();
 
 		BallEntity c1 = new BallEntity(new Point(200, 200), 80, false);
-		BallEntity c2 = new BallEntity(new Point(200, 260), 80, true);
+		BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
 
 		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), 800);
 

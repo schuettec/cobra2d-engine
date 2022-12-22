@@ -39,13 +39,13 @@ public class BasicMapCamera extends BasicCircleEntity implements Camera {
 				renderable.render(graphics, new Point(0, 0));
 				Point center = renderable.getPosition();
 				// .translate(getPosition());
-				drawPoint(graphics, center);
+				drawPoint(graphics, center, Color.BLUE);
 
 				if (entity instanceof BasicCircleEntity) {
 					BasicCircleEntity c = (BasicCircleEntity) entity;
 					double radius = c.getRadius();
 					Point debug = Math2D.getCircle(center, radius, 0);
-					drawPoint(graphics, debug);
+					drawPoint(graphics, debug, Color.YELLOW);
 				}
 
 			}
@@ -61,16 +61,16 @@ public class BasicMapCamera extends BasicCircleEntity implements Camera {
 		}
 
 		collisionPoints.stream()
-		    .forEach(p -> drawPoint(graphics, p));
+		    .forEach(p -> drawPoint(graphics, p, Color.RED));
 
 		this.render(graphics, getPosition());
 	}
 
-	private void drawPoint(Graphics2D graphics, Point point) {
-		Color color = graphics.getColor();
-		graphics.setColor(Color.red);
-		graphics.fillOval(point.getRoundX() - 5, point.getRoundY() - 5, 5, 5);
+	private void drawPoint(Graphics2D graphics, Point point, Color color) {
+		Color oldColor = graphics.getColor();
 		graphics.setColor(color);
+		graphics.fillOval(point.getRoundX() - 5, point.getRoundY() - 5, 5, 5);
+		graphics.setColor(oldColor);
 	}
 
 	@Override

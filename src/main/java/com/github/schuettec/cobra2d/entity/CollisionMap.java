@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity;
 
+import static java.util.Objects.nonNull;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Hashtable;
@@ -47,20 +49,19 @@ public class CollisionMap implements Serializable {
 	}
 
 	public void addCollisionsBidirectional(Collision collision, Collision reverse) {
-		addCollisionUnidirectional(collision);
-		_addCollision(collision);
-		_addCollision(reverse);
+		if (nonNull(collision)) {
+			_addCollision(collision);
+		}
+		if (nonNull(reverse)) {
+			_addCollision(reverse);
+		}
 	}
 
 	private void _addCollision(Collision collision) {
 		Entity entity = collision.getEntity();
 		int identityHash = System.identityHashCode(entity);
 		collisions.put(identityHash, collision);
-	}
-
-	public void addCollisionUnidirectional(Collision collision) {
-		this.flatList.add(collision);
-		_addCollision(collision);
+		flatList.add(collision);
 	}
 
 	public boolean hasCollision(Entity entity) {

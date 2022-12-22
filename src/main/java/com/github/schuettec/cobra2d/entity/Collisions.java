@@ -1,14 +1,20 @@
 package com.github.schuettec.cobra2d.entity;
 
+import static java.util.Objects.nonNull;
+
+import java.awt.Rectangle;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Circle;
+import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -35,12 +41,9 @@ public abstract class Collisions {
 	 *        first collision point will be calculated. If
 	 *        <code>true</code> all the other points will be
 	 *        calculated.
-	 * @param bidirectionalCollisions If <code>true</code> and if a collision c1~c2
-	 *        was detected, the {@link Collision} object for
-	 *        c2~c1 will also be calculated.
 	 */
 	public static void detectCollision(CollisionMap collisionMap, Set<? extends HasCollisionShape> firstSet,
-	    Set<? extends HasCollisionShape> secondSet, boolean allEntityPoints, boolean bidirectionalCollisions) {
+	    Set<? extends HasCollisionShape> secondSet, boolean allEntityPoints) {
 		collisionMap.clearCollisions();
 
 		for (Entity c1 : firstSet) {
@@ -52,18 +55,11 @@ public abstract class Collisions {
 				HasCollisionShape o2 = (HasCollisionShape) c2;
 				{
 					Collision collision = detectCollision(o1, o2, allEntityPoints);
-					// Collision may be null if there is none
-					if (collision != null) {
-						if (bidirectionalCollisions) {
-							Collision reverse = detectCollision(o2, o1, allEntityPoints);
-							collisionMap.addCollisionsBidirectional(collision, reverse);
-						} else {
-							collisionMap.addCollisionUnidirectional(collision);
-						}
-					}
+					Collision reverse = detectCollision(o2, o1, allEntityPoints);
+					collisionMap.addCollisionsBidirectional(collision, reverse);
 				}
-
 			}
+
 		}
 	}
 
@@ -84,10 +80,10 @@ public abstract class Collisions {
 	 *        c2~c1 will also be calculated.
 	 */
 	public static void detectCollision(CollisionMap collisionMap, Set<? extends HasCollisionShape> map,
-	    boolean allEntityPoints, boolean bidirectionalCollisions) {
+	    boolean allEntityPoints) {
 		// TODO: We can optimize this call: If c1~c2 was checked, then c2~c1 can
 		// be skipped. We can achieve this if we separate the map in two disjunct sets.
-		detectCollision(collisionMap, new HashSet<>(map), new HashSet<>(map), allEntityPoints, bidirectionalCollisions);
+		detectCollision(collisionMap, new HashSet<>(map), new HashSet<>(map), allEntityPoints);
 	}
 
 	/**
@@ -159,6 +155,10 @@ public abstract class Collisions {
 	}
 
 	private static List<Point> _detectCollision(Circle c1, Circle c2, boolean all) {
+		/*
+		 * The following collision detection only checks the collision with the outline of the
+		 * given shapes.
+		 */
 		List<Point> collisions = new LinkedList<>();
 
 		double d = Math2D.getEntfernung(c1.getPosition(), c2.getPosition());
@@ -168,7 +168,7 @@ public abstract class Collisions {
 		if (d > r0 + r1) {
 			return collisions;
 		} else if (d < Math.abs(r0 - r1)) {
-			return collisions;
+			return _detectInnerCollision(c1, c2);
 		} else if (d == 0 && r0 == r1) {
 			Point p = c1.getPosition()
 			    .clone();
@@ -189,11 +189,44 @@ public abstract class Collisions {
 		collisions.add(p31);
 		collisions.add(p32);
 
-		return collisions;
+		/*
+		 * The following collision detection checks also the inner collision of shapes, occurring if shapes containing each
+		 * other.
+		 */
+		if (collisions.isEmpty()) {
+			return _detectInnerCollision(c1, c2);
+		} else {
+			return collisions;
+		}
+	}
 
+	/**
+	 * This method checks if the circles contain each other.
+	 * 
+	 * @param c1 Cicle 1
+	 * @param c2 Cicle 2
+	 * @return Returns the center point of circle 2 if the circle c2 is inside c2. If there is no collision, an empty list
+	 *         is returned.
+	 */
+	private static List<Point> _detectInnerCollision(Circle c1, Circle c2) {
+		Point m1 = c1.getPosition();
+		Point m2 = c2.getPosition();
+		double distance = Math2D.getEntfernung(m1, m2);
+		if (distance < Math.abs(c1.getRadius() - c2.getRadius())) {
+			List<Point> result = new LinkedList<>();
+			// Just return the center point of c2, because the collisiont point is not neccessarily c1.center.
+			result.add(c2.getPosition());
+			return result;
+		} else {
+			return Collections.emptyList();
+		}
 	}
 
 	private static List<Point> _detectCollision(Circle p1, Polygon p2, boolean all) {
+		/*
+		 * The following collision detection only checks the collision with the outline of the
+		 * given shapes.
+		 */
 		List<Point> collisions = new LinkedList<>();
 		List<Line> h2 = p2.getLines();
 		for (Line l2 : h2) {
@@ -230,7 +263,43 @@ public abstract class Collisions {
 			}
 		}
 
-		return collisions;
+		/*
+		 * The following collision detection checks also the inner collision of shapes, occurring if shapes containing each
+		 * other.
+		 */
+		if (collisions.isEmpty()) {
+			return _detectInnerCollision(p1, p2, all);
+		} else {
+			return collisions;
+		}
+	}
+
+	/**
+	 * This method checks if the circles contains the polygon. Note: The collisoin with the outline is not checked here!
+	 * 
+	 * @param p1 Cicle
+	 * @param p2 Polygon
+	 * @param allPoints If <code>true</code> the returned list contains all points of the polygon that are inside the
+	 *        circle. If <code>false</code> only the first point inside the circle is returned:
+	 * @return Returns the points of the polygon that are contained within the circle. If there is no collision, an empty
+	 *         list is returned.
+	 */
+	private static List<Point> _detectInnerCollision(Circle p1, Polygon p2, boolean allPoints) {
+		List<Point> points = new LinkedList<>();
+		Point c = p1.getPosition();
+		double radius = p1.getRadius();
+		List<EntityPoint> polygonPoints = p2.getEntityPoints();
+		for (EntityPoint p : polygonPoints) {
+			Point polygonPoint = p.getCoordinates();
+			boolean inCircle = Math2D.isInCircle(polygonPoint, c, radius);
+			if (inCircle) {
+				points.add(polygonPoint);
+				if (!allPoints) {
+					break;
+				}
+			}
+		}
+		return points;
 	}
 
 	/**
@@ -261,7 +330,36 @@ public abstract class Collisions {
 				}
 			}
 		}
-		return collisions;
+
+		/*
+		 * The following collision detection checks also the inner collision of shapes, occurring if shapes containing each
+		 * other.
+		 */
+		if (collisions.isEmpty()) {
+			return _detectInnerCollision(p1, p2, all);
+		} else {
+			return collisions;
+		}
+	}
+
+	private static List<Point> _detectInnerCollision(Polygon p1, Polygon p2, boolean all) {
+		List<Line> lines = p1.getLines();
+		List<Point> points = p2.getEntityPoints()
+		    .stream()
+		    .map(p -> p.getCoordinates())
+		    .collect(Collectors.toList());
+		Rectangle huellRect = Math2D.getHuellRect(points);
+		Point centerOfPolygon = new Point(huellRect.getLocation().x, huellRect.getLocation().y);
+		Point maxX = Math2D.getPointMaxDistToY(points);
+		Line collisionCheck = new Line(centerOfPolygon, maxX);
+		for (Line pLine : lines) {
+			if (nonNull(pLine.intersects(collisionCheck))) {
+				List<Point> collisionPoint = new LinkedList<>();
+				collisionPoint.add(centerOfPolygon);
+				return collisionPoint;
+			}
+		}
+		return Collections.emptyList();
 	}
 
 }
