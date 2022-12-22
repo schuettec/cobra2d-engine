@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples;
+package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import java.awt.Dimension;
 import java.util.Properties;
@@ -9,7 +9,7 @@ import com.github.schuettec.cobra2d.entity.camera.BasicMapCamera;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
-public class Main {
+public class MoveableShapesDemo {
 	public static void main(String[] args) {
 
 		final Properties properties = new Properties();
@@ -29,9 +29,9 @@ public class Main {
 
 		// BallEntity c1 = new BallEntity(new Point(200, 200), 120, false);
 		// BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
-		TestPolygonEntity p1 = new TestPolygonEntity(new Point(200, 200), new Dimension(100, 100), false);
+		MoveablePolygonEntity p1 = new MoveablePolygonEntity(new Point(200, 200), new Dimension(100, 100), false);
 
-		TestPolygonEntity p2 = new TestPolygonEntity(new Point(300, 300), new Dimension(200, 200), true);
+		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(300, 300), new Dimension(200, 200), true);
 
 		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), new Dimension(400, 400));
 

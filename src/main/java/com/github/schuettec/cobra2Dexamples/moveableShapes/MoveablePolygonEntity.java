@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples;
+package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -15,13 +15,13 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 
-public class TestPolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Updatable {
+public class MoveablePolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Updatable {
 
 	private static final long serialVersionUID = 1L;
 
 	private boolean playerControlled;
 
-	public TestPolygonEntity(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
+	public MoveablePolygonEntity(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, new Point(0, 0), new Point(dimension.getWidth(), 0),
 		    new Point(dimension.getWidth(), dimension.getHeight()), new Point(0, dimension.getHeight()));
 		this.playerControlled = playerControlled;

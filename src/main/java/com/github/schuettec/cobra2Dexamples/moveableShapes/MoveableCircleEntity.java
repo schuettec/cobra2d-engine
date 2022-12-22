@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples;
+package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,13 +14,13 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class BallEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
+public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
 
 	private static final long serialVersionUID = 1L;
 
 	private boolean playerControlled;
 
-	public BallEntity(Point worldCoordinates, double radius, boolean playerControlled) {
+	public MoveableCircleEntity(Point worldCoordinates, double radius, boolean playerControlled) {
 		super(worldCoordinates, radius);
 		this.playerControlled = playerControlled;
 
