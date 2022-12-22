@@ -27,15 +27,15 @@ public class MoveableShapesDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		// BallEntity c1 = new BallEntity(new Point(200, 200), 120, false);
-		// BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
+		MoveableCircleEntity c1 = new MoveableCircleEntity(new Point(200, 200), 120, false);
+		MoveableCircleEntity c2 = new MoveableCircleEntity(new Point(200, 260), 70, false);
 		MoveablePolygonEntity p1 = new MoveablePolygonEntity(new Point(200, 200), new Dimension(100, 100), false);
 
 		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(300, 300), new Dimension(200, 200), true);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), new Dimension(400, 400));
+		BasicMapCamera camera = new BasicMapCamera(new Point(100, 100), new Dimension(500, 500));
 
-		engine.addEntity(p1, p2);
+		engine.addEntity(c1, c2, p1, p2);
 		engine.addEntity(camera);
 		engine.start();
 	}

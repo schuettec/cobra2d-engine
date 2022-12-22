@@ -33,7 +33,7 @@ public class CollisionMap implements Serializable {
 	/**
 	 * Holds all collision bidirectional.
 	 */
-	protected Map<Integer, Collision> collisions;
+	protected Map<Integer, List<Collision>> collisions;
 
 	public CollisionMap() {
 		this.flatList = new LinkedList<>();
@@ -66,16 +66,27 @@ public class CollisionMap implements Serializable {
 	private void _addCollision(Collision collision) {
 		Entity entity = collision.getEntity();
 		int identityHash = System.identityHashCode(entity);
-		collisions.put(identityHash, collision);
+		if (collisions.containsKey(identityHash)) {
+			collisions.get(identityHash)
+			    .add(collision);
+		} else {
+			List<Collision> collisons = new LinkedList<>();
+			collisions.put(identityHash, collisons);
+		}
 		flatList.add(collision);
 	}
 
 	public boolean hasCollision(Entity entity) {
 		int identityHash = System.identityHashCode(entity);
-		return collisions.containsKey(identityHash);
+		if (collisions.containsKey(identityHash)) {
+			return !collisions.get(identityHash)
+			    .isEmpty();
+		} else {
+			return false;
+		}
 	}
 
-	public Collision getCollision(Entity entity) {
+	public List<Collision> getCollision(Entity entity) {
 		int identityHash = System.identityHashCode(entity);
 		return collisions.get(identityHash);
 	}

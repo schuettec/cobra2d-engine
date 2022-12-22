@@ -32,8 +32,8 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		List<Point> collisionPoints = new LinkedList<>();
 
 		// IF SHAPE COLLISION DETECTION WORKS, THE NEXT TWO LINES ARE CORRET:
-		for (Collision c : capturedEntities) {
-			Entity entity = c.getOpponent();
+		for (Collision collision : capturedEntities) {
+			Entity entity = collision.getOpponent();
 			// for (Entity entity : map.getObstacles()) {
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
@@ -44,9 +44,10 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 			}
 			if (entity instanceof Obstacle) {
 				if (map.hasCollision(entity)) {
-					Collision collision = map.getCollision(entity);
-					collision.getPoints()
-					    .stream()
+					List<Collision> collisions = map.getCollision(entity);
+					collisions.stream()
+					    .flatMap(c -> c.getPoints()
+					        .stream())
 					    // .map(p -> p.translate(getPosition()))
 					    .forEach(p -> collisionPoints.add(p));
 				}

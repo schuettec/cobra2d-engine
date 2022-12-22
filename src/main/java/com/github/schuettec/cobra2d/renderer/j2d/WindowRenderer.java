@@ -6,10 +6,10 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -40,7 +40,7 @@ public class WindowRenderer implements Renderer {
 	private final int CORRECTION_X = 0;
 	private final int CORRECTION_Y = 0;
 
-	private final int NUM_BUFFERS = 2;
+	private final int NUM_BUFFERS = 3;
 
 	private GraphicsDevice gd;
 
@@ -63,7 +63,7 @@ public class WindowRenderer implements Renderer {
 	protected Benchmarker benchmarkAfterRendering;
 
 	private boolean drawEntityCenterPoint;
-	private JFrame frame;
+	private Frame frame;
 
 	@Override
 	public void render() {
@@ -71,6 +71,10 @@ public class WindowRenderer implements Renderer {
 		if (isNull(bufferStrategy)) {
 			frame.createBufferStrategy(WindowRenderer.this.NUM_BUFFERS);
 			bufferStrategy = frame.getBufferStrategy();
+			while (bufferStrategy == null) {
+				System.out.println("whileloop");
+				bufferStrategy = frame.getBufferStrategy();
+			}
 		}
 
 		Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
@@ -91,8 +95,8 @@ public class WindowRenderer implements Renderer {
 
 		// Display the buffer
 		bufferStrategy.show();
-		Toolkit.getDefaultToolkit()
-		    .sync();
+		// Toolkit.getDefaultToolkit()
+		// .sync();
 	}
 
 	public WindowRenderer() {
