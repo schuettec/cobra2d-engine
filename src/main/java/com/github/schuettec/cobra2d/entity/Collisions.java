@@ -421,13 +421,21 @@ public abstract class Collisions {
 		    .collect(Collectors.toList());
 		Point maxX = Math2D.getPointMaxDistToY(points);
 
+		if (point.getRoundX() > maxX.getRoundX()) {
+			return false;
+		}
+
 		Line collisionCheck = new Line(point, new Point(maxX.getRoundX(), point.getRoundY()));
 
 		List<Point> collisionPoint = new LinkedList<>();
 		List<Line> lines = polygon.getLines();
 		for (Line pLine : lines) {
 			Point intersection = pLine.intersects(collisionCheck);
-			if (nonNull(intersection)) {
+			// If the collision check line lays exactly on the polygon-line, the polygon line is parallel to X-Axis. In this
+			// case the
+			// shapes can only collide on the outline, which was checked before this method.
+			// This case is defined to not being a collision.
+			if (nonNull(intersection) && !pLine.isParallelX()) {
 				collisionPoint.add(intersection);
 			}
 		}

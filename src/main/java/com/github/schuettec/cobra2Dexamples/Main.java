@@ -27,15 +27,15 @@ public class Main {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		BallEntity c1 = new BallEntity(new Point(200, 200), 120, false);
+		// BallEntity c1 = new BallEntity(new Point(200, 200), 120, false);
 		// BallEntity c2 = new BallEntity(new Point(200, 260), 70, true);
 		TestPolygonEntity p1 = new TestPolygonEntity(new Point(200, 200), new Dimension(100, 100), false);
 
 		TestPolygonEntity p2 = new TestPolygonEntity(new Point(300, 300), new Dimension(200, 200), true);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), 400);
+		BasicMapCamera camera = new BasicMapCamera(new Point(200, 200), new Dimension(400, 400));
 
-		engine.addEntity(c1, p1, p2);
+		engine.addEntity(p1, p2);
 		engine.addEntity(camera);
 		engine.start();
 	}

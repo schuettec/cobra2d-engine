@@ -79,9 +79,6 @@ public class WindowRenderer implements Renderer {
 		bufferGraphics.setColor(Color.BLACK);
 		bufferGraphics.fillRect(0, 0, this.resolutionX, this.resolutionY);
 
-		bufferGraphics.setColor(Color.WHITE);
-		bufferGraphics.drawLine(0, 0, 800, 800);
-
 		Map map = engine.getMap();
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {

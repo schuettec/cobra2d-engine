@@ -258,4 +258,8 @@ public class Line implements Shape, Cloneable {
 		x2.setLocation(newX2);
 		return this;
 	}
+
+	public boolean isParallelX() {
+		return getM() == 0;
+	}
 }

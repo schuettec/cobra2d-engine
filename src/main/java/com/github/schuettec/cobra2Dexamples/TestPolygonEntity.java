@@ -49,11 +49,14 @@ public class TestPolygonEntity extends BasicPolygonEntity implements PolygonRend
 		if (playerControlled) {
 			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
 				this.moveLeft();
-			} else if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
+			}
+			if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
 				this.moveRight();
-			} else if (controller.isKeyPressed(KeyEvent.VK_UP)) {
+			}
+			if (controller.isKeyPressed(KeyEvent.VK_UP)) {
 				this.moveUp();
-			} else if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
+			}
+			if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
 				this.moveDown();
 			}
 		}

@@ -1,30 +1,34 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
+import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
-import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
+import com.github.schuettec.cobra2d.entity.skills.RectangleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
-import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Polygon;
 
-public class BasicMapCamera extends BasicCircleEntity implements CircleRenderable, Camera {
+public class BasicMapCamera extends BasicRectangleEntity implements RectangleRenderable, Camera {
 
-	public BasicMapCamera(Point worldCoordinates, double radius) {
-		super(worldCoordinates, radius);
+	public BasicMapCamera(Point worldCoordinates, Dimension dimension) {
+		super(worldCoordinates, dimension);
 	}
 
 	@Override
 	public void render(Graphics2D graphics, Map map, List<Collision> capturedEntities) {
+		graphics.setClip(getPosition().getRoundX(), getPosition().getRoundY(), getDimension().width + 1,
+		    getDimension().height + 1);
+
 		List<Point> collisionPoints = new LinkedList<>();
 
 		// IF SHAPE COLLISION DETECTION WORKS, THE NEXT TWO LINES ARE CORRET:
@@ -57,8 +61,8 @@ public class BasicMapCamera extends BasicCircleEntity implements CircleRenderabl
 
 	@Override
 	public void render(Graphics2D graphics, Point position) {
-		Circle collisionShape = getCollisionShape();
-		renderCircle(collisionShape, graphics, position);
+		Polygon collisionShape = getCollisionShape();
+		renderPolygon(collisionShape, graphics, position);
 	}
 
 	@Override
@@ -68,7 +72,7 @@ public class BasicMapCamera extends BasicCircleEntity implements CircleRenderabl
 
 	@Override
 	public Color getDrawColor() {
-		return Color.white;
+		return Color.GREEN;
 	}
 
 	private void drawPoint(Graphics2D graphics, Point point, Color color) {
@@ -82,11 +86,14 @@ public class BasicMapCamera extends BasicCircleEntity implements CircleRenderabl
 	public void update(Controller controller, List<Collision> collisions) {
 		// if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
 		// this.moveLeft();
-		// } else if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
+		// }
+		// if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
 		// this.moveRight();
-		// } else if (controller.isKeyPressed(KeyEvent.VK_UP)) {
+		// }
+		// if (controller.isKeyPressed(KeyEvent.VK_UP)) {
 		// this.moveUp();
-		// } else if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
+		// }
+		// if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
 		// this.moveDown();
 		// }
 	}
