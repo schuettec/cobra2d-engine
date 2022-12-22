@@ -383,7 +383,17 @@ public abstract class Collisions {
 		 * other.
 		 */
 		if (collisions.isEmpty()) {
-			return _detectInnerCollision(p1, p2, all);
+			List<Point> p1p2 = _detectInnerCollision(p1, p2, all);
+			if (p1p2.isEmpty()) {
+				List<Point> p2p1 = _detectInnerCollision(p2, p1, all);
+				if (p2p1.isEmpty()) {
+					return Collections.emptyList();
+				} else {
+					return p2p1;
+				}
+			} else {
+				return p1p2;
+			}
 		} else {
 			return collisions;
 		}
@@ -395,8 +405,8 @@ public abstract class Collisions {
 		    .map(p -> p.getCoordinates())
 		    .collect(Collectors.toList());
 		Rectangle huellRect = Math2D.getHuellRect(points);
-		Point centerOfPolygon = new Point(huellRect.getLocation().x + Math2D.saveRound(huellRect.width * 2.0),
-		    huellRect.getLocation().y + Math2D.saveRound(huellRect.height * 2.0));
+		Point centerOfPolygon = new Point(huellRect.getLocation().x + Math2D.saveRound(huellRect.width / 2.0),
+		    huellRect.getLocation().y + Math2D.saveRound(huellRect.height / 2.0));
 		if (isPointInPolygon(centerOfPolygon, p2)) {
 			return Arrays.asList(centerOfPolygon);
 		} else {

@@ -309,12 +309,11 @@ public class Math2D {
 	}
 
 	public static Rectangle getHuellRect(final List<Point> punktliste) {
-		final Point x1 = new Point(Math2D.getPointNextToY(punktliste).x - 10d, Math2D.getPointNextToX(punktliste).y - 10d);
+		final Point x1 = new Point(Math2D.getPointNextToY(punktliste).x, Math2D.getPointNextToX(punktliste).y);
 		// Point x2 = new Point(getPointMaxDistToY(punktliste).x + 10,
 		// getPointNextToX(punktliste).y - 10);
 
-		final Point x3 = new Point(Math2D.getPointMaxDistToY(punktliste).x + 10d,
-		    Math2D.getPointMaxDistToX(punktliste).y + 10d);
+		final Point x3 = new Point(Math2D.getPointMaxDistToY(punktliste).x, Math2D.getPointMaxDistToX(punktliste).y);
 		// Point x4 = new Point(getPointNextToY(punktliste).x - 10,
 		// getPointMaxDistToX(punktliste).y + 10);
 
