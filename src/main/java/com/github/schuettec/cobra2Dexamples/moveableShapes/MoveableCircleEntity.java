@@ -68,12 +68,12 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 		    .translate(5, 0);
 	}
 
-	public void moveUp() {
+	public void moveDown() {
 		this.getPosition()
 		    .translate(0, -5);
 	}
 
-	public void moveDown() {
+	public void moveUp() {
 		this.getPosition()
 		    .translate(0, 5);
 	}

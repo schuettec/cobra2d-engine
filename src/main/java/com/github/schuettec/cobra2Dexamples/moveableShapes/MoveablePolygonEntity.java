@@ -1,7 +1,6 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import java.awt.Dimension;
-import java.awt.event.KeyEvent;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -45,18 +44,17 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 
 	@Override
 	public void update(Controller controller, List<Collision> collisions) {
-
 		if (playerControlled) {
-			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
+			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
 			}
-			if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
+			if (controller.isRightKeyPressed()) {
 				this.moveRight();
 			}
-			if (controller.isKeyPressed(KeyEvent.VK_UP)) {
+			if (controller.isUpKeyPressed()) {
 				this.moveUp();
 			}
-			if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
+			if (controller.isDownKeyPressed()) {
 				this.moveDown();
 			}
 		}
@@ -72,12 +70,12 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 		    .translate(5, 0);
 	}
 
-	public void moveUp() {
+	public void moveDown() {
 		this.getPosition()
 		    .translate(0, -5);
 	}
 
-	public void moveDown() {
+	public void moveUp() {
 		this.getPosition()
 		    .translate(0, 5);
 	}

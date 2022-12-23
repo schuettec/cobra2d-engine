@@ -80,21 +80,21 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 	}
 
 	private void drawPoint(RendererAccess renderer, Point point, Color color) {
-		renderer.fillCircle(point.getRoundX() - 5, point.getRoundY() - 5, 5, color);
+		renderer.fillCircle(point.getRoundX(), point.getRoundY(), 5, color);
 	}
 
 	@Override
 	public void update(Controller controller, List<Collision> collisions) {
-		// if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
+		// if (controller.isLeftKeyPressed()) {
 		// this.moveLeft();
 		// }
-		// if (controller.isKeyPressed(KeyEvent.VK_RIGHT)) {
+		// if (controller.isRightKeyPressed()) {
 		// this.moveRight();
 		// }
-		// if (controller.isKeyPressed(KeyEvent.VK_UP)) {
+		// if (controller.isUpKeyPressed()) {
 		// this.moveUp();
 		// }
-		// if (controller.isKeyPressed(KeyEvent.VK_DOWN)) {
+		// if (controller.isDownKeyPressed()) {
 		// this.moveDown();
 		// }
 	}
@@ -109,12 +109,12 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		    .translate(5, 0);
 	}
 
-	public void moveUp() {
+	public void moveDown() {
 		this.getPosition()
 		    .translate(0, -5);
 	}
 
-	public void moveDown() {
+	public void moveUp() {
 		this.getPosition()
 		    .translate(0, 5);
 	}

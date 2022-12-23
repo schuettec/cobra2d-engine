@@ -1,8 +1,5 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +14,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
@@ -33,6 +31,11 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private int resolutionX;
 	private int resolutionY;
 	private LibGdxRendererAccess rendererAccess;
+	private LibGdxController controller;
+
+	public LibGdxRenderer() {
+		this.controller = new LibGdxController();
+	}
 
 	@Override
 	public void initializeRenderer(Cobra2DEngine engine, int resolutionX, int resolutionY, int bitDepth, int refreshRate,
@@ -72,18 +75,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-		rendererAccess.fillCircle(0f, 0f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(0f, 50f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(0f, 100f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(0f, 150f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(0f, 200f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-
-		rendererAccess.fillCircle(50f, 0f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(100f, 50f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(150f, 100f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(200f, 150f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-		rendererAccess.fillCircle(250f, 200f, 10f, com.github.schuettec.cobra2d.renderer.common.Color.YELLOW);
-
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);
@@ -94,36 +85,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void finish() {
-
-	}
-
-	@Override
-	public void addKeyListener(KeyListener singlePlayerController) {
-
-	}
-
-	@Override
-	public void removeKeyListener(KeyListener singlePlayerController) {
-
-	}
-
-	@Override
-	public void addMouseListener(MouseListener listener) {
-
-	}
-
-	@Override
-	public void removeMouseListener(MouseListener listener) {
-
-	}
-
-	@Override
-	public void addMouseMotionListener(MouseMotionListener listener) {
-
-	}
-
-	@Override
-	public void removeMouseMotionListener(MouseMotionListener listener) {
 
 	}
 
@@ -143,6 +104,11 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	ShapeRenderer getShapeRenderer() {
 		return shapeRenderer;
+	}
+
+	@Override
+	public Controller getController() {
+		return controller;
 	}
 
 }

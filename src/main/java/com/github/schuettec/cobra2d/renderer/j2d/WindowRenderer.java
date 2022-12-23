@@ -10,9 +10,6 @@ import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
@@ -25,6 +22,7 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 
 import com.github.schuettec.cobra2d.benchmark.Benchmarker;
+import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
@@ -64,6 +62,8 @@ public class WindowRenderer implements Renderer {
 
 	private boolean drawEntityCenterPoint;
 	private Frame frame;
+
+	private SwingController controller;
 
 	@Override
 	public void render() {
@@ -105,6 +105,7 @@ public class WindowRenderer implements Renderer {
 
 	public WindowRenderer() {
 		try {
+			this.controller = new SwingController();
 			SwingUtilities.invokeAndWait(new Runnable() {
 
 				@Override
@@ -133,6 +134,7 @@ public class WindowRenderer implements Renderer {
 				@Override
 				public void run() {
 
+					frame.addKeyListener(controller);
 					frame.addWindowListener(new WindowListener() {
 
 						@Override
@@ -349,33 +351,8 @@ public class WindowRenderer implements Renderer {
 	}
 
 	@Override
-	public void addKeyListener(KeyListener listener) {
-		frame.addKeyListener(listener);
-	}
-
-	@Override
-	public void removeKeyListener(KeyListener listener) {
-		frame.removeKeyListener(listener);
-	}
-
-	@Override
-	public void addMouseListener(MouseListener listener) {
-		frame.addMouseListener(listener);
-	}
-
-	@Override
-	public void removeMouseListener(MouseListener listener) {
-		frame.removeMouseListener(listener);
-	}
-
-	@Override
-	public void addMouseMotionListener(MouseMotionListener listener) {
-		frame.addMouseMotionListener(listener);
-	}
-
-	@Override
-	public void removeMouseMotionListener(MouseMotionListener listener) {
-		frame.removeMouseMotionListener(listener);
+	public Controller getController() {
+		return controller;
 	}
 
 }

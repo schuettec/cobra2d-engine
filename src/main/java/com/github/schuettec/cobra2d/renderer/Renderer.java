@@ -1,9 +1,6 @@
 package com.github.schuettec.cobra2d.renderer;
 
-import java.awt.event.KeyListener;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-
+import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 
 public interface Renderer {
@@ -15,16 +12,6 @@ public interface Renderer {
 
 	public void finish();
 
-	public void addKeyListener(KeyListener singlePlayerController);
-
-	public void removeKeyListener(KeyListener singlePlayerController);
-
-	public void addMouseListener(MouseListener listener);
-
-	public void removeMouseListener(MouseListener listener);
-
-	public void addMouseMotionListener(MouseMotionListener listener);
-
-	public void removeMouseMotionListener(MouseMotionListener listener);
+	public Controller getController();
 
 }

@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.controller.MockController;
-import com.github.schuettec.cobra2d.controller.SinglePlayerController;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
@@ -35,8 +33,8 @@ public class Cobra2DEngine {
 	private AnimationMemory animationMemory;
 	private Renderer renderer;
 	private Map map;
-	private Controller controller;
 	private ActiveWorldUpdater worldUpdater;
+	private Controller controller;
 
 	public Cobra2DEngine(final Properties properties) {
 		super();
@@ -54,7 +52,7 @@ public class Cobra2DEngine {
 		this.imageMemory = new ImageMemory();
 		this.animationMemory = new AnimationMemory(imageMemory);
 		this.renderer = createRenderer(rendererType);
-		this.controller = createController(renderer);
+		this.controller = renderer.getController();
 		this.map = new Map(controller);
 
 		boolean createWorldUpdater = cobra2DConfig.isCreateWorldUpdater();
@@ -63,14 +61,6 @@ public class Cobra2DEngine {
 		}
 
 		setupEnvironment(resourceLocation);
-	}
-
-	private Controller createController(Renderer renderer) {
-		if (cobra2DConfig.isCreateController()) {
-			return new SinglePlayerController(renderer);
-		} else {
-			return new MockController();
-		}
 	}
 
 	public void start() {
