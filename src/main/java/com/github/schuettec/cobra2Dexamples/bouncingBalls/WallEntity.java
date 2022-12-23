@@ -1,12 +1,11 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-
 import com.github.schuettec.cobra2d.entity.BasicPolygonEntity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.renderer.common.Color;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class WallEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle {
 
@@ -15,8 +14,8 @@ public class WallEntity extends BasicPolygonEntity implements PolygonRenderable,
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Point position) {
-		renderPolygon(getCollisionShape(), graphics, position);
+	public void render(RendererAccess renderer, Point position) {
+		renderPolygon(getCollisionShape(), renderer, position);
 	}
 
 	@Override

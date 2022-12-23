@@ -1,10 +1,10 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
-import java.awt.Graphics2D;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.map.Map;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public interface Camera extends Updatable, HasCollisionShape {
 
@@ -14,6 +14,6 @@ public interface Camera extends Updatable, HasCollisionShape {
 	 * @param capturedEntities The entities that colliding the viewport shape of
 	 *        this camera.
 	 */
-	void render(final Graphics2D graphics, final Map map, final List<Collision> capturedEntities);
+	void render(final RendererAccess renderer, final Map map, final List<Collision> capturedEntities);
 
 }

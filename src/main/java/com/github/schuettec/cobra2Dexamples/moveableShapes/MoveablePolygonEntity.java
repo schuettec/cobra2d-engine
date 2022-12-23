@@ -1,8 +1,6 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -14,6 +12,8 @@ import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
+import com.github.schuettec.cobra2d.renderer.common.Color;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class MoveablePolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Updatable {
 
@@ -28,9 +28,9 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Point position) {
+	public void render(RendererAccess renderer, Point position) {
 		Polygon collisionShape = getCollisionShape();
-		renderPolygon(collisionShape, graphics, position);
+		renderPolygon(collisionShape, renderer, position);
 	}
 
 	@Override
@@ -40,7 +40,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 
 	@Override
 	public Color getDrawColor() {
-		return Color.white;
+		return Color.WHITE;
 	}
 
 	@Override

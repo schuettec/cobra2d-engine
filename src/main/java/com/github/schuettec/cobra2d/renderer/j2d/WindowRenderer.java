@@ -78,16 +78,20 @@ public class WindowRenderer implements Renderer {
 		}
 
 		Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
+		Java2DRendererAccess java2D = new Java2DRendererAccess(bufferGraphics);
 
 		// Clear now the screen buffer
 		bufferGraphics.setColor(Color.BLACK);
 		bufferGraphics.fillRect(0, 0, this.resolutionX, this.resolutionY);
-
+		bufferGraphics.translate(0, resolutionY);
+		bufferGraphics.scale(1, -1);
+		// To be compatible with OpenGL the coordinate system is changes to y-up
+		// In OpenGL the coordinate system's origin is at the bottem left corner of the screen.
 		Map map = engine.getMap();
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);
-			camera.render(bufferGraphics, map, capturedEntities);
+			camera.render(java2D, map, capturedEntities);
 		}
 
 		// Dispose the graphics

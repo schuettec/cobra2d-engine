@@ -1,7 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
@@ -13,6 +11,8 @@ import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.renderer.common.Color;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
 
@@ -43,9 +43,9 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Point position) {
+	public void render(final RendererAccess renderer, Point position) {
 		Circle collisionShape = getCollisionShape();
-		renderCircle(collisionShape, graphics, position);
+		renderCircle(collisionShape, renderer, position);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 
 	@Override
 	public Color getDrawColor() {
-		return Color.white;
+		return Color.WHITE;
 	}
 
 	public void moveLeft() {

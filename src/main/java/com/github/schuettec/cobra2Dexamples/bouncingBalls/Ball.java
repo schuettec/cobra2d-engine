@@ -1,7 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +14,8 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.renderer.common.Color;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class Ball extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
@@ -48,9 +48,9 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Point position) {
+	public void render(RendererAccess renderer, Point position) {
 		Circle collisionShape = getCollisionShape();
-		renderCircle(collisionShape, graphics, position);
+		renderCircle(collisionShape, renderer, position);
 	}
 
 	@Override
@@ -60,7 +60,7 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 	@Override
 	public Color getDrawColor() {
-		return Color.white;
+		return Color.WHITE;
 	}
 
 }

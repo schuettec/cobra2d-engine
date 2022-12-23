@@ -1,8 +1,6 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,6 +15,8 @@ import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
+import com.github.schuettec.cobra2d.renderer.common.Color;
+import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class BasicMapCamera extends BasicRectangleEntity implements RectangleRenderable, Camera {
 
@@ -25,23 +25,26 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Map map, List<Collision> capturedEntities) {
-		graphics.setClip(getPosition().getRoundX(), getPosition().getRoundY(), getDimension().width + 1,
-		    getDimension().height + 1);
+	public void render(final RendererAccess renderer, Map map, List<Collision> capturedEntities) {
+		// RENDERER ACCESS NEEDS CLIPPING FEATURE
+		// renderer.setClip(getPosition().getRoundX(), getPosition().getRoundY(), getDimension().width + 1,
+		// getDimension().height + 1);
 
 		List<Point> collisionPoints = new LinkedList<>();
 
-		// IF SHAPE COLLISION DETECTION WORKS, THE NEXT TWO LINES ARE CORRET:
+		Point cameraTranslation = new Point(0, 0);
+
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
-			// for (Entity entity : map.getObstacles()) {
+
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
-				renderable.render(graphics, new Point(0, 0));
-				Point center = renderable.getPosition();
+				renderable.render(renderer, cameraTranslation);
+				Point entityPosition = renderable.getPosition();
 				// .translate(getPosition());
-				drawPoint(graphics, center, Color.BLUE);
+				drawPoint(renderer, entityPosition, Color.BLUE);
 			}
+
 			if (entity instanceof Obstacle) {
 				if (map.hasCollision(entity)) {
 					List<Collision> collisions = map.getCollision(entity);
@@ -55,15 +58,15 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		}
 
 		collisionPoints.stream()
-		    .forEach(p -> drawPoint(graphics, p, Color.RED));
+		    .forEach(p -> drawPoint(renderer, p, Color.RED));
 
-		this.render(graphics, new Point(0, 0));
+		this.render(renderer, cameraTranslation);
 	}
 
 	@Override
-	public void render(Graphics2D graphics, Point position) {
+	public void render(RendererAccess renderer, Point position) {
 		Polygon collisionShape = getCollisionShape();
-		renderPolygon(collisionShape, graphics, position);
+		renderPolygon(collisionShape, renderer, position);
 	}
 
 	@Override
@@ -76,11 +79,8 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		return Color.GREEN;
 	}
 
-	private void drawPoint(Graphics2D graphics, Point point, Color color) {
-		Color oldColor = graphics.getColor();
-		graphics.setColor(color);
-		graphics.fillOval(point.getRoundX() - 5, point.getRoundY() - 5, 5, 5);
-		graphics.setColor(oldColor);
+	private void drawPoint(RendererAccess renderer, Point point, Color color) {
+		renderer.fillCircle(point.getRoundX() - 5, point.getRoundY() - 5, 5, color);
 	}
 
 	@Override

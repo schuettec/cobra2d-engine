@@ -4,7 +4,15 @@ package com.github.schuettec.cobra2d.engine;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 
-public class WorldUpdater {
+/**
+ * Diese Klasse kommt noch aus der Zeit, als die Engine das aktive Neuzeichnen des Renderers kontrolliert hat.
+ * Aktuell übernimmt LibGDX die Verwaltung der Render-Update-Zyklen.
+ * 
+ * @author chris
+ *
+ */
+@Deprecated
+public class ActiveWorldUpdater {
 	protected int fps;
 	protected int actualFPS;
 	protected int actualUPS;
@@ -82,7 +90,7 @@ public class WorldUpdater {
 				 */
 				if (doMapUpdate) {
 					int skips = 0;
-					while ((excess > period) && (skips < WorldUpdater.this.maxFrameSkips)) {
+					while ((excess > period) && (skips < ActiveWorldUpdater.this.maxFrameSkips)) {
 						excess -= period;
 						if (!running) {
 							break;
@@ -107,7 +115,7 @@ public class WorldUpdater {
 		}
 	};
 
-	public WorldUpdater(int fps, boolean doMapUpdate, boolean doRender, Map map, Renderer renderer) {
+	public ActiveWorldUpdater(int fps, boolean doMapUpdate, boolean doRender, Map map, Renderer renderer) {
 		super();
 		this.fps = fps;
 		this.doMapUpdate = doMapUpdate;

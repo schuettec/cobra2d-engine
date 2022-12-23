@@ -424,7 +424,9 @@ public abstract class Collisions {
 			return false;
 		}
 
-		Line collisionCheck = new Line(point, new Point(maxX.getRoundX(), point.getRoundY()));
+		// The magic +1 means that the collision check line must be a little longer than the maxX of the polygon to create
+		// an intersection.
+		Line collisionCheck = new Line(point, new Point(maxX.getRoundX() + 1, point.getRoundY()));
 
 		List<Point> collisionPoint = new LinkedList<>();
 		List<Line> lines = polygon.getLines();

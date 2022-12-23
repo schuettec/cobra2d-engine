@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.engine;
 
+import static java.util.Objects.nonNull;
+
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -16,6 +18,7 @@ import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 import com.github.schuettec.cobra2d.renderer.j2d.WindowRenderer;
+import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderer;
 import com.github.schuettec.cobra2d.resource.Animation;
 import com.github.schuettec.cobra2d.resource.AnimationMemory;
 import com.github.schuettec.cobra2d.resource.ImageMemory;
@@ -32,8 +35,8 @@ public class Cobra2DEngine {
 	private AnimationMemory animationMemory;
 	private Renderer renderer;
 	private Map map;
-	private WorldUpdater worldUpdater;
 	private Controller controller;
+	private ActiveWorldUpdater worldUpdater;
 
 	public Cobra2DEngine(final Properties properties) {
 		super();
@@ -54,7 +57,11 @@ public class Cobra2DEngine {
 		this.controller = createController(renderer);
 		this.map = new Map(controller);
 
-		this.worldUpdater = new WorldUpdater(refreshRate, doMapUpdate, doRender, map, renderer);
+		boolean createWorldUpdater = cobra2DConfig.isCreateWorldUpdater();
+		if (createWorldUpdater) {
+			this.worldUpdater = new ActiveWorldUpdater(refreshRate, doMapUpdate, doRender, map, renderer);
+		}
+
 		setupEnvironment(resourceLocation);
 	}
 
@@ -74,13 +81,17 @@ public class Cobra2DEngine {
 		boolean fullscreen = cobra2DConfig.getFullscreen();
 
 		renderer.initializeRenderer(this, resolutionX, resolutionY, bitDepth, refreshRate, fullscreen);
-		this.worldUpdater.start();
+		if (nonNull(worldUpdater)) {
+			this.worldUpdater.start();
+		}
 	}
 
 	private Renderer createRenderer(RendererType rendererType) {
 		Renderer renderer = null;
 		if (RendererType.JAVA2D.equals(rendererType)) {
 			renderer = new WindowRenderer();
+		} else if (RendererType.LIBGDX.equals(rendererType)) {
+			renderer = new LibGdxRenderer();
 		}
 		return renderer;
 	}
@@ -98,7 +109,9 @@ public class Cobra2DEngine {
 	}
 
 	public void shutdownEngine() {
-		this.worldUpdater.stop();
+		if (nonNull(worldUpdater)) {
+			this.worldUpdater.stop();
+		}
 		this.renderer.finish();
 	}
 
