@@ -7,6 +7,7 @@ import static java.util.Objects.isNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -171,12 +172,13 @@ public class Map {
 
 	public void update() {
 		for (Updatable updatable : updateables) {
+			List<Collision> collisions = new LinkedList<>();
 			if (updatable instanceof Obstacle) {
 				if (detectedCollision.hasCollision(updatable)) {
-					List<Collision> collisions = detectedCollision.getCollision(updatable);
-					updatable.update(controller, collisions);
+					collisions = detectedCollision.getCollision(updatable);
 				}
 			}
+			updatable.update(controller, collisions);
 		}
 
 		// Detect all collisions in the set of obstacles

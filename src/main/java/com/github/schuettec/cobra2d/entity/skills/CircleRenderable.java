@@ -7,7 +7,7 @@ import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public interface CircleRenderable extends Renderable {
 
-	default void renderCircle(Circle circle, final RendererAccess renderer, final Point position) {
+	public static void renderCircle(Circle circle, final RendererAccess renderer, final Point position, Color color) {
 		// Translate world coordinates to screen coordinates
 		Circle circleOnScreen = circle.clone()
 		    .translate(position);
@@ -15,7 +15,11 @@ public interface CircleRenderable extends Renderable {
 		    .getRoundX(),
 		    circleOnScreen.getPosition()
 		        .getRoundY(),
-		    (float) circle.getRadius(), getDrawColor());
+		    (float) circle.getRadius(), color);
+	}
+
+	default void renderCircle(Circle circle, final RendererAccess renderer, final Point position) {
+		renderCircle(circle, renderer, position, getDrawColor());
 	}
 
 	/**

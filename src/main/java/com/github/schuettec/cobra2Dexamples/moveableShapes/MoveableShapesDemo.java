@@ -32,9 +32,9 @@ public class MoveableShapesDemo {
 		MoveableCircleEntity c2 = new MoveableCircleEntity(new Point(100, 200), 70, false);
 		MoveablePolygonEntity p1 = new MoveablePolygonEntity(new Point(120, 220), new Dimension(100, 100), false);
 
-		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), true);
+		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(1, 1), new Dimension(799, 799));
+		BasicMapCamera camera = new BasicMapCamera(new Point(1, 1), new Dimension(799, 799), true);
 
 		engine.addEntity(c1, c2, p1, p2);
 		engine.addEntity(camera);

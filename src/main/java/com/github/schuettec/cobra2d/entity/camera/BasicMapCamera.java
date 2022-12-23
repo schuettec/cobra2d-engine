@@ -20,8 +20,11 @@ import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class BasicMapCamera extends BasicRectangleEntity implements RectangleRenderable, Camera {
 
-	public BasicMapCamera(Point worldCoordinates, Dimension dimension) {
+	private boolean playerControlled;
+
+	public BasicMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
+		this.playerControlled = playerControlled;
 	}
 
 	@Override
@@ -61,6 +64,7 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		    .forEach(p -> drawPoint(renderer, p, Color.RED));
 
 		this.render(renderer, cameraTranslation);
+
 	}
 
 	@Override
@@ -85,18 +89,20 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 
 	@Override
 	public void update(Controller controller, List<Collision> collisions) {
-		// if (controller.isLeftKeyPressed()) {
-		// this.moveLeft();
-		// }
-		// if (controller.isRightKeyPressed()) {
-		// this.moveRight();
-		// }
-		// if (controller.isUpKeyPressed()) {
-		// this.moveUp();
-		// }
-		// if (controller.isDownKeyPressed()) {
-		// this.moveDown();
-		// }
+		if (playerControlled) {
+			if (controller.isLeftKeyPressed()) {
+				this.moveLeft();
+			}
+			if (controller.isRightKeyPressed()) {
+				this.moveRight();
+			}
+			if (controller.isUpKeyPressed()) {
+				this.moveUp();
+			}
+			if (controller.isDownKeyPressed()) {
+				this.moveDown();
+			}
+		}
 	}
 
 	public void moveLeft() {

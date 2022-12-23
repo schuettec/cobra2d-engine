@@ -9,8 +9,7 @@ import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public interface PolygonRenderable extends Renderable {
-
-	default void renderPolygon(Polygon polygon, final RendererAccess renderer, final Point position) {
+	public static void renderPolygon(Polygon polygon, final RendererAccess renderer, final Point position, Color color) {
 		// Translate world coordinates to screen coordinates
 		Polygon polygonOnScreen = polygon.clone()
 		    .translate(position);
@@ -25,8 +24,12 @@ public interface PolygonRenderable extends Renderable {
 			        .getRoundX(),
 			    l.getX2()
 			        .getRoundY(),
-			    getDrawColor());
+			    color);
 		}
+	}
+
+	default void renderPolygon(Polygon polygon, final RendererAccess renderer, final Point position) {
+		renderPolygon(polygon, renderer, position, getDrawColor());
 	}
 
 	/**

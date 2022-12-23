@@ -30,7 +30,7 @@ public class BouncingBalls {
 
 		BasicCircleEntity c1 = new BasicCircleEntity(new Point(100, 100), 45);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(0, 0), new Dimension(800, 800));
+		BasicMapCamera camera = new BasicMapCamera(new Point(0, 0), new Dimension(800, 800), false);
 
 		engine.addEntity(c1);
 		engine.addEntity(camera);
