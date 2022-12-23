@@ -15,7 +15,7 @@ public class WallEntity extends BasicPolygonEntity implements PolygonRenderable,
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
-		renderPolygon(getCollisionShape(), renderer, position);
+		renderPolygon(getCollisionShapeInWorldCoordinates(), renderer, position);
 	}
 
 	@Override

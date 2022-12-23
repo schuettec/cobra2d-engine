@@ -28,11 +28,24 @@ public class BasicCircleEntity extends BasicEntity implements HasCollisionShape 
 		this.circle = new Circle(new Point(0, 0), radius);
 	}
 
-	public Circle getCollisionShape() {
-		return circle.clone()
-		    .scale(scaling)
-		    .rotate(degrees)
-		    .translate(worldCoordinates);
+	public Circle getCollisionShapeInWorldCoordinates() {
+		return getCollisionShape(true, true, true);
+	}
+
+	@Override
+	public Circle getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
+		Circle clone = circle.clone();
+		if (applyScaling) {
+			clone = clone.scale(getScale());
+		}
+
+		if (applyRotation) {
+			clone = clone.rotate(getDegrees());
+		}
+		if (applyWorldCoordinates) {
+			clone = clone.translate(worldCoordinates);
+		}
+		return clone;
 	}
 
 	public double getRadius() {

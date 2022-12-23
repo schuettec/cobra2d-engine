@@ -40,7 +40,7 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 			// Berechne Einfallswinkel.
 			Collision collision = wallCollision.get();
 			HasCollisionShape opponent = collision.getOpponent();
-			Collisions.detectCollision(getCollisionShape(), opponent.getCollisionShape(), false);
+			Collisions.detectCollision(getCollisionShapeInWorldCoordinates(), opponent.getCollisionShapeInWorldCoordinates(), false);
 		} else {
 			Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 			this.setPosition(nextPosition);
@@ -49,7 +49,7 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
-		Circle collisionShape = getCollisionShape();
+		Circle collisionShape = getCollisionShapeInWorldCoordinates();
 		renderCircle(collisionShape, renderer, position);
 	}
 

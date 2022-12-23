@@ -25,4 +25,8 @@ public interface RendererAccess {
 
 	public void fillOval(float x1, float y1, float width, float height, Color color);
 
+	public int getWidth();
+
+	public int getHeight();
+
 }

@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
+import static java.util.Objects.isNull;
+
 import java.awt.Dimension;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,21 +12,28 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
-import com.github.schuettec.cobra2d.entity.skills.RectangleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
-public class BasicMapCamera extends BasicRectangleEntity implements RectangleRenderable, Camera {
+public class BasicMapCamera extends BasicRectangleEntity implements Camera {
 
 	private boolean playerControlled;
+	private Point screenPosition;
 
 	public BasicMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
+		this.screenPosition = null;
+	}
+
+	public BasicMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled, Point screenPosition) {
+		super(worldCoordinates, dimension);
+		this.playerControlled = playerControlled;
+		this.screenPosition = new Point(0, 0);
 	}
 
 	@Override
@@ -33,9 +42,17 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		// renderer.setClip(getPosition().getRoundX(), getPosition().getRoundY(), getDimension().width + 1,
 		// getDimension().height + 1);
 
+		Point screenTranslation = screenPosition;
+		if (isNull(screenPosition)) {
+			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
+			    renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
+		}
+
 		List<Point> collisionPoints = new LinkedList<>();
 
-		Point cameraTranslation = new Point(0, 0);
+		Point position = getPosition();
+		Point cameraTranslation = position.scale(-1)
+		    .translate(screenTranslation);
 
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
@@ -43,8 +60,8 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
 				renderable.render(renderer, cameraTranslation);
-				Point entityPosition = renderable.getPosition();
-				// .translate(getPosition());
+				Point entityPosition = renderable.getPosition()
+				    .translate(cameraTranslation);
 				drawPoint(renderer, entityPosition, Color.BLUE);
 			}
 
@@ -54,7 +71,7 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 					collisions.stream()
 					    .flatMap(c -> c.getPoints()
 					        .stream())
-					    // .map(p -> p.translate(getPosition()))
+					    .map(p -> p.translate(cameraTranslation))
 					    .forEach(p -> collisionPoints.add(p));
 				}
 			}
@@ -63,24 +80,7 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 		collisionPoints.stream()
 		    .forEach(p -> drawPoint(renderer, p, Color.RED));
 
-		this.render(renderer, cameraTranslation);
-
-	}
-
-	@Override
-	public void render(RendererAccess renderer, Point position) {
-		Polygon collisionShape = getCollisionShape();
-		renderPolygon(collisionShape, renderer, position);
-	}
-
-	@Override
-	public int getLayer() {
-		return 0;
-	}
-
-	@Override
-	public Color getDrawColor() {
-		return Color.GREEN;
+		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, screenTranslation, Color.GREEN);
 	}
 
 	private void drawPoint(RendererAccess renderer, Point point, Color color) {
@@ -106,23 +106,23 @@ public class BasicMapCamera extends BasicRectangleEntity implements RectangleRen
 	}
 
 	public void moveLeft() {
-		this.getPosition()
-		    .translate(-5, 0);
+		this.translate(new Point(-5, 0));
 	}
 
 	public void moveRight() {
-		this.getPosition()
-		    .translate(5, 0);
+		this.translate(new Point(5, 0));
 	}
 
 	public void moveDown() {
-		this.getPosition()
-		    .translate(0, -5);
+		this.translate(new Point(0, -5));
 	}
 
 	public void moveUp() {
-		this.getPosition()
-		    .translate(0, 5);
+		this.translate(new Point(0, 5));
+	}
+
+	public void setScreenPosition(Point point) {
+		this.screenPosition = point.clone();
 	}
 
 }

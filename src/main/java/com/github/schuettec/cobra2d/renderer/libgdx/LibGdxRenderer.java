@@ -111,4 +111,12 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		return controller;
 	}
 
+	int getResolutionX() {
+		return resolutionX;
+	}
+
+	int getResolutionY() {
+		return resolutionY;
+	}
+
 }

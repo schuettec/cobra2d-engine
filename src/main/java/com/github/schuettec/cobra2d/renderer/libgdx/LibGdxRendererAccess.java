@@ -63,4 +63,14 @@ public class LibGdxRendererAccess implements RendererAccess {
 		shapeRenderer.end();
 	}
 
+	@Override
+	public int getWidth() {
+		return renderer.getResolutionX();
+	}
+
+	@Override
+	public int getHeight() {
+		return renderer.getResolutionY();
+	}
+
 }

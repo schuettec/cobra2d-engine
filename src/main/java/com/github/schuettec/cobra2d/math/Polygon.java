@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * This class describes a geometric polygon in a 2D coordinate system. It is
@@ -100,5 +101,11 @@ public class Polygon implements Shape, Cloneable {
 			point.scale(scaleFactor);
 		}
 		return this;
+	}
+
+	public List<Point> getPoints() {
+		return getEntityPoints().stream()
+		    .map(p -> p.getCoordinates())
+		    .collect(Collectors.toList());
 	}
 }

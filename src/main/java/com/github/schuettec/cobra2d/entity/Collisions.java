@@ -114,10 +114,10 @@ public abstract class Collisions {
 
 		for (Entity c1 : new HashSet<>(map)) {
 			HasCollisionShape o1 = (HasCollisionShape) c1;
-			List<Point> collision = detectCollision(shape, o1.getCollisionShape(), all);
+			List<Point> collision = detectCollision(shape, o1.getCollisionShapeInWorldCoordinates(), all);
 			// Collision may be null if there is none
 			if (collision != null) {
-				collision = detectCollision(o1.getCollisionShape(), shape, all);
+				collision = detectCollision(o1.getCollisionShapeInWorldCoordinates(), shape, all);
 			}
 			if (!collision.isEmpty()) {
 				return collision;
@@ -140,8 +140,8 @@ public abstract class Collisions {
 	 *         points or <code>null</code> if no collision was detected.
 	 */
 	public static Collision detectCollision(HasCollisionShape e1, HasCollisionShape e2, boolean all) {
-		Shape s1 = e1.getCollisionShape();
-		Shape s2 = e2.getCollisionShape();
+		Shape s1 = e1.getCollisionShapeInWorldCoordinates();
+		Shape s2 = e2.getCollisionShapeInWorldCoordinates();
 		List<Point> collisions = detectCollision(s1, s2, all);
 		if (collisions.isEmpty()) {
 			return null;

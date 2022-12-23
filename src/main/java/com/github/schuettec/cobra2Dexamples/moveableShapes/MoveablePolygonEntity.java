@@ -28,7 +28,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
-		Polygon collisionShape = getCollisionShape();
+		Polygon collisionShape = getCollisionShapeInWorldCoordinates();
 		renderPolygon(collisionShape, renderer, position);
 	}
 

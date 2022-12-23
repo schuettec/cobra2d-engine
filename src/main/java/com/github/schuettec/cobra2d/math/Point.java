@@ -129,7 +129,7 @@ public class Point implements Shape, Cloneable {
 	 * This implementation does nothing, because a {@link Point} cannot be scaled.
 	 */
 	public Point scale(double scaleFactor) {
-		return this;
+		return new Point(getX() * scaleFactor, getY() * scaleFactor);
 	}
 
 	public java.awt.Point toAwtPoint() {

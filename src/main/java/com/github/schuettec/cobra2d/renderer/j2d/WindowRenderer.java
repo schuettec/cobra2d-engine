@@ -78,7 +78,7 @@ public class WindowRenderer implements Renderer {
 		}
 
 		Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-		Java2DRendererAccess java2D = new Java2DRendererAccess(bufferGraphics);
+		Java2DRendererAccess java2D = new Java2DRendererAccess(this);
 
 		// Clear now the screen buffer
 		bufferGraphics.setColor(Color.BLACK);
@@ -348,6 +348,10 @@ public class WindowRenderer implements Renderer {
 
 	public void setDrawEntityCenterPoint(boolean b) {
 		this.drawEntityCenterPoint = b;
+	}
+
+	Graphics2D getGraphics() {
+		return worldViewGraphics;
 	}
 
 	@Override

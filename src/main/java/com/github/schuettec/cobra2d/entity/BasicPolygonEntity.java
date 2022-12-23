@@ -29,11 +29,23 @@ public class BasicPolygonEntity extends BasicEntity implements HasCollisionShape
 	}
 
 	@Override
-	public Polygon getCollisionShape() {
-		return polygon.clone()
-		    .scale(scaling)
-		    .rotate(degrees)
-		    .translate(worldCoordinates);
+	public Polygon getCollisionShapeInWorldCoordinates() {
+		return getCollisionShape(true, true, true);
+	}
+
+	@Override
+	public Polygon getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
+		Polygon clone = polygon.clone();
+		if (applyScaling) {
+			clone = clone.scale(getScale());
+		}
+		if (applyRotation) {
+			clone = clone.rotate(getDegrees());
+		}
+		if (applyWorldCoordinates) {
+			clone = clone.translate(worldCoordinates);
+		}
+		return clone;
 	}
 
 }

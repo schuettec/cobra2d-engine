@@ -35,6 +35,8 @@ public class MoveableShapesDemo {
 		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
 
 		BasicMapCamera camera = new BasicMapCamera(new Point(1, 1), new Dimension(799, 799), true);
+		// camera.setScreenPosition(new Point(0, 0));
+		camera.scale(0.5);
 
 		engine.addEntity(c1, c2, p1, p2);
 		engine.addEntity(camera);

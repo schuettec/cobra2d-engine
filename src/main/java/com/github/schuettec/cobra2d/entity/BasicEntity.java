@@ -51,11 +51,7 @@ public abstract class BasicEntity implements Entity, Shape {
 
 	@Override
 	public Point getPosition() {
-		return worldCoordinates;
-	}
-
-	public void setPosition(int x, int y) {
-		this.worldCoordinates.setLocation(x, y);
+		return worldCoordinates.clone();
 	}
 
 	public void setPosition(double x, double y) {
@@ -89,7 +85,7 @@ public abstract class BasicEntity implements Entity, Shape {
 
 	@Override
 	public BasicEntity rotate(double degrees) {
-		this.degrees += degrees;
+		this.degrees = degrees;
 		return this;
 	}
 
@@ -101,7 +97,7 @@ public abstract class BasicEntity implements Entity, Shape {
 
 	@Override
 	public BasicEntity scale(double scaleFactor) {
-		this.scaling += scaleFactor;
+		this.scaling = scaleFactor;
 		return this;
 	}
 

@@ -44,7 +44,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 
 	@Override
 	public void render(final RendererAccess renderer, Point position) {
-		Circle collisionShape = getCollisionShape();
+		Circle collisionShape = getCollisionShapeInWorldCoordinates();
 		renderCircle(collisionShape, renderer, position);
 	}
 
