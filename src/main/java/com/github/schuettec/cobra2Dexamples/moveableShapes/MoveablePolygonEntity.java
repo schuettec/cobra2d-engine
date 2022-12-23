@@ -1,14 +1,13 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import java.awt.Dimension;
-import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicPolygonEntity;
-import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.renderer.common.Color;
@@ -43,7 +42,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 	}
 
 	@Override
-	public void update(Controller controller, List<Collision> collisions) {
+	public void update(Map map, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

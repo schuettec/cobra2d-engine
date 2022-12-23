@@ -1,6 +1,7 @@
 package com.github.schuettec.cobra2d.entity;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
@@ -26,7 +27,7 @@ public class Collision {
 	/**
 	 * This is the list of collision points.
 	 */
-	protected List<Point> points;
+	protected List<CollisionDetail> collisionDetails;
 	/**
 	 * If <code>true</code> the collision represents all collision points of the to
 	 * entities colliding. If <code>false</code> only the first collision point is
@@ -34,12 +35,13 @@ public class Collision {
 	 */
 	private boolean allCollisionPointsResolved;
 
-	protected Collision(HasCollisionShape entity, HasCollisionShape opponent, List<Point> points, boolean all) {
+	protected Collision(HasCollisionShape entity, HasCollisionShape opponent, List<CollisionDetail> collisionDetails,
+	    boolean all) {
 		super();
 		this.allCollisionPointsResolved = all;
 		this.entity = entity;
 		this.opponent = opponent;
-		this.points = points;
+		this.collisionDetails = collisionDetails;
 	}
 
 	/**
@@ -48,10 +50,11 @@ public class Collision {
 	 *         points this call returns <code>null</code>.
 	 */
 	public Point getFirstCollision() {
-		if (points.isEmpty()) {
+		if (collisionDetails.isEmpty()) {
 			return null;
 		} else {
-			return points.get(0);
+			return collisionDetails.get(0)
+			    .getIntersection();
 		}
 	}
 
@@ -64,7 +67,9 @@ public class Collision {
 	}
 
 	public List<Point> getPoints() {
-		return points;
+		return collisionDetails.stream()
+		    .map(cd -> cd.getIntersection())
+		    .collect(Collectors.toList());
 	}
 
 	/**

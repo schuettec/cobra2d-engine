@@ -8,6 +8,7 @@ import java.util.List;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
@@ -16,6 +17,7 @@ import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
@@ -62,38 +64,52 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements Camera {
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
 
+			// Render entity
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
 				renderable.render(renderer, cameraTranslation);
-				Point entityPosition = renderable.getPosition()
-				    .translate(cameraTranslation);
-				drawPoint(renderer, entityPosition, Color.BLUE);
 			}
 
+			// Render entity shape and get collision points
 			if (entity instanceof Obstacle) {
-				if (map.hasCollision(entity)) {
-					List<Collision> collisions = map.getCollision(entity);
+				Obstacle obstacle = (Obstacle) entity;
+				Shape entityShape = obstacle.getCollisionShape(true, true, true)
+				    .translate(cameraTranslation);
+				if (entityShape.isPointBased()) {
+					entityShape.getPoints()
+					    .stream()
+					    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
+				}
+
+				CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
+				if (collisionMap.hasCollision(entity)) {
+					List<Collision> collisions = collisionMap.getCollision(entity);
 					collisions.stream()
 					    .flatMap(c -> c.getPoints()
 					        .stream())
 					    .map(p -> p.translate(cameraTranslation))
 					    .forEach(p -> collisionPoints.add(p));
 				}
+
+				// Render entity base-point
+				Point entityPosition = entity.getPosition()
+				    .translate(cameraTranslation);
+				drawPoint(renderer, entityPosition, 2, Color.LIGHT_GRAY);
 			}
 		}
 
 		collisionPoints.stream()
-		    .forEach(p -> drawPoint(renderer, p, Color.RED));
+		    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
 
 		CircleRenderable.renderCircle(getCollisionShape(true, true, false), renderer, screenTranslation, Color.GREEN);
 	}
 
-	private void drawPoint(RendererAccess renderer, Point point, Color color) {
-		renderer.fillCircle(point.getRoundX(), point.getRoundY(), 5, color);
+	private void drawPoint(RendererAccess renderer, Point point, int radius, Color color) {
+		renderer.fillCircle(point.getRoundX(), point.getRoundY(), radius, color);
 	}
 
 	@Override
-	public void update(Controller controller, List<Collision> collisions) {
+	public void update(Map map, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

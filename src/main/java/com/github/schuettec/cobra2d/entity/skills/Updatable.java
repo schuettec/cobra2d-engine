@@ -1,9 +1,7 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
-import java.util.List;
-
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.map.Map;
 
 /**
  * This interface describes an updateable object. This object provides an update
@@ -18,8 +16,8 @@ public interface Updatable extends Entity {
 	 * Called by the rendering framework to signal that the object should update for
 	 * the new frame.
 	 * 
-	 * @param collisions If this entity is also an {@link Obstacle}, the list of collisions contains the entities
-	 *        colliding with this one. Otherwise the collisions list is empty.
+	 * @param map The map.
+	 * @param controller The controller for user inputer.
 	 */
-	public void update(Controller controller, List<Collision> collisions);
+	public void update(Map map, Controller controller);
 }

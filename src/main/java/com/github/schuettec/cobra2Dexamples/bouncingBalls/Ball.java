@@ -1,16 +1,16 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
-import java.util.List;
 import java.util.Optional;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
-import com.github.schuettec.cobra2d.entity.Collisions;
+import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -21,7 +21,7 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 	double VELOCITY = 2.0;
 
-	double speed = 0;
+	double speed = VELOCITY;
 
 	public Ball(Point worldCoordinates, double radius) {
 		super(worldCoordinates, radius);
@@ -30,9 +30,12 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 	}
 
 	@Override
-	public void update(Controller controller, List<Collision> collisions) {
+	public void update(Map map, Controller controller) {
 
-		Optional<Collision> wallCollision = collisions.stream()
+		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, false, false);
+
+		Optional<Collision> wallCollision = collisionMap.getCollisions()
+		    .stream()
 		    .filter(c -> c.getOpponent() instanceof WallEntity)
 		    .findFirst();
 
@@ -40,7 +43,7 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 			// Berechne Einfallswinkel.
 			Collision collision = wallCollision.get();
 			HasCollisionShape opponent = collision.getOpponent();
-			Collisions.detectCollision(getCollisionShapeInWorldCoordinates(), opponent.getCollisionShapeInWorldCoordinates(), false);
+
 		} else {
 			Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 			this.setPosition(nextPosition);

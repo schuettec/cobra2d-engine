@@ -9,6 +9,7 @@ import java.util.List;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
@@ -84,8 +85,9 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 					    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
 				}
 
-				if (map.hasCollision(entity)) {
-					List<Collision> collisions = map.getCollision(entity);
+				CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
+				if (collisionMap.hasCollision(entity)) {
+					List<Collision> collisions = collisionMap.getCollision(entity);
 					collisions.stream()
 					    .flatMap(c -> c.getPoints()
 					        .stream())
@@ -113,7 +115,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 	}
 
 	@Override
-	public void update(Controller controller, List<Collision> collisions) {
+	public void update(Map map, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
