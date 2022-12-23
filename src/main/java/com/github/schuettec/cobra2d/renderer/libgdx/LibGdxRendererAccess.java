@@ -64,6 +64,24 @@ public class LibGdxRendererAccess implements RendererAccess {
 	}
 
 	@Override
+	public void drawRectangle(float x, float y, float width, float height, Color color) {
+		ShapeRenderer shapeRenderer = renderer.getShapeRenderer();
+		shapeRenderer.begin(ShapeType.Line);
+		shapeRenderer.setColor(color.toLibGdxColor());
+		shapeRenderer.rect(x, y, width, height);
+		shapeRenderer.end();
+	}
+
+	@Override
+	public void fillRectangle(float x, float y, float width, float height, Color color) {
+		ShapeRenderer shapeRenderer = renderer.getShapeRenderer();
+		shapeRenderer.begin(ShapeType.Filled);
+		shapeRenderer.setColor(color.toLibGdxColor());
+		shapeRenderer.rect(x, y, width, height);
+		shapeRenderer.end();
+	}
+
+	@Override
 	public int getWidth() {
 		return renderer.getResolutionX();
 	}

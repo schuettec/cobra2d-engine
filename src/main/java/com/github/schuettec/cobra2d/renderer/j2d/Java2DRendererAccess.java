@@ -21,6 +21,24 @@ public class Java2DRendererAccess implements RendererAccess {
 	}
 
 	@Override
+	public void drawRectangle(float x, float y, float width, float height, Color color) {
+		Graphics2D g = renderer.getGraphics();
+		java.awt.Color oldColor = g.getColor();
+		g.setColor(color.toAwtColor());
+		g.drawRect(Math2D.saveRound(x), Math2D.saveRound(y), Math2D.saveRound(width), Math2D.saveRound(height));
+		g.setColor(oldColor);
+	}
+
+	@Override
+	public void fillRectangle(float x, float y, float width, float height, Color color) {
+		Graphics2D g = renderer.getGraphics();
+		java.awt.Color oldColor = g.getColor();
+		g.setColor(color.toAwtColor());
+		g.fillRect(Math2D.saveRound(x), Math2D.saveRound(y), Math2D.saveRound(width), Math2D.saveRound(height));
+		g.setColor(oldColor);
+	}
+
+	@Override
 	public void drawCircle(float x, float y, float radius, Color color) {
 		drawOval(x, y, radius, radius, color);
 	}

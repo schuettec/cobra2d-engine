@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
@@ -61,6 +62,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	@Override
 	public void create() {
 		shapeRenderer = new ShapeRenderer();
+		shapeRenderer.setAutoShapeType(true);
+
 		camera = new OrthographicCamera(resolutionX, resolutionY);
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
@@ -72,13 +75,40 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	public void render() {
 		map.update();
 		camera.update();
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		ScreenUtils.clear(Color.BLACK);
 
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);
+
+			/* Clear our depth buffer info from previous frame. */
+			Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+
+			/* Set the depth function to LESS. */
+			Gdx.gl.glDepthFunc(GL20.GL_LESS);
+
+			/* Enable depth writing. */
+			Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
+			/* Disable RGBA color writing. */
+			Gdx.gl.glColorMask(false, false, false, false);
+
+			camera.renderClippingMask(rendererAccess);
+			shapeRenderer.flush();
+
+			/* Enable RGBA color writing. */
+			Gdx.gl.glColorMask(true, true, true, true);
+
+			/* Set the depth function to EQUAL. */
+			Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
+
+			Gdx.gl.glClearColor(0, 0, 0, 1);
+			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
 			camera.render(rendererAccess, map, capturedEntities);
+			shapeRenderer.flush();
+
 		}
 
 	}

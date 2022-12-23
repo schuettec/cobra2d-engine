@@ -37,11 +37,19 @@ public class BasicMapCamera extends BasicRectangleEntity implements Camera {
 	}
 
 	@Override
-	public void render(final RendererAccess renderer, Map map, List<Collision> capturedEntities) {
-		// RENDERER ACCESS NEEDS CLIPPING FEATURE
-		// renderer.setClip(getPosition().getRoundX(), getPosition().getRoundY(), getDimension().width + 1,
-		// getDimension().height + 1);
+	public void renderClippingMask(RendererAccess renderer) {
+		Point screenTranslation = screenPosition;
+		if (isNull(screenPosition)) {
+			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
+			    renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
+		}
+		Dimension dimension = getDimension();
+		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
+		    dimension.height + 1, Color.YELLOW);
+	}
 
+	@Override
+	public void render(final RendererAccess renderer, Map map, List<Collision> capturedEntities) {
 		Point screenTranslation = screenPosition;
 		if (isNull(screenPosition)) {
 			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
