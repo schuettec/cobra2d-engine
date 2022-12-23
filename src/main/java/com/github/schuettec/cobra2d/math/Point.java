@@ -1,5 +1,9 @@
 package com.github.schuettec.cobra2d.math;
 
+import static java.util.Arrays.asList;
+
+import java.util.List;
+
 public class Point implements Shape, Cloneable {
 
 	public Object userObject;
@@ -138,6 +142,16 @@ public class Point implements Shape, Cloneable {
 
 	public static Point ofAWT(java.awt.Point point) {
 		return new Point(point.getX(), point.getY());
+	}
+
+	@Override
+	public boolean isPointBased() {
+		return true;
+	}
+
+	@Override
+	public List<Point> getPoints() {
+		return asList(this);
 	}
 
 }

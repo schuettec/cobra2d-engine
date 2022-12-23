@@ -55,4 +55,28 @@ public interface Entity extends Skill {
 	 */
 	public double getDegrees();
 
+	/**
+	 * Sets the rotation like {@link #setDegrees(double)}.
+	 * 
+	 * @param degrees The rotation.
+	 * @return Returns this entity for method chaining.
+	 */
+	public Entity rotate(double degrees);
+
+	/**
+	 * Adds a translation to the position of this entity.
+	 * 
+	 * @param translation The translation to add.
+	 * @return Returns this entity for method chaining.
+	 */
+	public Entity translate(Point translation);
+
+	/**
+	 * Sets the scaling of this entity like {@link #scale(double)}.
+	 * 
+	 * @param scaleFactor The scale factor.
+	 * @return Returns this entity for method chaining.
+	 */
+	public Entity scale(double scaleFactor);
+
 }

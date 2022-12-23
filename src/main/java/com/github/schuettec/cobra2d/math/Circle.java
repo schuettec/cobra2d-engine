@@ -1,5 +1,8 @@
 package com.github.schuettec.cobra2d.math;
 
+import java.util.Collections;
+import java.util.List;
+
 /**
  * This class defines a {@link Shape} representing a circle.
  *
@@ -53,6 +56,16 @@ public class Circle implements Shape, Cloneable {
 	public Circle setRadius(double radius) {
 		this.radius = radius;
 		return this;
+	}
+
+	@Override
+	public boolean isPointBased() {
+		return false;
+	}
+
+	@Override
+	public List<Point> getPoints() {
+		return Collections.emptyList();
 	}
 
 }

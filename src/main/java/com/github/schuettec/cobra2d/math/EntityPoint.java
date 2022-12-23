@@ -1,6 +1,9 @@
 
 package com.github.schuettec.cobra2d.math;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * An {@link EntityPoint} represents a point in world coordinates.
  *
@@ -84,6 +87,16 @@ public class EntityPoint implements Shape {
 	public EntityPoint scale(double scaleFactor) {
 		setByCircle(this.degrees, this.radius * scaleFactor);
 		return this;
+	}
+
+	@Override
+	public boolean isPointBased() {
+		return true;
+	}
+
+	@Override
+	public List<Point> getPoints() {
+		return Arrays.asList(coordinates);
 	}
 
 }

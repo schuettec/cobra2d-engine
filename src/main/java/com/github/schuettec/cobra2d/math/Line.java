@@ -2,6 +2,9 @@ package com.github.schuettec.cobra2d.math;
 
 import static java.util.Objects.isNull;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * This class describes a geometric line in a 2D coordinate system. It is
  * basically a representation of the formula <code>g(x) = m * x + b</code>
@@ -261,5 +264,15 @@ public class Line implements Shape, Cloneable {
 
 	public boolean isParallelX() {
 		return getM() == 0;
+	}
+
+	@Override
+	public boolean isPointBased() {
+		return true;
+	}
+
+	@Override
+	public List<Point> getPoints() {
+		return Arrays.asList(x1, x2);
 	}
 }

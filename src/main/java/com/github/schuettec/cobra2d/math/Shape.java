@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.math;
 
+import java.util.List;
+
 /**
  * This interface describes methods a geometry must provide.
  *
@@ -7,6 +9,19 @@ package com.github.schuettec.cobra2d.math;
  *
  */
 public interface Shape {
+
+	/**
+	 * @return Returns <code>true</code> if the shape is point based, otherwise <code>false</code>
+	 *         is returned.
+	 * 
+	 */
+	public boolean isPointBased();
+
+	/**
+	 * @return If this shape is point based, this method returns the entity points. Otherwise an empty list should be
+	 *         returned.
+	 */
+	public List<Point> getPoints();
 
 	/**
 	 * Rotates this {@link Shape} and returns itself to support a fluent API

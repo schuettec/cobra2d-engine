@@ -16,6 +16,7 @@ import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
@@ -66,15 +67,23 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
 
+			// Render entity
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
 				renderable.render(renderer, cameraTranslation);
-				Point entityPosition = renderable.getPosition()
-				    .translate(cameraTranslation);
-				drawPoint(renderer, entityPosition, Color.BLUE);
 			}
 
+			// Render entity shape and get collision points
 			if (entity instanceof Obstacle) {
+				Obstacle obstacle = (Obstacle) entity;
+				Shape entityShape = obstacle.getCollisionShape(true, true, true)
+				    .translate(cameraTranslation);
+				if (entityShape.isPointBased()) {
+					entityShape.getPoints()
+					    .stream()
+					    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
+				}
+
 				if (map.hasCollision(entity)) {
 					List<Collision> collisions = map.getCollision(entity);
 					collisions.stream()
@@ -83,17 +92,24 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 					    .map(p -> p.translate(cameraTranslation))
 					    .forEach(p -> collisionPoints.add(p));
 				}
+
+				// Render entity base-point
+				Point entityPosition = entity.getPosition()
+				    .translate(cameraTranslation);
+				drawPoint(renderer, entityPosition, 2, Color.LIGHT_GRAY);
 			}
 		}
 
+		// Draw collision points
 		collisionPoints.stream()
-		    .forEach(p -> drawPoint(renderer, p, Color.RED));
+		    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
 
+		// Draw camera outline.
 		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, screenTranslation, Color.GREEN);
 	}
 
-	private void drawPoint(RendererAccess renderer, Point point, Color color) {
-		renderer.fillCircle(point.getRoundX(), point.getRoundY(), 5, color);
+	private void drawPoint(RendererAccess renderer, Point point, int radius, Color color) {
+		renderer.fillCircle(point.getRoundX(), point.getRoundY(), radius, color);
 	}
 
 	@Override

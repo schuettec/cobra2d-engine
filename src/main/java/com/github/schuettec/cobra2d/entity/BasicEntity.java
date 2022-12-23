@@ -3,7 +3,6 @@ package com.github.schuettec.cobra2d.entity;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.math.Shape;
 
 /**
  * Represents an abstract obstacle in the world. This is the most possible
@@ -20,7 +19,7 @@ import com.github.schuettec.cobra2d.math.Shape;
  *
  * @author schuettec
  */
-public abstract class BasicEntity implements Entity, Shape {
+public abstract class BasicEntity implements Entity {
 	/**
 	 *
 	 */

@@ -108,4 +108,9 @@ public class Polygon implements Shape, Cloneable {
 		    .map(p -> p.getCoordinates())
 		    .collect(Collectors.toList());
 	}
+
+	@Override
+	public boolean isPointBased() {
+		return true;
+	}
 }
