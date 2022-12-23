@@ -49,7 +49,7 @@ public class BasicCircleEntity extends BasicEntity implements HasCollisionShape 
 	}
 
 	public double getRadius() {
-		return circle.getRadius();
+		return getCollisionShape(true, true, false).getRadius();
 	}
 
 }

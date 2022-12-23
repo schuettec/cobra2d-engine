@@ -19,18 +19,19 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
-public class BasicMapCamera extends BasicRectangleEntity implements Camera {
+public class BasicRectangleMapCamera extends BasicRectangleEntity implements Camera {
 
 	private boolean playerControlled;
 	private Point screenPosition;
 
-	public BasicMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
+	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
 		this.screenPosition = null;
 	}
 
-	public BasicMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled, Point screenPosition) {
+	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled,
+	    Point screenPosition) {
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
 		this.screenPosition = new Point(0, 0);
@@ -45,7 +46,7 @@ public class BasicMapCamera extends BasicRectangleEntity implements Camera {
 		}
 		Dimension dimension = getDimension();
 		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
-		    dimension.height + 1, Color.YELLOW);
+		    dimension.height + 1, Color.BLACK);
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import java.util.Properties;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
-import com.github.schuettec.cobra2d.entity.camera.BasicMapCamera;
+import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
@@ -30,7 +30,7 @@ public class BouncingBalls {
 
 		BasicCircleEntity c1 = new BasicCircleEntity(new Point(100, 100), 45);
 
-		BasicMapCamera camera = new BasicMapCamera(new Point(0, 0), new Dimension(800, 800), false);
+		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
 
 		engine.addEntity(c1);
 		engine.addEntity(camera);
