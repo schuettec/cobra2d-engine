@@ -1,10 +1,12 @@
 package com.github.schuettec.cobra2d.entity;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
+import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -42,6 +44,23 @@ public class Collision {
 		this.entity = entity;
 		this.opponent = opponent;
 		this.collisionDetails = collisionDetails;
+	}
+
+	public List<CollisionDetail> getCollisionDetails() {
+		return new LinkedList<>(collisionDetails);
+	}
+
+	/**
+	 * @return Returns the first collision as {@link CollisionDetail} that was reported for
+	 *         the colliding entities. If this object does not have any collision
+	 *         points this call returns <code>null</code>.
+	 */
+	public CollisionDetail getFirstCollisionDetail() {
+		if (collisionDetails.isEmpty()) {
+			return null;
+		} else {
+			return collisionDetails.get(0);
+		}
 	}
 
 	/**

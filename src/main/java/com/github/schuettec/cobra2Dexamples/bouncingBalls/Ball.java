@@ -1,17 +1,20 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.CollisionDetail;
 import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Circle;
+import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.common.Color;
@@ -19,20 +22,20 @@ import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
 public class Ball extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
-	double VELOCITY = 2.0;
+	double speed;
 
-	double speed = VELOCITY;
-
-	public Ball(Point worldCoordinates, double radius) {
+	public Ball(Point worldCoordinates, double radius, double speed, double degrees) {
 		super(worldCoordinates, radius);
-		this.speed = VELOCITY;
-		this.setDegrees(Math2D.random(0, 360));
+		this.speed = speed;
+		this.setDegrees(degrees);
 	}
 
 	@Override
 	public void update(Map map, Controller controller) {
 
-		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, false, false);
+		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+
+		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 
 		Optional<Collision> wallCollision = collisionMap.getCollisions()
 		    .stream()
@@ -40,14 +43,43 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 		    .findFirst();
 
 		if (wallCollision.isPresent()) {
-			// Berechne Einfallswinkel.
 			Collision collision = wallCollision.get();
-			HasCollisionShape opponent = collision.getOpponent();
 
-		} else {
-			Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-			this.setPosition(nextPosition);
+			Set<Line> alreadyManagedLines = new HashSet<>();
+			for (CollisionDetail c : collision.getCollisionDetails()) {
+				// Berechne Einfallswinkel.
+				Line opponentLine = c.getOpponentLine();
+
+				if (!alreadyManagedLines.contains(opponentLine)) {
+					alreadyManagedLines.add(opponentLine);
+
+					// Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+					// Line movement = new Line(getPosition(), nextPosition);
+
+					double myAngle = getDegrees();
+					double opponentAngle = Math2D.getAngle(opponentLine.getX1(), opponentLine.getX2());
+
+					double normalizedMyAngle = modulo360(myAngle - opponentAngle);
+
+					double newAngle = 360 - normalizedMyAngle;
+					double resultAngle = modulo360(newAngle + opponentAngle);
+					setDegrees(resultAngle);
+				}
+			}
 		}
+
+		nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		this.setPosition(nextPosition);
+
+	}
+
+	private double modulo360(double d) {
+		if (d > 360) {
+			return (d % 360);
+		} else if (d < 0) {
+			return 360 + d;
+		}
+		return d;
 	}
 
 	@Override

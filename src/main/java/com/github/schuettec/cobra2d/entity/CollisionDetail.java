@@ -45,4 +45,8 @@ public class CollisionDetail {
 		return opponentLine;
 	}
 
+	boolean isPointBased() {
+		return pointBased;
+	}
+
 }
