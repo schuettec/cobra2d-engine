@@ -20,11 +20,11 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.common.Color;
 import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
 
-public class Ball extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
+public class BallEntity extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
 	double speed;
 
-	public Ball(Point worldCoordinates, double radius, double speed, double degrees) {
+	public BallEntity(Point worldCoordinates, double radius, double speed, double degrees) {
 		super(worldCoordinates, radius);
 		this.speed = speed;
 		this.setDegrees(degrees);
@@ -35,10 +35,10 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 		// Calculate the collision shape at next frame
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-		// Circle nextShape = getCollisionShapeInWorldCoordinates().translate(nextPosition);
-		// CollisionMap collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
+		Circle nextShape = getCollisionShape(true, true, false).translate(nextPosition);
+		CollisionMap collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
 
-		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
+		// CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 
 		Optional<Collision> wallCollision = collisionMap.getCollisions()
 		    .stream()
@@ -71,20 +71,24 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 			}
 		}
 
-		// // Calculate the collision shape at next frame
-		// nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-		// nextShape = getCollisionShapeInWorldCoordinates().translate(nextPosition);
-		// collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
-		// wallCollision = collisionMap.getCollisions()
-		// .stream()
-		// .filter(c -> c.getOpponent() instanceof WallEntity)
-		// .findFirst();
-		//
-		// if (wallCollision.isPresent()) {
-		// } else {
+		// Calculate the collision shape at next frame
 		nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-		this.setPosition(nextPosition);
-		// }
+		nextShape = getCollisionShape(true, true, false).translate(nextPosition);
+
+		collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
+		wallCollision = collisionMap.getCollisions()
+		    .stream()
+		    .filter(c -> c.getOpponent() instanceof WallEntity)
+		    .findFirst();
+
+		if (wallCollision.isPresent()) {
+			setDegrees(modulo360(getDegrees() + 15));
+			nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+			this.setPosition(nextPosition);
+		} else {
+			nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+			this.setPosition(nextPosition);
+		}
 	}
 
 	private double modulo360(double d) {

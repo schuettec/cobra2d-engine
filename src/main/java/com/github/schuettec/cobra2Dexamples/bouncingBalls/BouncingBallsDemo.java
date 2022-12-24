@@ -26,7 +26,7 @@ public class BouncingBallsDemo {
 
 		WallEntity wall = new WallEntity(new Point(0, 0), new Dimension(759, 759));
 
-		Ball ball1 = new Ball(new Point(0, 0), 30, 5, 65);
+		BallEntity ball1 = new BallEntity(new Point(0, 0), 30, 5, 65);
 		// Ball ball2 = new Ball(new Point(300, 300), 30, 5, 85);
 		// Ball ball3 = new Ball(new Point(300, 300), 30, 5, 115);
 		// Ball ball4 = new Ball(new Point(300, 300), 30, 5, 125);

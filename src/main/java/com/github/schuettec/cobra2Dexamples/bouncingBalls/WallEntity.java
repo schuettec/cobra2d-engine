@@ -41,16 +41,18 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 
 		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 
-		Optional<Collision> wallCollision = collisionMap.getCollisions()
+		Optional<Collision> ballCollision = collisionMap.getCollisions()
 		    .stream()
-		    .filter(c -> c.getOpponent() instanceof WallEntity)
+		    .filter(c -> c.getOpponent() instanceof BallEntity)
 		    .findFirst();
 
-		if (controller.isPlusKeyPressed()) {
-			this.rotateClockwise();
-		}
-		if (controller.isMinusKeyPressed()) {
-			this.rotateCounterClockwise();
+		if (ballCollision.isEmpty()) {
+			if (controller.isPlusKeyPressed()) {
+				this.rotateClockwise();
+			}
+			if (controller.isMinusKeyPressed()) {
+				this.rotateCounterClockwise();
+			}
 		}
 	}
 
