@@ -70,7 +70,6 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 
 		nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 		this.setPosition(nextPosition);
-
 	}
 
 	private double modulo360(double d) {

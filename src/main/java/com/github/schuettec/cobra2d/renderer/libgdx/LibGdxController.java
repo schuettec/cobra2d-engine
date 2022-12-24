@@ -74,4 +74,14 @@ public class LibGdxController implements Controller {
 	public boolean isEscapePressed() {
 		return isKeyPressed(Keys.ESCAPE);
 	}
+
+	@Override
+	public boolean isPlusKeyPressed() {
+		return isKeyPressed(Keys.NUMPAD_ADD);
+	}
+
+	@Override
+	public boolean isMinusKeyPressed() {
+		return isKeyPressed(Keys.NUMPAD_SUBTRACT);
+	}
 }

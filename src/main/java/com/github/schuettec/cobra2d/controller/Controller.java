@@ -36,4 +36,8 @@ public interface Controller {
 	public boolean isShiftLeftKeyPressed();
 
 	public boolean isAltLeftKeyPressed();
+
+	public boolean isPlusKeyPressed();
+
+	public boolean isMinusKeyPressed();
 }

@@ -1,9 +1,12 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
 import java.awt.Dimension;
+import java.util.Optional;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
+import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
@@ -35,22 +38,29 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 
 	@Override
 	public void update(Map map, Controller controller) {
-		// if (controller.isLeftKeyPressed()) {
-		// this.moveLeft();
-		// }
-		// if (controller.isRightKeyPressed()) {
-		// this.moveRight();
-		// }
-		// if (controller.isUpKeyPressed()) {
-		// this.moveUp();
-		// }
-		// if (controller.isDownKeyPressed()) {
-		// this.moveDown();
-		// }
+
+		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
+
+		Optional<Collision> wallCollision = collisionMap.getCollisions()
+		    .stream()
+		    .filter(c -> c.getOpponent() instanceof WallEntity)
+		    .findFirst();
+
+		if (controller.isPlusKeyPressed()) {
+			this.rotateClockwise();
+		}
+		if (controller.isMinusKeyPressed()) {
+			this.rotateCounterClockwise();
+		}
 	}
 
-	public void moveLeft() {
+	public void rotateCounterClockwise() {
 		double degrees = modulo360(this.getDegrees() + 1);
+		setDegrees(degrees);
+	}
+
+	public void rotateClockwise() {
+		double degrees = modulo360(this.getDegrees() - 1);
 		setDegrees(degrees);
 	}
 
@@ -61,17 +71,5 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 			return 360 + d;
 		}
 		return d;
-	}
-
-	public void moveRight() {
-		this.translate(new Point(5, 0));
-	}
-
-	public void moveDown() {
-		this.translate(new Point(0, -5));
-	}
-
-	public void moveUp() {
-		this.translate(new Point(0, 5));
 	}
 }

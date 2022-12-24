@@ -102,4 +102,14 @@ public class SwingController implements Controller, KeyListener {
 		return isKeyPressed(KeyEvent.VK_ESCAPE);
 	}
 
+	@Override
+	public boolean isPlusKeyPressed() {
+		return isKeyPressed(KeyEvent.VK_PLUS);
+	}
+
+	@Override
+	public boolean isMinusKeyPressed() {
+		return isKeyPressed(KeyEvent.VK_MINUS);
+	}
+
 }
