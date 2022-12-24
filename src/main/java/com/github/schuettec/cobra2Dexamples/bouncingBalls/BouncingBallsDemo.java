@@ -11,14 +11,9 @@ import com.github.schuettec.cobra2d.renderer.RendererType;
 
 public class BouncingBallsDemo {
 	public static void main(String[] args) {
-
+		// 2560x1440, bpp: 24, hz: 165
 		final Properties properties = new Properties();
-		properties.put(Cobra2DProperties.RESOLUTION_X, "800"); // 1920
-		properties.put(Cobra2DProperties.RESOLUTION_Y, "800"); // 1080
-		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
-		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
-		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
-		properties.put(Cobra2DProperties.FULLSCREEN, "false");
+		fullscreenMode(properties);
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
 		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
@@ -44,5 +39,23 @@ public class BouncingBallsDemo {
 		engine.addEntity(wall, ball1, ball2, ball3, ball4, ball5, ball6);
 		engine.addEntity(camera);
 		engine.start();
+	}
+
+	private static void fullscreenMode(final Properties properties) {
+		properties.put(Cobra2DProperties.RESOLUTION_X, "2560"); // 1920
+		properties.put(Cobra2DProperties.RESOLUTION_Y, "1440"); // 1080
+		properties.put(Cobra2DProperties.BIT_DEPHT, "24");
+		properties.put(Cobra2DProperties.REFRESH_REATE, "165");
+		properties.put(Cobra2DProperties.REQUESTED_FPS, "165");
+		properties.put(Cobra2DProperties.FULLSCREEN, "true");
+	}
+
+	private static void windowMode(final Properties properties) {
+		properties.put(Cobra2DProperties.RESOLUTION_X, "800"); // 1920
+		properties.put(Cobra2DProperties.RESOLUTION_Y, "800"); // 1080
+		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
+		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
+		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
+		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 	}
 }

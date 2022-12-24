@@ -97,4 +97,9 @@ public class SwingController implements Controller, KeyListener {
 		return altDown;
 	}
 
+	@Override
+	public boolean isEscapePressed() {
+		return isKeyPressed(KeyEvent.VK_ESCAPE);
+	}
+
 }

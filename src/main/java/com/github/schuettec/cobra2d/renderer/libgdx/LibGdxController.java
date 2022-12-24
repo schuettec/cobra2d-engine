@@ -70,4 +70,8 @@ public class LibGdxController implements Controller {
 	public boolean isAltLeftKeyPressed() {
 		return isKeyPressed(Keys.ALT_LEFT);
 	}
+
+	public boolean isEscapePressed() {
+		return isKeyPressed(Keys.ESCAPE);
+	}
 }

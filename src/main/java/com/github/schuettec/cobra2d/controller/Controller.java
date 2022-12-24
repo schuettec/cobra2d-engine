@@ -11,6 +11,8 @@ public interface Controller {
 	 */
 	public abstract boolean isKeyPressed(final int keyCode);
 
+	public boolean isEscapePressed();
+
 	public boolean isUpKeyPressed();
 
 	boolean isDownKeyPressed();

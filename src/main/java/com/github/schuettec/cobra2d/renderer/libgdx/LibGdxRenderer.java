@@ -26,13 +26,13 @@ import com.github.schuettec.cobra2d.renderer.RendererException;
 public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	private Map map;
-	private Lwjgl3Application application;
 	private ShapeRenderer shapeRenderer;
 	private OrthographicCamera camera;
 	private int resolutionX;
 	private int resolutionY;
 	private LibGdxRendererAccess rendererAccess;
 	private LibGdxController controller;
+	private Cobra2DEngine engine;
 
 	public LibGdxRenderer() {
 		this.controller = new LibGdxController();
@@ -41,6 +41,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	@Override
 	public void initializeRenderer(Cobra2DEngine engine, int resolutionX, int resolutionY, int bitDepth, int refreshRate,
 	    boolean fullscreen) throws RendererException {
+		this.engine = engine;
 		this.map = engine.getMap();
 		this.resolutionX = resolutionX;
 		this.resolutionY = resolutionY;
@@ -56,7 +57,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		}
 		config.setForegroundFPS(60);
 		config.setTitle("Cobra2D Engine");
-		this.application = new Lwjgl3Application(this, config);
+		new Lwjgl3Application(this, config);
 	}
 
 	@Override
@@ -73,49 +74,52 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void render() {
-		map.update();
-		camera.update();
+		if (controller.isEscapePressed()) {
+			engine.shutdownEngine();
+		} else {
+			map.update();
+			camera.update();
 
-		ScreenUtils.clear(Color.BLACK);
+			ScreenUtils.clear(Color.BLACK);
 
-		Set<Camera> cameras = map.getCameras();
-		for (Camera camera : cameras) {
-			List<Collision> capturedEntities = map.getCameraCollision(camera);
+			Set<Camera> cameras = map.getCameras();
+			for (Camera camera : cameras) {
+				List<Collision> capturedEntities = map.getCameraCollision(camera);
 
-			/* Clear our depth buffer info from previous frame. */
-			Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+				/* Clear our depth buffer info from previous frame. */
+				Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
 
-			/* Set the depth function to LESS. */
-			Gdx.gl.glDepthFunc(GL20.GL_LESS);
+				/* Set the depth function to LESS. */
+				Gdx.gl.glDepthFunc(GL20.GL_LESS);
 
-			/* Enable depth writing. */
-			Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+				/* Enable depth writing. */
+				Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 
-			/* Disable RGBA color writing. */
-			Gdx.gl.glColorMask(false, false, false, false);
+				/* Disable RGBA color writing. */
+				Gdx.gl.glColorMask(false, false, false, false);
 
-			camera.renderClippingMask(rendererAccess);
-			shapeRenderer.flush();
+				camera.renderClippingMask(rendererAccess);
+				shapeRenderer.flush();
 
-			/* Enable RGBA color writing. */
-			Gdx.gl.glColorMask(true, true, true, true);
+				/* Enable RGBA color writing. */
+				Gdx.gl.glColorMask(true, true, true, true);
 
-			/* Set the depth function to EQUAL. */
-			Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
+				/* Set the depth function to EQUAL. */
+				Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
 
-			Gdx.gl.glClearColor(0, 0, 0, 1);
-			Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+				Gdx.gl.glClearColor(0, 0, 0, 1);
+				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-			camera.render(rendererAccess, map, capturedEntities);
-			shapeRenderer.flush();
+				camera.render(rendererAccess, map, capturedEntities);
+				shapeRenderer.flush();
 
+			}
 		}
-
 	}
 
 	@Override
 	public void finish() {
-
+		Gdx.app.exit();
 	}
 
 	public DisplayMode getDisplayMode(int resolutionX, int resolutionY, int bitDepth, int refreshRate) {
