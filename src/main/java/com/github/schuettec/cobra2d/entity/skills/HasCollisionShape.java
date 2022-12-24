@@ -15,6 +15,7 @@ public interface HasCollisionShape extends Entity {
 	/**
 	 * Returns the collision shape of this entity applied with the specified operations.
 	 * If all arguments are <code>false</code> the local, original collision shape is returned.
+	 * 
 	 * @param applyScaling Applies any scaling set by the current entity.
 	 * @param applyRotation Applies the rotation of the current entity.
 	 * @param applyWorldCoordinates Applies world coordinates.

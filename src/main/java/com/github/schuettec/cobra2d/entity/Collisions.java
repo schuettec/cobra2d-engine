@@ -492,4 +492,69 @@ public abstract class Collisions {
 		double[] results = Math2D.pqFormula(p, q);
 		System.out.println(Arrays.toString(results));
 	}
+
+	public static CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstacles,
+	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
+		HasCollisionShape emulated = new HasCollisionShape() {
+
+			@Override
+			public Entity translate(Point translation) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public void setScale(double scale) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public void setPosition(Point worldCoordinates) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public void setDegrees(double degrees) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public Entity scale(double scaleFactor) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public Entity rotate(double degrees) {
+				throw new IllegalAccessError("This method should not be called here!");
+			}
+
+			@Override
+			public double getScale() {
+				throw new IllegalAccessError("This method should not be called here!");
+
+			}
+
+			@Override
+			public Point getPosition() {
+				throw new IllegalAccessError("This method should not be called here!");
+
+			}
+
+			@Override
+			public double getDegrees() {
+				throw new IllegalAccessError("This method should not be called here!");
+
+			}
+
+			@Override
+			public Shape getCollisionShapeInWorldCoordinates() {
+				return shape;
+			}
+
+			@Override
+			public Shape getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
+				return shape;
+			}
+		};
+		return detectCollision(emulated, obstacles, outlineOnly, allEntityPoints, addBidirectional);
+	}
 }

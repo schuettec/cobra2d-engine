@@ -33,7 +33,10 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 	@Override
 	public void update(Map map, Controller controller) {
 
+		// Calculate the collision shape at next frame
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		// Circle nextShape = getCollisionShapeInWorldCoordinates().translate(nextPosition);
+		// CollisionMap collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
 
 		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 
@@ -68,8 +71,20 @@ public class Ball extends BasicCircleEntity implements CircleRenderable, Updatab
 			}
 		}
 
+		// // Calculate the collision shape at next frame
+		// nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		// nextShape = getCollisionShapeInWorldCoordinates().translate(nextPosition);
+		// collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
+		// wallCollision = collisionMap.getCollisions()
+		// .stream()
+		// .filter(c -> c.getOpponent() instanceof WallEntity)
+		// .findFirst();
+		//
+		// if (wallCollision.isPresent()) {
+		// } else {
 		nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 		this.setPosition(nextPosition);
+		// }
 	}
 
 	private double modulo360(double d) {

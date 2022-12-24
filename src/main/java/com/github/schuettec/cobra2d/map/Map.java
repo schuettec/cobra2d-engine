@@ -334,4 +334,9 @@ public class Map {
 		return clone;
 	}
 
+	public CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstaclesExcept,
+	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
+		return Collisions.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
 }
