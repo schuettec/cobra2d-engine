@@ -35,18 +35,18 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 
 	@Override
 	public void update(Map map, Controller controller) {
-		if (controller.isLeftKeyPressed()) {
-			this.moveLeft();
-		}
-		if (controller.isRightKeyPressed()) {
-			this.moveRight();
-		}
-		if (controller.isUpKeyPressed()) {
-			this.moveUp();
-		}
-		if (controller.isDownKeyPressed()) {
-			this.moveDown();
-		}
+		// if (controller.isLeftKeyPressed()) {
+		// this.moveLeft();
+		// }
+		// if (controller.isRightKeyPressed()) {
+		// this.moveRight();
+		// }
+		// if (controller.isUpKeyPressed()) {
+		// this.moveUp();
+		// }
+		// if (controller.isDownKeyPressed()) {
+		// this.moveDown();
+		// }
 	}
 
 	public void moveLeft() {

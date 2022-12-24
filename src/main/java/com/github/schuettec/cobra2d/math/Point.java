@@ -76,7 +76,7 @@ public class Point implements Shape, Cloneable {
 
 	@Override
 	public String toString() {
-		return "[x" + x + ", " + y + "]";
+		return "[x=" + x + ", y=" + y + "]";
 	}
 
 	public java.awt.Point getPoint() {

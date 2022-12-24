@@ -14,8 +14,7 @@ public class BasicRectangleEntity extends BasicPolygonEntity {
 	private static final long serialVersionUID = 1L;
 
 	public BasicRectangleEntity(Point worldCoordinates, Dimension dimension) {
-		super(worldCoordinates, new Point(0, 0), new Point(dimension.getWidth(), 0),
-		    new Point(dimension.getWidth(), dimension.getHeight()), new Point(0, dimension.getHeight()));
+		super(worldCoordinates, Math2D.getRectangle(dimension));
 	}
 
 	public Dimension getDimension() {

@@ -16,6 +16,7 @@ import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.map.Map;
+import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.common.Color;
@@ -41,29 +42,36 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
-		Point screenTranslation = screenPosition;
-		if (isNull(screenPosition)) {
-			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
-			    renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
-		}
-		Dimension dimension = getDimension();
-		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
-		    dimension.height + 1, Color.BLACK);
+		// Point screenTranslation = screenPosition;
+		// if (isNull(screenPosition)) {
+		// screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
+		// renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
+		// }
+		// Dimension dimension = getDimension();
+		// renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
+		// dimension.height + 1, Color.BLACK);
+
+		// Dimension dimension = getDimension();
+		// renderer.fillRectangle(0, 0, dimension.width + 1, dimension.height + 1, Color.BLACK);
 	}
 
 	@Override
 	public void render(final RendererAccess renderer, Map map, List<Collision> capturedEntities) {
 		Point screenTranslation = screenPosition;
 		if (isNull(screenPosition)) {
-			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
-			    renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
+			screenTranslation = new Point(renderer.getWidth() / 2.0, renderer.getHeight() / 2.0);
 		}
 
 		List<Point> collisionPoints = new LinkedList<>();
 
 		Point position = getPosition();
-		Point cameraTranslation = position.scale(-1)
-		    .translate(screenTranslation);
+
+		// Scale to -2 because the translation of the camera must be subtracted from entity world coordinates.
+		// Point cameraTranslation = position.scale(-1);
+		// Then translate to the screen position.
+		// .translate(screenTranslation);
+
+		Point cameraTranslation = screenTranslation;
 
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
@@ -150,6 +158,18 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 
 	public void setScreenPosition(Point point) {
 		this.screenPosition = point.clone();
+	}
+
+	@Override
+	public String toString() {
+
+		String str = "BasicRectangleMapCamera [";
+		List<EntityPoint> entityPoints = getCollisionShape(true, true, true).getEntityPoints();
+		for (EntityPoint p : entityPoints) {
+			str += p.getCoordinates()
+			    .toString() + "\n";
+		}
+		return str + "]";
 	}
 
 }

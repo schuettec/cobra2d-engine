@@ -302,22 +302,21 @@ public abstract class Collisions {
 				double ym = p1.getPosition().y;
 				double r = p1.getRadius();
 				double m = l2.getM();
-				double n = l2.getB();
+				double b = l2.getB();
 
-				double p = ((-2d * xm + 2d * m * n - 2d * m * ym) / (Math.pow(m, 2) + 1d));
-				double q = ((Math.pow(xm, 2) + Math.pow(n - ym, 2) - Math.pow(r, 2)) / (Math.pow(m, 2) + 1d));
+				double p = ((-2d * xm + 2d * m * b - 2d * m * ym) / (Math.pow(m, 2) + 1d));
+				// VORHER:
+				double q = ((Math.pow(xm, 2) + Math.pow(b - ym, 2) - Math.pow(r, 2)) / (Math.pow(m, 2) + 1d));
 
 				double[] results = Math2D.pqFormula(p, q);
 
 				if (results.length > 0) {
 					for (double result : results) {
-						if (result >= 0) {
-							double x = result;
-							double y = m * x + n;
-							Point point = new Point(x, y);
-							if (l2.isDefined(point)) {
-								collisions.add(ofLineBased(point, null, l2));
-							}
+						double x = result;
+						double y = m * x + b;
+						Point point = new Point(x, y);
+						if (l2.isDefined(point)) {
+							collisions.add(ofLineBased(point, null, l2));
 						}
 					}
 				}
@@ -478,5 +477,19 @@ public abstract class Collisions {
 		}
 		// if the number of collision points is odd the point is inside the polygon.
 		return (collisionPoint.size() % 2 != 0);
+	}
+
+	public static void main(String[] args) {
+		double xm = -50;
+		double ym = 5;
+		double r = 10;
+		double m = 0;
+		double b = 10;
+
+		double p = ((-2d * xm + 2d * m * b - 2d * m * ym) / (Math.pow(m, 2) + 1d));
+		double q = ((Math.pow(xm, 2) + Math.pow(b - ym, 2) - Math.pow(r, 2)) / (Math.pow(m, 2) + 1d));
+
+		double[] results = Math2D.pqFormula(p, q);
+		System.out.println(Arrays.toString(results));
 	}
 }

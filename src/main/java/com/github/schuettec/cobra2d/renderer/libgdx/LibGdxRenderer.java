@@ -86,35 +86,43 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 			for (Camera camera : cameras) {
 				List<Collision> capturedEntities = map.getCameraCollision(camera);
 
-				/* Clear our depth buffer info from previous frame. */
-				Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+				// renderClippingMask(camera);
 
-				/* Set the depth function to LESS. */
-				Gdx.gl.glDepthFunc(GL20.GL_LESS);
-
-				/* Enable depth writing. */
-				Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
-
-				/* Disable RGBA color writing. */
-				Gdx.gl.glColorMask(false, false, false, false);
-
-				camera.renderClippingMask(rendererAccess);
-				shapeRenderer.flush();
-
-				/* Enable RGBA color writing. */
-				Gdx.gl.glColorMask(true, true, true, true);
-
-				/* Set the depth function to EQUAL. */
-				Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
-
-				Gdx.gl.glClearColor(0, 0, 0, 1);
-				Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-				camera.render(rendererAccess, map, capturedEntities);
-				shapeRenderer.flush();
+				renderCameraView(camera, capturedEntities);
 
 			}
 		}
+	}
+
+	private void renderCameraView(Camera camera, List<Collision> capturedEntities) {
+		/* Enable RGBA color writing. */
+		Gdx.gl.glColorMask(true, true, true, true);
+
+		/* Set the depth function to EQUAL. */
+		Gdx.gl.glDepthFunc(GL20.GL_EQUAL);
+
+		Gdx.gl.glClearColor(0, 0, 0, 1);
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+		camera.render(rendererAccess, map, capturedEntities);
+		shapeRenderer.flush();
+	}
+
+	private void renderClippingMask(Camera camera) {
+		/* Clear our depth buffer info from previous frame. */
+		Gdx.gl.glClear(GL20.GL_DEPTH_BUFFER_BIT);
+
+		/* Set the depth function to LESS. */
+		Gdx.gl.glDepthFunc(GL20.GL_LESS);
+
+		/* Enable depth writing. */
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+
+		/* Disable RGBA color writing. */
+		Gdx.gl.glColorMask(false, false, false, false);
+
+		camera.renderClippingMask(rendererAccess);
+		shapeRenderer.flush();
 	}
 
 	@Override

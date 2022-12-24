@@ -17,14 +17,19 @@ public class BasicPolygonEntity extends BasicEntity implements HasCollisionShape
 
 	protected Polygon polygon;
 
-	public BasicPolygonEntity(Point worldCoordinates, Point... points) {
+	public BasicPolygonEntity(Point worldCoordinates, Point... localPoints) {
 		super(worldCoordinates);
 
-		List<EntityPoint> entityPoints = new ArrayList<EntityPoint>(points.length);
-		for (Point p : points) {
+		List<EntityPoint> entityPoints = new ArrayList<EntityPoint>(localPoints.length);
+		for (Point p : localPoints) {
 			entityPoints.add(new EntityPoint(p));
 		}
 
+		this.polygon = new Polygon(entityPoints);
+	}
+
+	public BasicPolygonEntity(Point worldCoordinates, List<EntityPoint> entityPoints) {
+		super(worldCoordinates);
 		this.polygon = new Polygon(entityPoints);
 	}
 

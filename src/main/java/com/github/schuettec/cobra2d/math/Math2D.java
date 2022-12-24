@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.math;
 
+import static java.util.Arrays.asList;
+
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -9,6 +11,20 @@ import java.util.List;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 
 public class Math2D {
+
+	public static List<EntityPoint> getRectangle(Dimension dimension) {
+		return getRectangle(dimension.width, dimension.height);
+	}
+
+	public static List<EntityPoint> getRectangle(int width, int height) {
+		double dX = Math2D.saveRound(width / 2.0);
+		double dY = Math2D.saveRound(height / 2.0);
+		EntityPoint ep1 = new EntityPoint(new Point(-dX, dY));
+		EntityPoint ep2 = new EntityPoint(new Point(dX, dY));
+		EntityPoint ep3 = new EntityPoint(new Point(+dX, -dY));
+		EntityPoint ep4 = new EntityPoint(new Point(-dX, -dY));
+		return asList(ep1, ep2, ep3, ep4);
+	}
 
 	/**
 	 * Calculates the middlepoint in a picture.
@@ -281,7 +297,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double y = Math.abs(aktPoint.y);
+			final double y = aktPoint.y;
 
 			if (y > maxY) {
 				maxY = y;
@@ -298,7 +314,7 @@ public class Math2D {
 
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double x = Math.abs(aktPoint.x);
+			final double x = aktPoint.x;
 			if (x > maxX) {
 				maxX = x;
 				anchorMaxDistToX = aktPoint;
@@ -341,13 +357,13 @@ public class Math2D {
 		}
 	}
 
-	public static double[] pqFormula(double pP, double pQ) {
+	public static double[] pqFormula(double p, double q) {
 		double diskriminante;
-		diskriminante = (pP / 2.0) * (pP / 2.0) - pQ;
+		diskriminante = Math.pow(p / 2.0, 2) - q;
 		if (diskriminante >= 0) {
 			double x1, x2;
-			x1 = -(pP / 2) + Math.sqrt(diskriminante);
-			x2 = -(pP / 2) - Math.sqrt(diskriminante);
+			x1 = (-(p / 2.0)) + Math.sqrt(diskriminante);
+			x2 = (-(p / 2.0)) - Math.sqrt(diskriminante);
 			if (x1 == x2) {
 				return new double[] {
 				    x2

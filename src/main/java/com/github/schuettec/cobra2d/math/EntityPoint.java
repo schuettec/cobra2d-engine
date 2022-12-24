@@ -99,4 +99,29 @@ public class EntityPoint implements Shape {
 		return Arrays.asList(coordinates);
 	}
 
+	@Override
+	public String toString() {
+		return "EntityPoint [coordinates=" + coordinates + ", radius=" + radius + ", degrees=" + degrees + "]";
+	}
+
+	// /**
+	// * Converts the given points to a {@link List} of entity points with the center set to the center of the hull
+	// * rectangle.
+	// *
+	// * @param points The points in real world coordinates.
+	// * @return The entity points in local coordinate system with origin in center of the hull rectangle of the specified
+	// * points.
+	// */
+	// public static List<EntityPoint> getEntityPointsAroundCenter(List<Point> points) {
+	// Rectangle huellRect = Math2D.getHuellRect(points);
+	// Point center = new Point(saveRound(huellRect.getWidth() / 2.0), saveRound(huellRect.getHeight() / 2.0));
+	// return points.stream()
+	// .map(p -> {
+	// double angle = Math2D.getAngle(center, p);
+	// double entfernung = Math2D.getEntfernung(center, p);
+	// return new EntityPoint(angle, entfernung);
+	// })
+	// .collect(Collectors.toList());
+	// }
+
 }
