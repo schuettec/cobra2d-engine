@@ -42,14 +42,14 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
-		// Point screenTranslation = screenPosition;
-		// if (isNull(screenPosition)) {
-		// screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
-		// renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
-		// }
-		// Dimension dimension = getDimension();
-		// renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
-		// dimension.height + 1, Color.BLACK);
+		Point screenTranslation = screenPosition;
+		if (isNull(screenPosition)) {
+			screenTranslation = new Point(renderer.getWidth() / 2.0 - (getDimension().width / 2.0),
+			    renderer.getHeight() / 2.0 - (getDimension().height / 2.0));
+		}
+		Dimension dimension = getDimension();
+		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
+		    dimension.height + 1, Color.BLACK);
 
 		// Dimension dimension = getDimension();
 		// renderer.fillRectangle(0, 0, dimension.width + 1, dimension.height + 1, Color.BLACK);
@@ -67,11 +67,11 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 		Point position = getPosition();
 
 		// Scale to -2 because the translation of the camera must be subtracted from entity world coordinates.
-		// Point cameraTranslation = position.scale(-1);
-		// Then translate to the screen position.
-		// .translate(screenTranslation);
+		Point cameraTranslation = position.scale(-1)
+		    // Then translate to the screen position.
+		    .translate(screenTranslation);
 
-		Point cameraTranslation = screenTranslation;
+		// Point cameraTranslation = screenTranslation;
 
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
