@@ -50,9 +50,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 		Dimension dimension = getDimension();
 		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
 		    dimension.height + 1, Color.BLACK);
-
-		// Dimension dimension = getDimension();
-		// renderer.fillRectangle(0, 0, dimension.width + 1, dimension.height + 1, Color.BLACK);
 	}
 
 	@Override
@@ -70,8 +67,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Cam
 		Point cameraTranslation = position.scale(-1)
 		    // Then translate to the screen position.
 		    .translate(screenTranslation);
-
-		// Point cameraTranslation = screenTranslation;
 
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();

@@ -45,7 +45,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements Camera {
 			screenTranslation = new Point(renderer.getWidth() / 2.0, renderer.getHeight() / 2.0);
 		}
 		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(), Math2D.saveRound(getRadius() + 1),
-		    Color.YELLOW);
+		    Color.BLACK);
 	}
 
 	@Override
@@ -58,7 +58,10 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements Camera {
 		List<Point> collisionPoints = new LinkedList<>();
 
 		Point position = getPosition();
+
+		// Scale to -2 because the translation of the camera must be subtracted from entity world coordinates.
 		Point cameraTranslation = position.scale(-1)
+		    // Then translate to the screen position.
 		    .translate(screenTranslation);
 
 		for (Collision collision : capturedEntities) {
@@ -98,9 +101,11 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements Camera {
 			}
 		}
 
+		// Draw collision points
 		collisionPoints.stream()
 		    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
 
+		// Draw camera outline.
 		CircleRenderable.renderCircle(getCollisionShape(true, true, false), renderer, screenTranslation, Color.GREEN);
 	}
 

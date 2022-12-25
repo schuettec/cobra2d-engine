@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.github.schuettec.cobra2d.renderer.common.Color;
@@ -17,6 +18,14 @@ public class LibGdxRendererAccess implements RendererAccess {
 	@Override
 	public <R> R getNativeRenderer(Class<R> rendererType) {
 		return (R) renderer;
+	}
+
+	@Override
+	public void drawTexture() {
+		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
+		spriteRenderer.begin();
+
+		spriteRenderer.end();
 	}
 
 	@Override

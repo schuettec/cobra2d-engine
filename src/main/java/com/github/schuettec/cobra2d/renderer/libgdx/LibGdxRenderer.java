@@ -12,6 +12,7 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -33,6 +34,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private LibGdxRendererAccess rendererAccess;
 	private LibGdxController controller;
 	private Cobra2DEngine engine;
+	private SpriteBatch spriteRenderer;
 
 	public LibGdxRenderer() {
 		this.controller = new LibGdxController();
@@ -65,6 +67,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setAutoShapeType(true);
 
+		spriteRenderer = new SpriteBatch();
+
 		camera = new OrthographicCamera(resolutionX, resolutionY);
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
@@ -86,7 +90,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 			for (Camera camera : cameras) {
 				List<Collision> capturedEntities = map.getCameraCollision(camera);
 
-				// renderClippingMask(camera);
+				renderClippingMask(camera);
 
 				renderCameraView(camera, capturedEntities);
 
@@ -159,6 +163,10 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	int getResolutionY() {
 		return resolutionY;
+	}
+
+	SpriteBatch getSpriteRenderer() {
+		return spriteRenderer;
 	}
 
 }

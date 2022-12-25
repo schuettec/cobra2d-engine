@@ -33,4 +33,6 @@ public interface RendererAccess {
 
 	public int getHeight();
 
+	public void drawTexture();
+
 }
