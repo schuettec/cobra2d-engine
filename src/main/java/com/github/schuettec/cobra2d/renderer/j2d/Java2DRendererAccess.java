@@ -21,6 +21,11 @@ public class Java2DRendererAccess implements RendererAccess {
 	}
 
 	@Override
+	public void drawTexture() {
+		throw new IllegalStateException("Not implemented");
+	}
+
+	@Override
 	public void drawRectangle(float x, float y, float width, float height, Color color) {
 		Graphics2D g = renderer.getGraphics();
 		java.awt.Color oldColor = g.getColor();
