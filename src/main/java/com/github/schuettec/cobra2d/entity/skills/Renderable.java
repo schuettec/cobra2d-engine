@@ -1,7 +1,7 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public interface Renderable extends HasCollisionShape {
 

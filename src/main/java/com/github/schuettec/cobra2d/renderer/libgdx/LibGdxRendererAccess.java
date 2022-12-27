@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import java.net.URL;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
@@ -7,15 +9,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.resource.ResourceInfo;
+import com.github.schuettec.cobra2d.resource.TextureMemory;
 
 public class LibGdxRendererAccess implements RendererAccess {
 
 	private LibGdxRenderer renderer;
+	private TextureMemory textureMemory;
 
 	public LibGdxRendererAccess(LibGdxRenderer renderer) {
 		this.renderer = renderer;
+		this.textureMemory = renderer.getTextureMemory();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -25,11 +31,23 @@ public class LibGdxRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void drawTexture(float x, float y, float originX, float originY, float width, float height, float scaleX,
-	    float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
-		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
-		FileHandle file = Gdx.files.internal("image.png");
+	public void loadTexture(ResourceInfo resource) {
+		URL url = resource.getUrl();
+		// Because libGDX only supports hard-coded file locations, we can only support classpath and install-dir
+		String path = url.getPath();
+		FileHandle file = Gdx.files.internal(path);
 		Texture texture = new Texture(file);
+		resource.setResource(new LibGdxResource(texture));
+	}
+
+	@Override
+	public void drawTexture(String imageId, float x, float y, float originX, float originY, float width, float height,
+	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
+	    boolean flipY) {
+		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
+		ResourceInfo resource = textureMemory.getImage(imageId);
+		Texture texture = resource.getRendererResource(LibGdxResource.class)
+		    .getResource();
 		Sprite sprite = new Sprite(texture, 20, 20, 50, 50);
 		sprite.setPosition(100, 10);
 		sprite.setColor(0, 0, 1, 1);

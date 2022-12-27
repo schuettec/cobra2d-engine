@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class TexturedEntity extends BasicRectangleEntity implements Renderable {
 

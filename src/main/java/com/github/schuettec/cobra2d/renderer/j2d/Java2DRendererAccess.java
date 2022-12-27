@@ -1,10 +1,12 @@
 package com.github.schuettec.cobra2d.renderer.j2d;
 
 import java.awt.Graphics2D;
+import java.awt.image.VolatileImage;
 
 import com.github.schuettec.cobra2d.math.Math2D;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.resource.ResourceInfo;
 
 public class Java2DRendererAccess implements RendererAccess {
 
@@ -21,8 +23,9 @@ public class Java2DRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void drawTexture(float x, float y, float originX, float originY, float width, float height, float scaleX,
-	    float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
+	public void drawTexture(String imageId, float x, float y, float originX, float originY, float width, float height,
+	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
+	    boolean flipY) {
 		throw new IllegalStateException("Not implemented");
 	}
 
@@ -97,6 +100,12 @@ public class Java2DRendererAccess implements RendererAccess {
 	@Override
 	public int getHeight() {
 		return renderer.getResolutionY();
+	}
+
+	@Override
+	public void loadTexture(ResourceInfo resource) {
+		VolatileImage image = RenderToolkit.loadSprite(resource.getUrl());
+		resource.setResource(new Java2DRendererResource(image));
 	}
 
 }

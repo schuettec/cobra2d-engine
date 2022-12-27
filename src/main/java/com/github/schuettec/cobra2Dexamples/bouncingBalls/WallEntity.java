@@ -12,8 +12,8 @@ import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class WallEntity extends BasicRectangleEntity implements PolygonRenderable, Obstacle, Updatable {
 

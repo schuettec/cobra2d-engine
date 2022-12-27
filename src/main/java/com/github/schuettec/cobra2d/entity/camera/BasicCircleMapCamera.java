@@ -18,8 +18,8 @@ import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class BasicCircleMapCamera extends BasicCircleEntity implements Camera {
 

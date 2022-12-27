@@ -5,9 +5,7 @@ import static java.util.Objects.nonNull;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.awt.image.VolatileImage;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -17,9 +15,7 @@ import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 import com.github.schuettec.cobra2d.renderer.j2d.WindowRenderer;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderer;
-import com.github.schuettec.cobra2d.resource.Animation;
-import com.github.schuettec.cobra2d.resource.AnimationMemory;
-import com.github.schuettec.cobra2d.resource.ImageMemory;
+import com.github.schuettec.cobra2d.resource.TextureMemory;
 import com.github.schuettec.cobra2d.resource.ImageMemoryException;
 import com.github.schuettec.cobra2d.resource.URLClasspathHandler;
 import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
@@ -29,8 +25,7 @@ import com.github.schuettec.cobra2d.resource.URLStreamHandlerRegistry;
 public class Cobra2DEngine {
 
 	private Cobra2DProperties cobra2DConfig;
-	private ImageMemory imageMemory;
-	private AnimationMemory animationMemory;
+	private TextureMemory textureMemory;
 	private Renderer renderer;
 	private Map map;
 	private ActiveWorldUpdater worldUpdater;
@@ -49,9 +44,9 @@ public class Cobra2DEngine {
 		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
 		boolean doRender = cobra2DConfig.hasRenderer();
 
-		this.imageMemory = new ImageMemory();
-		this.animationMemory = new AnimationMemory(imageMemory);
 		this.renderer = createRenderer(rendererType);
+		this.textureMemory = new TextureMemory();
+		this.textureMemory.attachRenderer(renderer.getRendererAccess());
 		this.controller = renderer.getController();
 		this.map = new Map(controller);
 
@@ -86,12 +81,8 @@ public class Cobra2DEngine {
 		return renderer;
 	}
 
-	public ImageMemory getImageMemory() {
-		return this.imageMemory;
-	}
-
-	public AnimationMemory getAnimationMemory() {
-		return this.animationMemory;
+	public TextureMemory getTextureMemory() {
+		return this.textureMemory;
 	}
 
 	public Map getMap() {
@@ -134,48 +125,8 @@ public class Cobra2DEngine {
 		URL.setURLStreamHandlerFactory(registry);
 	}
 
-	public HashMap<String, URL> getImageKeyToUrlMapping() {
-		return imageMemory.getImageKeyToUrlMapping();
-	}
-
 	public void addImage(String address, URL ressourceURL) throws ImageMemoryException {
-		imageMemory.addImage(address, ressourceURL);
-	}
-
-	public void clearImageMemory() {
-		imageMemory.clearImageMemory();
-	}
-
-	public VolatileImage getImage(String address) {
-		return imageMemory.getImage(address);
-	}
-
-	public VolatileImage removeImage(String imageAddress) {
-		return imageMemory.removeImage(imageAddress);
-	}
-
-	public HashMap<String, VolatileImage> getImages() {
-		return imageMemory.getImages();
-	}
-
-	public HashMap<String, Animation> getAnimations() {
-		return animationMemory.getAnimations();
-	}
-
-	public void addAnimation(String address, String texturAddress, int width, int height) {
-		animationMemory.addAnimation(address, texturAddress, width, height);
-	}
-
-	public Animation removeAnimation(String animationAddress) {
-		return animationMemory.removeAnimation(animationAddress);
-	}
-
-	public void clearAnimationMemory() {
-		animationMemory.clearAnimationMemory();
-	}
-
-	public Animation getAnimation(String address) {
-		return animationMemory.getAnimation(address);
+		textureMemory.addImage(address, ressourceURL);
 	}
 
 	public void addEntity(Entity... entities) {

@@ -14,4 +14,6 @@ public interface Renderer {
 
 	public Controller getController();
 
+	public RendererAccess getRendererAccess();
+
 }

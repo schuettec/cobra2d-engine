@@ -10,8 +10,8 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
 

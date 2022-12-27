@@ -1,4 +1,6 @@
-package com.github.schuettec.cobra2d.renderer.common;
+package com.github.schuettec.cobra2d.renderer;
+
+import com.github.schuettec.cobra2d.resource.ResourceInfo;
 
 /**
  * A common interface that gives access to general drawing and rendering functions across platforms.
@@ -33,7 +35,10 @@ public interface RendererAccess {
 
 	public int getHeight();
 
-	void drawTexture(float x, float y, float originX, float originY, float width, float height, float scaleX,
-	    float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY);
+	void drawTexture(String textureId, float x, float y, float originX, float originY, float width, float height,
+	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
+	    boolean flipY);
+
+	public void loadTexture(ResourceInfo resource);
 
 }

@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.map.Map;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public interface Camera extends Updatable, HasCollisionShape {
 

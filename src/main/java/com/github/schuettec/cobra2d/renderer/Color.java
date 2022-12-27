@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.renderer.common;
+package com.github.schuettec.cobra2d.renderer;
 
 import com.badlogic.gdx.utils.NumberUtils;
 

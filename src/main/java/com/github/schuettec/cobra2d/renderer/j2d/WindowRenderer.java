@@ -28,6 +28,7 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class WindowRenderer implements Renderer {
 
@@ -64,6 +65,7 @@ public class WindowRenderer implements Renderer {
 	private Frame frame;
 
 	private SwingController controller;
+	private Java2DRendererAccess rendererAccess;
 
 	@Override
 	public void render() {
@@ -78,7 +80,6 @@ public class WindowRenderer implements Renderer {
 		}
 
 		Graphics2D bufferGraphics = (Graphics2D) bufferStrategy.getDrawGraphics();
-		Java2DRendererAccess java2D = new Java2DRendererAccess(this);
 
 		// Clear now the screen buffer
 		bufferGraphics.setColor(Color.BLACK);
@@ -91,7 +92,7 @@ public class WindowRenderer implements Renderer {
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);
-			camera.render(java2D, map, capturedEntities);
+			camera.render(rendererAccess, map, capturedEntities);
 		}
 
 		// Dispose the graphics
@@ -106,6 +107,8 @@ public class WindowRenderer implements Renderer {
 	public WindowRenderer() {
 		try {
 			this.controller = new SwingController();
+			this.rendererAccess = new Java2DRendererAccess(this);
+
 			SwingUtilities.invokeAndWait(new Runnable() {
 
 				@Override
@@ -322,18 +325,6 @@ public class WindowRenderer implements Renderer {
 
 	}
 
-	public void setCursorImage(final String texturAddress) {
-		final VolatileImage image = this.engine.getImageMemory()
-		    .getImage(texturAddress);
-		if (image == null) {
-			System.out.println("Cannot set cursor to image with texture address '" + texturAddress + "'.");
-			return;
-		}
-		this.cursorVisible = true;
-		frame.setCursor(frame.getToolkit()
-		    .createCustomCursor(image.getSnapshot(), new java.awt.Point(0, 0), "CustomCursor"));
-	}
-
 	public boolean isCursorVisible() {
 		return this.cursorVisible;
 	}
@@ -357,6 +348,11 @@ public class WindowRenderer implements Renderer {
 	@Override
 	public Controller getController() {
 		return controller;
+	}
+
+	@Override
+	public RendererAccess getRendererAccess() {
+		return rendererAccess;
 	}
 
 }

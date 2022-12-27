@@ -5,8 +5,8 @@ import java.util.List;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public interface PolygonRenderable extends Renderable {
 	public static void renderPolygon(Polygon polygon, final RendererAccess renderer, final Point position, Color color) {

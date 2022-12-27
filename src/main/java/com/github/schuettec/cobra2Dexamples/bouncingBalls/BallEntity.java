@@ -17,8 +17,8 @@ import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.renderer.common.Color;
-import com.github.schuettec.cobra2d.renderer.common.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.Color;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class BallEntity extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
