@@ -21,7 +21,8 @@ public class Java2DRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void drawTexture() {
+	public void drawTexture(float x, float y, float originX, float originY, float width, float height, float scaleX,
+	    float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		throw new IllegalStateException("Not implemented");
 	}
 

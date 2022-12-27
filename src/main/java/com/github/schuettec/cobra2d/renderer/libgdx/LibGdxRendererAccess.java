@@ -1,10 +1,10 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.github.schuettec.cobra2d.renderer.common.Color;
@@ -25,18 +25,18 @@ public class LibGdxRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void drawTexture() {
+	public void drawTexture(float x, float y, float originX, float originY, float width, float height, float scaleX,
+	    float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX, boolean flipY) {
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
-		Texture texture = new Texture(Gdx.files.internal("image.png"));
-		TextureRegion region = new TextureRegion(texture, 20, 20, 50, 50);
+		FileHandle file = Gdx.files.internal("image.png");
+		Texture texture = new Texture(file);
 		Sprite sprite = new Sprite(texture, 20, 20, 50, 50);
 		sprite.setPosition(100, 10);
 		sprite.setColor(0, 0, 1, 1);
 		spriteRenderer.begin();
 		spriteRenderer.setColor(1, 0, 0, 1);
-		spriteRenderer.draw(texture, 10, 10);
-		spriteRenderer.setColor(0, 1, 0, 1);
-		spriteRenderer.draw(region, 50, 10);
+		spriteRenderer.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth,
+		    srcHeight, flipX, flipY);
 		sprite.draw(spriteRenderer);
 		spriteRenderer.end();
 	}

@@ -27,14 +27,15 @@ import com.github.schuettec.cobra2d.renderer.RendererException;
 public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	private Map map;
-	private ShapeRenderer shapeRenderer;
-	private OrthographicCamera camera;
 	private int resolutionX;
 	private int resolutionY;
 	private LibGdxRendererAccess rendererAccess;
 	private LibGdxController controller;
 	private Cobra2DEngine engine;
+
 	private SpriteBatch spriteRenderer;
+	private ShapeRenderer shapeRenderer;
+	private OrthographicCamera camera;
 
 	public LibGdxRenderer() {
 		this.controller = new LibGdxController();
@@ -131,6 +132,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void finish() {
+		shapeRenderer.dispose();
+		spriteRenderer.dispose();
 		Gdx.app.exit();
 	}
 
