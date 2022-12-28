@@ -1,7 +1,6 @@
 package com.github.schuettec.cobra2Dexamples.textureRendering;
 
 import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
-import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
 import java.awt.Dimension;
 
@@ -37,14 +36,20 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
-		Point textureCenter = new Point(saveRound(textureDimension.width / 2.0), saveRound(textureDimension.height / 2.0));
-		Point textureCenterCorrection = textureCenter.scale(-1);
-		Point texturePosition = getPosition().translate(position)
-		    .translate(textureCenterCorrection);
-		renderer.drawTexture(textureId, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
+		Point texturePosition = getTexturePosition(renderer, position);
+		Point textureCenter = renderer.getTextureCenter(textureId);
+		renderer.drawTexture(textureId, 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
 		    textureCenter.getRoundX(), textureCenter.getRoundY(), (float) textureDimension.width,
 		    (float) textureDimension.height, (float) this.getScale(), (float) this.getScale(), (float) getDegrees(), 0, 0,
 		    textureDimension.width, textureDimension.height, false, false);
+
+	}
+
+	protected Point getTexturePosition(RendererAccess renderer, Point position) {
+		Point textureCenter = renderer.getTextureCenter(textureId);
+		Point textureCenterCorrection = textureCenter.scale(-1);
+		return getPosition().translate(position)
+		    .translate(textureCenterCorrection);
 	}
 
 	@Override
@@ -53,7 +58,7 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 	}
 
 	@Override
-	public void update(World map, Controller controller) {
+	public void update(World map, float deltaTime, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.rotateLeft();

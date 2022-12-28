@@ -17,7 +17,8 @@ public interface Updatable extends Entity {
 	 * the new frame.
 	 * 
 	 * @param map The map.
+	 * @param deltaTime The time between the last and the current frame in seconds.
 	 * @param controller The controller for user inputer.
 	 */
-	public void update(World map, Controller controller);
+	public void update(World map, float deltaTime, Controller controller);
 }

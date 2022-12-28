@@ -37,7 +37,7 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 	}
 
 	@Override
-	public void update(World map, Controller controller) {
+	public void update(World map, float deltaTime, Controller controller) {
 
 		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 

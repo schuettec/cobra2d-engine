@@ -10,4 +10,5 @@ public class LibGdxExtendedAccess {
 	public LibGdxExtendedAccess(LibGdxRenderer renderer) {
 		this.renderer = renderer;
 	}
+
 }

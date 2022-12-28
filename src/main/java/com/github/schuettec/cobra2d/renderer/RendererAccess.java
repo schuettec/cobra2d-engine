@@ -1,6 +1,10 @@
 package com.github.schuettec.cobra2d.renderer;
 
+import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
+
 import java.awt.Dimension;
+
+import com.github.schuettec.cobra2d.math.Point;
 
 /**
  * A common interface that gives access to general drawing and rendering functions across platforms.
@@ -35,9 +39,18 @@ public interface RendererAccess {
 
 	int getHeight();
 
-	void drawTexture(String textureId, float x, float y, float originX, float originY, float width, float height,
-	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
-	    boolean flipY);
+	void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
+	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
+	    boolean flipX, boolean flipY);
+
+	void drawTexture(String textureId, float alpha, float roundX, float roundY, float degrees);
+
+	void drawTexture(String textureId, float alpha, float roundX, float roundY, float degrees, float scale);
 
 	Dimension getTextureDimension(String textureId);
+
+	default Point getTextureCenter(String textureId) {
+		Dimension textureDimension = getTextureDimension(textureId);
+		return new Point(saveRound(textureDimension.width / 2.0), saveRound(textureDimension.height / 2.0));
+	}
 }

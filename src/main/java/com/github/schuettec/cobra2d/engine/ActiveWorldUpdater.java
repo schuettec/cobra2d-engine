@@ -34,6 +34,8 @@ public class ActiveWorldUpdater {
 
 		@Override
 		public void run() {
+			// Currently the active world updater does actively compensate any delays, so the delta time should be neutral
+			float deltaTime = 1f;
 			long startTime, stopTime, neededTime, sleepTime, oversleepTime = 0;
 			long excess = 0L;
 			int noDelays = 0;
@@ -49,7 +51,7 @@ public class ActiveWorldUpdater {
 				startTime = System.nanoTime();
 				// Update world
 				if (doMapUpdate) {
-					map.update();
+					map.update(deltaTime);
 					mapUpdates++;
 				}
 				updateTime = (System.nanoTime() - startTime) / 1000000.0;
@@ -97,7 +99,7 @@ public class ActiveWorldUpdater {
 						}
 						// Update world, test again for loop
 						if (doMapUpdate) {
-							map.update(); // update
+							map.update(deltaTime); // update
 							mapUpdates++;
 						}
 						// state but don't render

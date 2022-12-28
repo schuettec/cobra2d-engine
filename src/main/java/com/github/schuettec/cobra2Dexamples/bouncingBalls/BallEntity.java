@@ -22,19 +22,20 @@ import com.github.schuettec.cobra2d.world.World;
 
 public class BallEntity extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
-	double speed;
+	double currentSpeed;
 
 	public BallEntity(Point worldCoordinates, double radius, double speed, double degrees) {
 		super(worldCoordinates, radius);
-		this.speed = speed;
+		this.currentSpeed = speed;
 		this.setDegrees(degrees);
 	}
 
 	@Override
-	public void update(World map, Controller controller) {
+	public void update(World map, float deltaTime, Controller controller) {
+		double frameSpeed = currentSpeed * deltaTime;
 
 		// Calculate the collision shape at next frame
-		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		Point nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
 		Circle nextShape = getCollisionShape(true, true, false).translate(nextPosition);
 		CollisionMap collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
 
@@ -72,7 +73,7 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 		}
 
 		// Calculate the collision shape at next frame
-		nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
 		nextShape = getCollisionShape(true, true, false).translate(nextPosition);
 
 		collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
@@ -83,10 +84,10 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 
 		if (wallCollision.isPresent()) {
 			setDegrees(modulo360(getDegrees() + 15));
-			nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+			nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
 			this.setPosition(nextPosition);
 		} else {
-			nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+			nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
 			this.setPosition(nextPosition);
 		}
 	}

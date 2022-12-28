@@ -71,16 +71,16 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		// Anti-Aliasing here ------------------------vv
 		config.setBackBufferConfig(8, 8, 8, 8, 16, 0, 16); // 8, 8, 8, 8, 16, 0 are default values
-
 		config.setInitialBackgroundColor(Color.BLACK);
 		config.setHdpiMode(HdpiMode.Pixels);
+		config.useVsync(true);
 		if (fullscreen) {
 			DisplayMode mode = getDisplayMode(resolutionX, resolutionY, bitDepth, refreshRate);
 			config.setFullscreenMode(mode);
 		} else {
 			config.setWindowedMode(resolutionX, resolutionY);
 		}
-		config.setForegroundFPS(60);
+		config.setForegroundFPS(refreshRate);
 		config.setTitle("Cobra2D Engine");
 
 		this.state = RendererState.INITIALIZED;
@@ -107,10 +107,12 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void render() {
+		float deltaTime = Gdx.graphics.getDeltaTime();
+
 		if (controller.isEscapePressed()) {
 			engine.shutdownEngine();
 		} else {
-			world.update();
+			world.update(deltaTime);
 			camera.update();
 
 			ScreenUtils.clear(Color.BLACK);
@@ -138,6 +140,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		camera.render(rendererAccess, world, capturedEntities);
+
 		shapeRenderer.flush();
 	}
 

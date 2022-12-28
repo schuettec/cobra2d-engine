@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.net.URL;
 import java.util.Properties;
 
+import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
@@ -30,19 +31,23 @@ public class BlendingDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		BlendingEntity t1 = new BlendingEntity("floor", new Point(300, 300), 0, false);
-		BlendingEntity t2 = new BlendingEntity("police", new Point(300, 300), 1, true);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
+		// TexturedEntity t2 = new TexturedEntity("police", new Point(300, 300), 1, true);
+		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-light", "police-blue-light", new Point(300, 300), 2,
+		    true);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		// camera.scale(0.5);
 
-		engine.addEntity(t2, t1, camera);
+		engine.addEntity(t1, b1, camera);
 		// engine.addEntity(camera);
 
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
+		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
+		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
 
 		engine.start();
 	}

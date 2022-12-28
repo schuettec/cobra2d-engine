@@ -167,9 +167,9 @@ public class World {
 		}
 	}
 
-	public void update() {
+	public void update(float deltaTime) {
 		for (Updatable updatable : updateables) {
-			updatable.update(this, controller);
+			updatable.update(this, deltaTime, controller);
 		}
 		cameraCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras

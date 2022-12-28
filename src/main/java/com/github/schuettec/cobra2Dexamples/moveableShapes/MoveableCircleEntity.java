@@ -26,7 +26,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	@Override
-	public void update(World map, Controller controller) {
+	public void update(World map, float deltaTime, Controller controller) {
 
 		if (playerControlled) {
 			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {

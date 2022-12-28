@@ -61,7 +61,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public void update(World map, Controller controller) {
+	public void update(World map, float deltaTime, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

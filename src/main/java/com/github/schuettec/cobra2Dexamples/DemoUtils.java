@@ -18,8 +18,8 @@ public class DemoUtils {
 		properties.put(Cobra2DProperties.RESOLUTION_X, "800"); // 1920
 		properties.put(Cobra2DProperties.RESOLUTION_Y, "800"); // 1080
 		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
-		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
-		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
+		properties.put(Cobra2DProperties.REFRESH_REATE, "165");
+		properties.put(Cobra2DProperties.REQUESTED_FPS, "165");
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 	}
 }

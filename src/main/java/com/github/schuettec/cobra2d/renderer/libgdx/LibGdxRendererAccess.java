@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
@@ -20,17 +21,34 @@ public class LibGdxRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void drawTexture(String imageId, float x, float y, float originX, float originY, float width, float height,
-	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
-	    boolean flipY) {
+	public void drawTexture(String textureId, float alpha, float x, float y, float degrees) {
+		Point textureCenter = getTextureCenter(textureId);
+		Dimension textureDimension = getTextureDimension(textureId);
+		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
+		    (float) textureDimension.width, (float) textureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
+		    textureDimension.width, textureDimension.height, false, false);
+	}
+
+	@Override
+	public void drawTexture(String textureId, float alpha, float x, float y, float degrees, float scale) {
+		Point textureCenter = getTextureCenter(textureId);
+		Dimension textureDimension = getTextureDimension(textureId);
+		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
+		    (float) textureDimension.width, (float) textureDimension.height, (float) scale, scale, (float) degrees, 0, 0,
+		    textureDimension.width, textureDimension.height, false, false);
+	}
+
+	@Override
+	public void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
+	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
+	    boolean flipX, boolean flipY) {
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
-		Texture texture = renderer.getTexture(imageId);
-		// sprite.setColor(0, 0, 1, 1);
+		Texture texture = renderer.getTexture(textureId);
 		spriteRenderer.begin();
-		// spriteRenderer.setColor(1, 0, 0, 1);
+		com.badlogic.gdx.graphics.Color color = spriteRenderer.getColor();
+		spriteRenderer.setColor(color.r, color.g, color.b, alpha);
 		spriteRenderer.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth,
 		    srcHeight, flipX, flipY);
-		// spriteRenderer.draw(texture, x, y, width, height);
 		spriteRenderer.end();
 	}
 
