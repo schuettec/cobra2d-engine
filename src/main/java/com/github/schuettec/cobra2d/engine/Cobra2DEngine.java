@@ -10,24 +10,22 @@ import java.util.Properties;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
+import com.github.schuettec.cobra2d.renderer.j2d.ImageMemoryException;
 import com.github.schuettec.cobra2d.renderer.j2d.WindowRenderer;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderer;
-import com.github.schuettec.cobra2d.resource.TextureMemory;
-import com.github.schuettec.cobra2d.resource.ImageMemoryException;
 import com.github.schuettec.cobra2d.resource.URLClasspathHandler;
 import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
 import com.github.schuettec.cobra2d.resource.URLResourceTypeHandler;
 import com.github.schuettec.cobra2d.resource.URLStreamHandlerRegistry;
+import com.github.schuettec.cobra2d.world.World;
 
 public class Cobra2DEngine {
 
 	private Cobra2DProperties cobra2DConfig;
-	private TextureMemory textureMemory;
 	private Renderer renderer;
-	private Map map;
+	private World world;
 	private ActiveWorldUpdater worldUpdater;
 	private Controller controller;
 
@@ -45,14 +43,12 @@ public class Cobra2DEngine {
 		boolean doRender = cobra2DConfig.hasRenderer();
 
 		this.renderer = createRenderer(rendererType);
-		this.textureMemory = new TextureMemory();
-		this.textureMemory.attachRenderer(renderer.getRendererAccess());
 		this.controller = renderer.getController();
-		this.map = new Map(controller);
+		this.world = new World(controller);
 
 		boolean createWorldUpdater = cobra2DConfig.isCreateWorldUpdater();
 		if (createWorldUpdater) {
-			this.worldUpdater = new ActiveWorldUpdater(refreshRate, doMapUpdate, doRender, map, renderer);
+			this.worldUpdater = new ActiveWorldUpdater(refreshRate, doMapUpdate, doRender, world, renderer);
 		}
 
 		setupEnvironment(resourceLocation);
@@ -66,6 +62,7 @@ public class Cobra2DEngine {
 		boolean fullscreen = cobra2DConfig.getFullscreen();
 
 		renderer.initializeRenderer(this, resolutionX, resolutionY, bitDepth, refreshRate, fullscreen);
+
 		if (nonNull(worldUpdater)) {
 			this.worldUpdater.start();
 		}
@@ -81,12 +78,8 @@ public class Cobra2DEngine {
 		return renderer;
 	}
 
-	public TextureMemory getTextureMemory() {
-		return this.textureMemory;
-	}
-
-	public Map getMap() {
-		return this.map;
+	public World getWorld() {
+		return this.world;
 	}
 
 	public void shutdownEngine() {
@@ -126,23 +119,23 @@ public class Cobra2DEngine {
 	}
 
 	public void addImage(String address, URL ressourceURL) throws ImageMemoryException {
-		textureMemory.addImage(address, ressourceURL);
+		renderer.addTexture(address, ressourceURL);
 	}
 
 	public void addEntity(Entity... entities) {
-		map.addEntity(entities);
+		world.addEntity(entities);
 	}
 
 	public void addEntity(Entity entity) {
-		map.addEntity(entity);
+		world.addEntity(entity);
 	}
 
 	public void removeEntity(Entity... entities) {
-		map.removeEntity(entities);
+		world.removeEntity(entities);
 	}
 
 	public void removeEntity(Entity entity) {
-		map.removeEntity(entity);
+		world.removeEntity(entity);
 	}
 
 	public Controller getController() {

@@ -1,6 +1,6 @@
 package com.github.schuettec.cobra2d.renderer;
 
-import com.github.schuettec.cobra2d.resource.ResourceInfo;
+import java.awt.Dimension;
 
 /**
  * A common interface that gives access to general drawing and rendering functions across platforms.
@@ -15,30 +15,29 @@ public interface RendererAccess {
 	 * @param rendererType The expected renderer type.
 	 * @return Returns the renderer.
 	 */
-	public <R> R getNativeRenderer(Class<R> rendererType);
+	<R> R extendedRenderer(Class<R> rendererType);
 
-	public void drawCircle(float x, float y, float radius, Color color);
+	void drawCircle(float x, float y, float radius, Color color);
 
-	public void fillCircle(float x, float y, float radius, Color color);
+	void fillCircle(float x, float y, float radius, Color color);
 
-	public void drawLine(float x1, float y1, float x2, float y2, Color color);
+	void drawLine(float x1, float y1, float x2, float y2, Color color);
 
-	public void drawOval(float x1, float y1, float width, float height, Color color);
+	void drawOval(float x1, float y1, float width, float height, Color color);
 
-	public void fillOval(float x1, float y1, float width, float height, Color color);
+	void fillOval(float x1, float y1, float width, float height, Color color);
 
-	public void drawRectangle(float x, float y, float width, float height, Color color);
+	void drawRectangle(float x, float y, float width, float height, Color color);
 
-	public void fillRectangle(float x, float y, float width, float height, Color color);
+	void fillRectangle(float x, float y, float width, float height, Color color);
 
-	public int getWidth();
+	int getWidth();
 
-	public int getHeight();
+	int getHeight();
 
 	void drawTexture(String textureId, float x, float y, float originX, float originY, float width, float height,
 	    float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight, boolean flipX,
 	    boolean flipY);
 
-	public void loadTexture(ResourceInfo resource);
-
+	Dimension getTextureDimension(String textureId);
 }

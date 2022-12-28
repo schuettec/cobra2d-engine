@@ -14,6 +14,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferStrategy;
 import java.awt.image.VolatileImage;
+import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -26,9 +27,10 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.RendererException;
+import com.github.schuettec.cobra2d.world.World;
 
 public class WindowRenderer implements Renderer {
 
@@ -42,6 +44,8 @@ public class WindowRenderer implements Renderer {
 	private final int NUM_BUFFERS = 3;
 
 	private GraphicsDevice gd;
+
+	private ImageMemory textures;
 
 	private VolatileImage worldView;
 	protected Graphics2D worldViewGraphics;
@@ -88,7 +92,7 @@ public class WindowRenderer implements Renderer {
 		bufferGraphics.scale(1, -1);
 		// To be compatible with OpenGL the coordinate system is changes to y-up
 		// In OpenGL the coordinate system's origin is at the bottem left corner of the screen.
-		Map map = engine.getMap();
+		World map = engine.getWorld();
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);
@@ -108,6 +112,7 @@ public class WindowRenderer implements Renderer {
 		try {
 			this.controller = new SwingController();
 			this.rendererAccess = new Java2DRendererAccess(this);
+			this.textures = new ImageMemory();
 
 			SwingUtilities.invokeAndWait(new Runnable() {
 
@@ -353,6 +358,15 @@ public class WindowRenderer implements Renderer {
 	@Override
 	public RendererAccess getRendererAccess() {
 		return rendererAccess;
+	}
+
+	public VolatileImage getTexture(String textureId) {
+		return textures.getImage(textureId);
+	}
+
+	@Override
+	public void addTexture(String textureId, URL url) {
+		textures.addImage(textureId, url);
 	}
 
 }

@@ -37,7 +37,7 @@ public class MoveableShapesRectangleCameraDemo {
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(1, 1), new Dimension(799, 799), true);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
-		camera.scale(0.5);
+		camera.scale(0.75);
 
 		engine.addEntity(c1, c2, p1, p2);
 		engine.addEntity(camera);

@@ -1,8 +1,8 @@
 
 package com.github.schuettec.cobra2d.engine;
 
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.renderer.Renderer;
+import com.github.schuettec.cobra2d.world.World;
 
 /**
  * Diese Klasse kommt noch aus der Zeit, als die Engine das aktive Neuzeichnen des Renderers kontrolliert hat.
@@ -26,7 +26,7 @@ public class ActiveWorldUpdater {
 	protected double updateTime;
 	protected double renderTime;
 
-	protected Map map;
+	protected World map;
 	protected Renderer renderer;
 
 	protected Thread rendererThread;
@@ -115,7 +115,7 @@ public class ActiveWorldUpdater {
 		}
 	};
 
-	public ActiveWorldUpdater(int fps, boolean doMapUpdate, boolean doRender, Map map, Renderer renderer) {
+	public ActiveWorldUpdater(int fps, boolean doMapUpdate, boolean doRender, World map, Renderer renderer) {
 		super();
 		this.fps = fps;
 		this.doMapUpdate = doMapUpdate;

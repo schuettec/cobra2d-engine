@@ -6,12 +6,12 @@ import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.world.World;
 
 /**
  * Instances of this class represent a collision of two {@link Obstacle}s. This
- * class is the data transfer object for collisions detected by the {@link Map}.
+ * class is the data transfer object for collisions detected by the {@link World}.
  *
  * @author Chris
  *

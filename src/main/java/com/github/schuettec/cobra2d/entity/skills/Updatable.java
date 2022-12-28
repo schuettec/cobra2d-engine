@@ -1,7 +1,7 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.map.Map;
+import com.github.schuettec.cobra2d.world.World;
 
 /**
  * This interface describes an updateable object. This object provides an update
@@ -19,5 +19,5 @@ public interface Updatable extends Entity {
 	 * @param map The map.
 	 * @param controller The controller for user inputer.
 	 */
-	public void update(Map map, Controller controller);
+	public void update(World map, Controller controller);
 }

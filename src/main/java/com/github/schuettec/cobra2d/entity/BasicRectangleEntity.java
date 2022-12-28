@@ -2,9 +2,11 @@ package com.github.schuettec.cobra2d.entity;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.util.List;
 
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Polygon;
 
 public class BasicRectangleEntity extends BasicPolygonEntity {
 
@@ -17,8 +19,14 @@ public class BasicRectangleEntity extends BasicPolygonEntity {
 		super(worldCoordinates, Math2D.getRectangle(dimension));
 	}
 
+	protected void createRectangleShape(Dimension dimension) {
+		createCollisionShape(Math2D.getRectangle(dimension));
+	}
+
 	public Dimension getDimension() {
-		Rectangle huellRect = Math2D.getHuellRect(getCollisionShape(true, true, false).getPoints());
+		Polygon collisionShape = getCollisionShape(true, true, false);
+		List<Point> points = collisionShape.getPoints();
+		Rectangle huellRect = Math2D.getHuellRect(points);
 		return new Dimension(huellRect.width, huellRect.height);
 	}
 

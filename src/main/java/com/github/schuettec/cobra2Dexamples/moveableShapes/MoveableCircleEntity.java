@@ -7,11 +7,11 @@ import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.world.World;
 
 public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
 
@@ -26,7 +26,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	@Override
-	public void update(Map map, Controller controller) {
+	public void update(World map, Controller controller) {
 
 		if (playerControlled) {
 			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {

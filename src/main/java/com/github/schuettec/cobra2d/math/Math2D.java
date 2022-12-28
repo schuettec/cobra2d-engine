@@ -209,21 +209,62 @@ public class Math2D {
 		return e;
 	}
 
-	public static Point getPointNextToY(final List<Point> points) {
+	public static Point getPointMinX(final List<Point> points) {
 		double minX = Double.MAX_VALUE;
-		Point anchorNextToX = points.get(0);
-
+		Point pointMinX = points.get(0);
 		for (int i = 0; i < points.size(); i++) {
 			final Point aktPoint = points.get(i);
-			final double x = Math.abs(aktPoint.x);
+			final double x = aktPoint.x;
 
-			if (x < minX) {
+			if (x <= minX) {
 				minX = x;
-				anchorNextToX = aktPoint;
+				pointMinX = aktPoint;
 			}
 		}
+		return new Point(pointMinX.x, pointMinX.y);
+	}
 
-		return new Point(anchorNextToX.x, anchorNextToX.y);
+	public static Point getPointMaxX(final List<Point> points) {
+		double maxX = Double.MIN_VALUE;
+		Point pointMaxX = points.get(0);
+		for (int i = 0; i < points.size(); i++) {
+			final Point aktPoint = points.get(i);
+			final double x = aktPoint.x;
+			if (x > maxX) {
+				maxX = x;
+				pointMaxX = aktPoint;
+			}
+		}
+		return new Point(pointMaxX.x, pointMaxX.y);
+	}
+
+	public static Point getPointMinY(final List<Point> points) {
+		double minY = Double.MAX_VALUE;
+		Point anchorNextToY = points.get(0);
+		for (int i = 0; i < points.size(); i++) {
+			final Point aktPoint = points.get(i);
+			final double y = aktPoint.y;
+
+			if (y < minY) {
+				minY = y;
+				anchorNextToY = aktPoint;
+			}
+		}
+		return new Point(anchorNextToY.x, anchorNextToY.y);
+	}
+
+	public static Point getPointMaxY(final List<Point> points) {
+		double maxY = Double.MIN_VALUE;
+		Point anchorMaxDistToY = points.get(0);
+		for (int i = 0; i < points.size(); i++) {
+			final Point aktPoint = points.get(i);
+			final double y = aktPoint.y;
+			if (y > maxY) {
+				maxY = y;
+				anchorMaxDistToY = aktPoint;
+			}
+		}
+		return new Point(anchorMaxDistToY.x, anchorMaxDistToY.y);
 	}
 
 	public static EntityPoint getPointNextTo(final EntityPoint nextTo, final List<EntityPoint> points) {
@@ -261,7 +302,6 @@ public class Math2D {
 	public static Point getPointNextToEntityPoints(final Point nextTo, final List<EntityPoint> points) {
 		double laenge = Double.MAX_VALUE;
 		Point closest = null;
-
 		for (int i = 0; i < points.size(); i++) {
 			final EntityPoint ePoint = points.get(i);
 			final Point point = ePoint.getCoordinates();
@@ -271,70 +311,13 @@ public class Math2D {
 				closest = point;
 			}
 		}
-
 		return closest;
 	}
 
-	public static Point getPointNextToX(final List<Point> points) {
-		double minY = Double.MAX_VALUE;
-		Point anchorNextToY = points.get(0);
-
-		for (int i = 0; i < points.size(); i++) {
-			final Point aktPoint = points.get(i);
-			final double y = Math.abs(aktPoint.y);
-
-			if (y < minY) {
-				minY = y;
-				anchorNextToY = aktPoint;
-			}
-		}
-		return new Point(anchorNextToY.x, anchorNextToY.y);
-	}
-
-	public static Point getPointMaxDistToX(final List<Point> points) {
-		double maxY = 0;
-		Point anchorMaxDistToY = points.get(0);
-
-		for (int i = 0; i < points.size(); i++) {
-			final Point aktPoint = points.get(i);
-			final double y = aktPoint.y;
-
-			if (y > maxY) {
-				maxY = y;
-				anchorMaxDistToY = aktPoint;
-			}
-		}
-
-		return new Point(anchorMaxDistToY.x, anchorMaxDistToY.y);
-	}
-
-	public static Point getPointMaxDistToY(final List<Point> points) {
-		double maxX = 0;
-		Point anchorMaxDistToX = points.get(0);
-
-		for (int i = 0; i < points.size(); i++) {
-			final Point aktPoint = points.get(i);
-			final double x = aktPoint.x;
-			if (x > maxX) {
-				maxX = x;
-				anchorMaxDistToX = aktPoint;
-			}
-		}
-
-		return new Point(anchorMaxDistToX.x, anchorMaxDistToX.y);
-	}
-
 	public static Rectangle getHuellRect(final List<Point> punktliste) {
-		final Point x1 = new Point(Math2D.getPointNextToY(punktliste).x, Math2D.getPointNextToX(punktliste).y);
-		// Point x2 = new Point(getPointMaxDistToY(punktliste).x + 10,
-		// getPointNextToX(punktliste).y - 10);
-
-		final Point x3 = new Point(Math2D.getPointMaxDistToY(punktliste).x, Math2D.getPointMaxDistToX(punktliste).y);
-		// Point x4 = new Point(getPointNextToY(punktliste).x - 10,
-		// getPointMaxDistToX(punktliste).y + 10);
-
+		final Point x1 = new Point(Math2D.getPointMinX(punktliste).x, Math2D.getPointMinY(punktliste).y);
+		final Point x3 = new Point(Math2D.getPointMaxX(punktliste).x, Math2D.getPointMaxY(punktliste).y);
 		final Rectangle rect = new Rectangle(x1.getPoint(), new Dimension(saveRound(x3.x - x1.x), saveRound(x3.y - x1.y)));
-
 		return rect;
 	}
 
@@ -389,6 +372,21 @@ public class Math2D {
 	public static boolean compareDouble(double d1, double d2) {
 		double epsilon = 0.000001d;
 		return Math.abs(d1 - d2) < epsilon;
+	}
+
+	/**
+	 * Normalizes the specified angle to a value between 0 and 360 degrees.
+	 * 
+	 * @param d The angle to normalize
+	 * @return The normalized angle.
+	 */
+	public static double normalizeAngle(double d) {
+		if (d > 360) {
+			return (d % 360);
+		} else if (d < 0) {
+			return d + Math.ceil(Math.abs(d) / 360.0) * 360.0;
+		}
+		return d;
 	}
 
 }

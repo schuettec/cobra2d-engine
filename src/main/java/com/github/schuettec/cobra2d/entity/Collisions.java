@@ -453,7 +453,7 @@ public abstract class Collisions {
 		    .stream()
 		    .map(p -> p.getCoordinates())
 		    .collect(Collectors.toList());
-		Point maxX = Math2D.getPointMaxDistToY(points);
+		Point maxX = Math2D.getPointMaxX(points);
 
 		if (point.getRoundX() > maxX.getRoundX()) {
 			return false;

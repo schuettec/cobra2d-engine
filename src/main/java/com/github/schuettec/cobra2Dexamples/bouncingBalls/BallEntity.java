@@ -12,13 +12,13 @@ import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.map.Map;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.world.World;
 
 public class BallEntity extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
@@ -31,7 +31,7 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 	}
 
 	@Override
-	public void update(Map map, Controller controller) {
+	public void update(World map, Controller controller) {
 
 		// Calculate the collision shape at next frame
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());

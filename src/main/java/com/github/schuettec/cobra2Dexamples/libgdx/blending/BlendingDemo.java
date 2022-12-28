@@ -1,17 +1,18 @@
-package com.github.schuettec.cobra2Dexamples.moveableShapes;
+package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 
 import java.awt.Dimension;
+import java.net.URL;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
-import com.github.schuettec.cobra2d.entity.camera.BasicCircleMapCamera;
-import com.github.schuettec.cobra2d.entity.skills.Camera;
+import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
-public class MoveableShapesCircleCameraDemo {
-	public static void main(String[] args) {
+public class BlendingDemo {
+
+	public static void main(String[] args) throws Exception {
 
 		final Properties properties = new Properties();
 		properties.put(Cobra2DProperties.RESOLUTION_X, "800"); // 1920
@@ -29,19 +30,20 @@ public class MoveableShapesCircleCameraDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		MoveableCircleEntity c1 = new MoveableCircleEntity(new Point(200, 200), 120, false);
-		MoveableCircleEntity c2 = new MoveableCircleEntity(new Point(100, 200), 70, false);
-		MoveablePolygonEntity p1 = new MoveablePolygonEntity(new Point(120, 220), new Dimension(100, 100), false);
+		BlendingEntity t1 = new BlendingEntity("floor", new Point(300, 300), 0, false);
+		BlendingEntity t2 = new BlendingEntity("police", new Point(300, 300), 1, true);
 
-		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
-
-		Camera camera = new BasicCircleMapCamera(new Point(1, 1), 799, true);
+		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
-		camera.scale(0.5);
+		// camera.scale(0.5);
 
-		engine.addEntity(c1, c2, p1, p2);
-		engine.addEntity(camera);
+		engine.addEntity(t2, t1, camera);
+		// engine.addEntity(camera);
+
+		engine.addImage("floor", new URL("resource:floor.png"));
+		engine.addImage("police", new URL("resource:cars/police.png"));
+
 		engine.start();
 	}
 }

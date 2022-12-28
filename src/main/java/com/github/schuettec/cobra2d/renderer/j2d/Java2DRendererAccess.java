@@ -1,12 +1,12 @@
 package com.github.schuettec.cobra2d.renderer.j2d;
 
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.VolatileImage;
 
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.resource.ResourceInfo;
 
 public class Java2DRendererAccess implements RendererAccess {
 
@@ -14,12 +14,7 @@ public class Java2DRendererAccess implements RendererAccess {
 
 	public Java2DRendererAccess(WindowRenderer renderer) {
 		this.renderer = renderer;
-	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <R> R getNativeRenderer(Class<R> rendererType) {
-		return (R) renderer;
 	}
 
 	@Override
@@ -103,9 +98,14 @@ public class Java2DRendererAccess implements RendererAccess {
 	}
 
 	@Override
-	public void loadTexture(ResourceInfo resource) {
-		VolatileImage image = RenderToolkit.loadSprite(resource.getUrl());
-		resource.setResource(new Java2DRendererResource(image));
+	public Dimension getTextureDimension(String textureId) {
+		VolatileImage volatileImage = renderer.getTexture(textureId);
+		return new Dimension(volatileImage.getWidth(), volatileImage.getHeight());
+	}
+
+	@Override
+	public <R> R extendedRenderer(Class<R> rendererType) {
+		throw new IllegalAccessError("Not yet implemented.");
 	}
 
 }

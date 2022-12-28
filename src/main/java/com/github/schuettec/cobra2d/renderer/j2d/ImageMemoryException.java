@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.resource;
+package com.github.schuettec.cobra2d.renderer.j2d;
 
 public class ImageMemoryException extends RuntimeException {
 

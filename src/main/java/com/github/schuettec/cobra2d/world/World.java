@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.map;
+package com.github.schuettec.cobra2d.world;
 
 import static com.github.schuettec.cobra2d.entity.skills.Skill.asSkill;
 import static java.util.Objects.isNull;
@@ -26,20 +26,20 @@ import com.github.schuettec.cobra2d.math.Shape;
 
 /**
  * This is the map data structure. This class makes all {@link Entity} objects
- * accessible that are currently existing in the world. The {@link Map} also
+ * accessible that are currently existing in the world. The {@link World} also
  * manages all the collisions for the current frame.
  *
  *
  * <p>
  * <b>Note: The map is intended to be used in the rendering thread or at least
- * in one thread managing all the entities calls. Therefore this {@link Map} is
+ * in one thread managing all the entities calls. Therefore this {@link World} is
  * not thread safe.</b>
  * </p>
  *
  * @author Chris
  *
  */
-public class Map {
+public class World {
 
 	// this would be a useful regression test
 	// public static void main(String[] args) {
@@ -70,7 +70,7 @@ public class Map {
 
 	private Controller controller;
 
-	public Map(Controller controller) {
+	public World(Controller controller) {
 		this.controller = controller;
 		this.allEntities = new HashSet<Entity>();
 		this.obstacles = new HashSet<>();
