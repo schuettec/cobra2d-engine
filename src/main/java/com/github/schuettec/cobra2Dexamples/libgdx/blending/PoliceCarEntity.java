@@ -4,12 +4,20 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.World;
 
 public class PoliceCarEntity extends TexturedEntity implements Renderable, Updatable {
+
+	/**
+	 * Interval in milliseconds to switch between blue and red lights.
+	 */
+	private static final float MAX_SPEED = 1000f;
+	private static final float MILLISECONDS_TO_MAX_SPEED = 8000;
+	private static final float MILLISECONDS_TO_ROLL_OUT = 5000f;
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -35,10 +43,18 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 	 */
 	private boolean blue = true;
 
+	/**
+	 * The current alpha value.
+	 */
+	private float alpha;
+
+	/**
+	 * The speed of the car.
+	 */
+	private float speed;
+
 	private String redLightTextureId;
 	private String blueLightTextureId;
-
-	private float alpha;
 
 	public PoliceCarEntity(String carTextureId, String redLightTextureId, String blueLightTextureId,
 	    Point worldCoordinates, int layer, boolean playerControlled) {
@@ -66,6 +82,12 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 
 	@Override
 	public void update(World map, float deltaTime, Controller controller) {
+		float deltaTimeMillis = deltaTime * 1000;
+		float acceleration = (MAX_SPEED / MILLISECONDS_TO_MAX_SPEED) / deltaTimeMillis;
+		float brake = (MAX_SPEED / MILLISECONDS_TO_ROLL_OUT) / deltaTimeMillis;
+
+		System.out.println("Delta Time  " + deltaTimeMillis + " Acceleration: " + acceleration + " Brake: " + brake);
+
 		long currentTimeMillis = System.currentTimeMillis();
 
 		super.update(map, deltaTime, controller);
@@ -78,6 +100,17 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 				blue = !blue;
 			}
 		}
+
+		if (controller.isUpKeyPressed()) {
+			this.speed = Math.min(speed + acceleration, MAX_SPEED);
+		} else {
+			this.speed = Math.max(speed - brake, 0);
+		}
+		System.out.println(speed);
+		setDegrees(270);
+		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+		this.setPosition(nextPosition);
+
 	}
 
 }
