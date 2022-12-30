@@ -36,18 +36,22 @@ public class BlendingDemo {
 		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-light", "police-blue-light", new Point(300, 300), 2,
 		    true);
 
+		LightEntity l = new LightEntity("light", new Point(300, 300), 0, false);
+		l.setLayer(4);
+
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		// camera.scale(0.5);
 
-		engine.addEntity(t1, b1, camera);
+		engine.addEntity(t1, b1, l, camera);
 		// engine.addEntity(camera);
 
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
 		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
 		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
+		engine.addImage("light", new URL("resource:light.png"));
 
 		engine.start();
 	}

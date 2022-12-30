@@ -57,6 +57,10 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 		return layer;
 	}
 
+	public void setLayer(int layer) {
+		this.layer = layer;
+	}
+
 	@Override
 	public void update(World map, float deltaTime, Controller controller) {
 		if (playerControlled) {
