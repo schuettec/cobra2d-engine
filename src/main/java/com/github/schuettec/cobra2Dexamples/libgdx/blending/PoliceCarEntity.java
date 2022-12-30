@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 
+import java.util.function.BiFunction;
+
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
@@ -15,9 +17,10 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
 	 */
-	private static final float MAX_SPEED = 1000f;
-	private static final float MILLISECONDS_TO_MAX_SPEED = 8000;
-	private static final float MILLISECONDS_TO_ROLL_OUT = 5000f;
+	private static final float MAX_SPEED = 10f;
+	private static final float SECONDS_TO_BRAKE = 1;
+	private static final float SECONDS_TO_MAX_SPEED = 2;
+	private static final float SECONDS_TO_ROLL_OUT = 8;
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -82,11 +85,9 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 
 	@Override
 	public void update(World map, float deltaTime, Controller controller) {
-		float deltaTimeMillis = deltaTime * 1000;
-		float acceleration = (MAX_SPEED / MILLISECONDS_TO_MAX_SPEED) / deltaTimeMillis;
-		float brake = (MAX_SPEED / MILLISECONDS_TO_ROLL_OUT) / deltaTimeMillis;
-
-		System.out.println("Delta Time  " + deltaTimeMillis + " Acceleration: " + acceleration + " Brake: " + brake);
+		float acceleration = (MAX_SPEED / SECONDS_TO_MAX_SPEED) * deltaTime;
+		float brake = (MAX_SPEED / SECONDS_TO_BRAKE) * deltaTime;
+		float rollout = (MAX_SPEED / SECONDS_TO_ROLL_OUT) * deltaTime;
 
 		long currentTimeMillis = System.currentTimeMillis();
 
@@ -103,9 +104,20 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 
 		if (controller.isUpKeyPressed()) {
 			this.speed = Math.min(speed + acceleration, MAX_SPEED);
+		} else if (controller.isDownKeyPressed()) {
+			this.speed = Math.min(speed - acceleration, MAX_SPEED);
+		} else if (controller.isSpaceKeyPressed()) {
+			float signum = Math.signum(this.speed) * -1;
+			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
+			this.speed = minMax.apply(speed + signum * brake, 0f);
 		} else {
-			this.speed = Math.max(speed - brake, 0);
+			System.out.println("Delta Time  " + deltaTime + " Acceleration: " + acceleration + " Brake: " + rollout);
+			System.out.println("Speed: " + speed);
+			float signum = Math.signum(this.speed) * -1;
+			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
+			this.speed = minMax.apply(speed + signum * rollout, 0f);
 		}
+
 		System.out.println(speed);
 		setDegrees(270);
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
