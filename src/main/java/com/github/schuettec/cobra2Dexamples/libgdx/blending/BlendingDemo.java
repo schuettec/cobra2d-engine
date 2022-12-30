@@ -16,8 +16,8 @@ public class BlendingDemo {
 	public static void main(String[] args) throws Exception {
 
 		final Properties properties = new Properties();
-		properties.put(Cobra2DProperties.RESOLUTION_X, "800"); // 1920
-		properties.put(Cobra2DProperties.RESOLUTION_Y, "800"); // 1080
+		properties.put(Cobra2DProperties.RESOLUTION_X, "1920"); // 1920
+		properties.put(Cobra2DProperties.RESOLUTION_Y, "1080"); // 1080
 		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
 		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
 		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
@@ -36,7 +36,7 @@ public class BlendingDemo {
 		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-light", "police-blue-light", new Point(300, 300), 2,
 		    true);
 
-		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
+		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		// camera.scale(0.5);

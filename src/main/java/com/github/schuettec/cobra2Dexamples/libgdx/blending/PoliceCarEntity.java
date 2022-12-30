@@ -6,6 +6,7 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
 import com.github.schuettec.cobra2d.math.Point;
@@ -17,10 +18,20 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
 	 */
-	private static final float MAX_SPEED = 10f;
+	private static final float MAX_SPEED = 15f;
 	private static final float SECONDS_TO_BRAKE = 1;
 	private static final float SECONDS_TO_MAX_SPEED = 2;
-	private static final float SECONDS_TO_ROLL_OUT = 8;
+	private static final float SECONDS_TO_ROLL_OUT = 4;
+
+	/*
+	 * How much steering can be done is based on speed. If the car drives slower, then a smaller turning radius can be
+	 * achieved. If the car is driving fast, the steering speed is reduced.
+	 */
+	private static final float TURN_DEGREES = 45f;
+	private static final float MIN_SECONDS_TO_TURN_DEGREES = 0.16f;
+	private static final float MAX_SECONDS_TO_TURN_DEGREES = 0.30f;
+	private static final Line STEERING_SPEED_FUNCTION = new Line(new Point(0, MIN_SECONDS_TO_TURN_DEGREES),
+	    new Point(MAX_SPEED, MAX_SECONDS_TO_TURN_DEGREES));
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -85,13 +96,23 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 
 	@Override
 	public void update(World map, float deltaTime, Controller controller) {
-		float acceleration = (MAX_SPEED / SECONDS_TO_MAX_SPEED) * deltaTime;
-		float brake = (MAX_SPEED / SECONDS_TO_BRAKE) * deltaTime;
-		float rollout = (MAX_SPEED / SECONDS_TO_ROLL_OUT) * deltaTime;
+		float acceleration = MAX_SPEED / SECONDS_TO_MAX_SPEED * deltaTime;
+		float brake = MAX_SPEED / SECONDS_TO_BRAKE * deltaTime;
+		float rollout = MAX_SPEED / SECONDS_TO_ROLL_OUT * deltaTime;
+
+		/**
+		 * Calculate the steering speed
+		 */
+		float turnDegrees = 0;
+		if (speed > 0) {
+			float steeringSpeed = (float) STEERING_SPEED_FUNCTION.getValue(Math.abs(speed));
+			turnDegrees = TURN_DEGREES / steeringSpeed * deltaTime;
+			if (!STEERING_SPEED_FUNCTION.isDefined(new Point(speed, steeringSpeed))) {
+				turnDegrees = 0;
+			}
+		}
 
 		long currentTimeMillis = System.currentTimeMillis();
-
-		super.update(map, deltaTime, controller);
 
 		if (lightsOn) {
 			long lightTime = currentTimeMillis - lastSwitchTimestamp;
@@ -103,23 +124,34 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 		}
 
 		if (controller.isUpKeyPressed()) {
-			this.speed = Math.min(speed + acceleration, MAX_SPEED);
+			if (this.speed < 0) {
+				this.speed = Math.min(speed + brake, MAX_SPEED);
+			} else {
+				this.speed = Math.min(speed + acceleration, MAX_SPEED);
+			}
 		} else if (controller.isDownKeyPressed()) {
-			this.speed = Math.min(speed - acceleration, MAX_SPEED);
+			if (this.speed > 0) {
+				this.speed = Math.max(speed - brake, -MAX_SPEED);
+			} else {
+				this.speed = Math.max(speed - acceleration, -MAX_SPEED);
+			}
 		} else if (controller.isSpaceKeyPressed()) {
 			float signum = Math.signum(this.speed) * -1;
 			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
 			this.speed = minMax.apply(speed + signum * brake, 0f);
 		} else {
-			System.out.println("Delta Time  " + deltaTime + " Acceleration: " + acceleration + " Brake: " + rollout);
-			System.out.println("Speed: " + speed);
 			float signum = Math.signum(this.speed) * -1;
 			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
 			this.speed = minMax.apply(speed + signum * rollout, 0f);
 		}
 
-		System.out.println(speed);
-		setDegrees(270);
+		if (controller.isLeftKeyPressed()) {
+			double newDegrees = getDegrees() + turnDegrees;
+			setDegrees(Math2D.normalizeAngle(newDegrees));
+		} else if (controller.isRightKeyPressed()) {
+			setDegrees(Math2D.normalizeAngle(getDegrees() - turnDegrees));
+		}
+
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 		this.setPosition(nextPosition);
 

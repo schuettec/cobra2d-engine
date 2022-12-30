@@ -58,7 +58,7 @@ public class Line implements Shape, Cloneable {
 
 		// 2. Fall | --
 		if (this.parallelY) {
-			final Point schnittPunkt = new Point(this.x1.x, l.getY(this.x1.x));
+			final Point schnittPunkt = new Point(this.x1.x, l.getValue(this.x1.x));
 			if (this.isDefined(schnittPunkt) && l.isDefined(schnittPunkt)) {
 				return new Point(schnittPunkt.getX(), schnittPunkt.getY());
 			} else {
@@ -69,7 +69,7 @@ public class Line implements Shape, Cloneable {
 
 		// 3. Fall -- |
 		if (l.isParallelY()) {
-			final Point schnittPunkt = new Point(l.getX1().x, this.getY(l.getX1().x));
+			final Point schnittPunkt = new Point(l.getX1().x, this.getValue(l.getX1().x));
 			if (l.isDefined(schnittPunkt) && this.isDefined(schnittPunkt)) {
 				return new Point(schnittPunkt.getX(), schnittPunkt.getY());
 			} else {
@@ -103,7 +103,7 @@ public class Line implements Shape, Cloneable {
 
 		double x = (l.getB() - this.getB()) / (this.getM() - l.getM());
 
-		double y = this.getY(x);
+		double y = this.getValue(x);
 
 		Point schnittPunkt = new Point(x, y);
 		if (this.isDefined(schnittPunkt) && l.isDefined(schnittPunkt)) {
@@ -112,7 +112,7 @@ public class Line implements Shape, Cloneable {
 
 		x = (this.getB() - l.getB()) / (l.getM() - this.getM());
 
-		y = this.getY(x);
+		y = this.getValue(x);
 
 		schnittPunkt = new Point(x, y);
 		if (this.isDefined(schnittPunkt) && l.isDefined(schnittPunkt)) {
@@ -149,7 +149,7 @@ public class Line implements Shape, Cloneable {
 			// stattgefunden
 			// Lösungsansatz: Auf ungenauen Integer runden und auf Gleichheit
 			// prüfen
-			if (Math2D.saveRound(this.getY(point.x)) == Math2D.saveRound(point.y)) {
+			if (Math2D.saveRound(this.getValue(point.x)) == Math2D.saveRound(point.y)) {
 				return true;
 			}
 		}
@@ -158,7 +158,7 @@ public class Line implements Shape, Cloneable {
 
 	}
 
-	public double getY(final double x) {
+	public double getValue(final double x) {
 		if (this.parallelY) {
 			return this.x1.y;
 		}
