@@ -27,12 +27,12 @@ public class BouncingBallsDemo {
 
 		WallEntity wall = new WallEntity(new Point(0, 0), new Dimension(759, 759));
 
-		BallEntity ball1 = new BallEntity(new Point(0, 0), 30, 1000, 65);
-		BallEntity ball2 = new BallEntity(new Point(0, 300), 30, 1000, 85);
-		BallEntity ball3 = new BallEntity(new Point(300, 0), 30, 1000, 115);
-		BallEntity ball4 = new BallEntity(new Point(300, 300), 30, 1000, 125);
-		BallEntity ball5 = new BallEntity(new Point(0, 300), 30, 1000, 135);
-		BallEntity ball6 = new BallEntity(new Point(300, 0), 30, 1000, 145);
+		BallEntity ball1 = new BallEntity(new Point(0, 0), 30, 200, 35);
+		BallEntity ball2 = new BallEntity(new Point(0, 300), 30, 200, 85);
+		BallEntity ball3 = new BallEntity(new Point(300, 0), 30, 200, 115);
+		BallEntity ball4 = new BallEntity(new Point(300, 300), 30, 200, 125);
+		BallEntity ball5 = new BallEntity(new Point(0, 300), 30, 200, 135);
+		BallEntity ball6 = new BallEntity(new Point(300, 0), 30, 200, 145);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
 		// Set screen position or the camera is centered automatically

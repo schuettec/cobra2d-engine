@@ -53,4 +53,11 @@ public interface RendererAccess {
 		Dimension textureDimension = getTextureDimension(textureId);
 		return new Point(saveRound(textureDimension.width / 2.0), saveRound(textureDimension.height / 2.0));
 	}
+
+	default Point getTexturePosition(String textureId, Point position, Point screenTranslation) {
+		Point textureCenter = getTextureCenter(textureId);
+		Point textureCenterCorrection = textureCenter.scale(-1);
+		return position.translate(screenTranslation)
+		    .translate(textureCenterCorrection);
+	}
 }

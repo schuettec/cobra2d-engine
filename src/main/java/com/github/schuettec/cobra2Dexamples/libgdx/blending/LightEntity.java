@@ -23,11 +23,11 @@ public class LightEntity extends TexturedEntity {
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
-		Point texturePosition = getTexturePosition(renderer, position);
+		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), position);
 		Point textureCenter = renderer.getTextureCenter(textureId);
 		LibGdxExtendedAccess extendedRenderer = renderer.extendedRenderer(LibGdxExtendedAccess.class);
 
-		extendedRenderer.drawTexture(textureId, 1f, (float) texturePosition.getRoundX(),
+		extendedRenderer.drawLightTexture(textureId, 1f, (float) texturePosition.getRoundX(),
 		    (float) texturePosition.getRoundY(), textureCenter.getRoundX(), textureCenter.getRoundY(),
 		    (float) textureDimension.width, (float) textureDimension.height, (float) this.getScale(),
 		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.width, textureDimension.height, false,

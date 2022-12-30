@@ -14,7 +14,7 @@ public class LibGdxExtendedAccess {
 		this.renderer = renderer;
 	}
 
-	public void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
+	public void drawLightTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
 	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
 	    boolean flipX, boolean flipY) {
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();

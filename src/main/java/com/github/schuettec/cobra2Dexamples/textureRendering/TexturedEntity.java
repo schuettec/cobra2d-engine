@@ -29,27 +29,20 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 	}
 
 	@Override
-	public void render(RendererAccess renderer, Point position) {
+	public void render(RendererAccess renderer, Point screenTranslation) {
 		Dimension textureDimension = renderer.getTextureDimension(textureId);
 		createRectangleShape(textureDimension);
 		/*
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
-		Point texturePosition = getTexturePosition(renderer, position);
+		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), screenTranslation);
 		Point textureCenter = renderer.getTextureCenter(textureId);
 		renderer.drawTexture(textureId, 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
 		    textureCenter.getRoundX(), textureCenter.getRoundY(), (float) textureDimension.width,
 		    (float) textureDimension.height, (float) this.getScale(), (float) this.getScale(), (float) getDegrees(), 0, 0,
 		    textureDimension.width, textureDimension.height, false, false);
 
-	}
-
-	protected Point getTexturePosition(RendererAccess renderer, Point position) {
-		Point textureCenter = renderer.getTextureCenter(textureId);
-		Point textureCenterCorrection = textureCenter.scale(-1);
-		return getPosition().translate(position)
-		    .translate(textureCenterCorrection);
 	}
 
 	@Override

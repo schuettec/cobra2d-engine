@@ -1,19 +1,21 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 
+import java.awt.Dimension;
 import java.util.function.BiFunction;
 
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
+import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
 import com.github.schuettec.cobra2d.world.World;
 
-public class PoliceCarEntity extends TexturedEntity implements Renderable, Updatable {
+public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable, Updatable {
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -69,29 +71,50 @@ public class PoliceCarEntity extends TexturedEntity implements Renderable, Updat
 
 	private String redLightTextureId;
 	private String blueLightTextureId;
+	private String frontLightTextureId;
 
 	public PoliceCarEntity(String carTextureId, String redLightTextureId, String blueLightTextureId,
-	    Point worldCoordinates, int layer, boolean playerControlled) {
+	    String frontLightTextureId, Point worldCoordinates, int layer, boolean playerControlled) {
 		super(carTextureId, worldCoordinates, layer, playerControlled);
 		this.redLightTextureId = redLightTextureId;
 		this.blueLightTextureId = blueLightTextureId;
+		this.frontLightTextureId = frontLightTextureId;
 	}
 
 	@Override
-	public void render(RendererAccess renderer, Point position) {
-		super.render(renderer, position);
+	public void render(RendererAccess renderer, Point screenTranslation) {
+		super.render(renderer, screenTranslation);
 
-		Point texturePosition = getTexturePosition(renderer, position);
+		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), screenTranslation);
 
 		if (lightsOn) {
 			if (blue) {
-				renderer.drawTexture(blueLightTextureId, alpha, (float) texturePosition.getRoundX(),
-				    (float) texturePosition.getRoundY(), (float) getDegrees());
+				renderer.drawTexture(blueLightTextureId, alpha, (float) texturePosition.getRoundX() - 20,
+				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
 			} else {
-				renderer.drawTexture(redLightTextureId, alpha, (float) texturePosition.getRoundX(),
-				    (float) texturePosition.getRoundY(), (float) getDegrees());
+				renderer.drawTexture(redLightTextureId, alpha, (float) texturePosition.getRoundX() - 20,
+				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
 			}
 		}
+
+		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
+		Point lightTextureCenter = renderer.getTextureCenter(frontLightTextureId);
+
+		Dimension textureDimension = renderer.getTextureDimension(textureId);
+		Point leftLight = Math2D.getCircle(getPosition(), textureDimension.width - lightTextureCenter.getRoundX(),
+		    Math2D.normalizeAngle(getDegrees() + 15));
+		leftLight = leftLight.translate(screenTranslation)
+		    .translate(lightTextureCenter.clone()
+		        .scale(-1));
+
+		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
+
+		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
+		extendedRenderer.drawLightTexture(frontLightTextureId, 1f, (float) leftLight.getRoundX(),
+		    (float) leftLight.getRoundY(), lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
+		    (float) lightTextureDimension.width, (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
+		    lightTextureDimension.width, lightTextureDimension.height, false, false);
+
 	}
 
 	@Override
