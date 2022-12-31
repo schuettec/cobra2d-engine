@@ -73,6 +73,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private String blueLightTextureId;
 	private String frontLightTextureId;
 	private String brakeLightTextureId;
+	private boolean brake;
 
 	public PoliceCarEntity(String carTextureId, String redLightTextureId, String blueLightTextureId,
 	    String frontLightTextureId, String brakeLightTextureId, Point worldCoordinates, int layer,
@@ -102,8 +103,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 		renderFrontLight(renderer, screenTranslation, 10);
 		renderFrontLight(renderer, screenTranslation, -10);
-		renderBrakeLight(renderer, screenTranslation, 0);
 
+		if (brake) {
+			renderBrakeLight(renderer, screenTranslation, 0);
+		}
 	}
 
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -176,22 +179,29 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		}
 
 		if (controller.isUpKeyPressed()) {
+			// Accelerate
 			if (this.speed < 0) {
+				this.brake = true;
 				this.speed = Math.min(speed + brake, MAX_SPEED);
 			} else {
+				this.brake = false;
 				this.speed = Math.min(speed + acceleration, MAX_SPEED);
 			}
 		} else if (controller.isDownKeyPressed()) {
 			if (this.speed > 0) {
+				this.brake = true;
 				this.speed = Math.max(speed - brake, -MAX_SPEED);
 			} else {
+				this.brake = false;
 				this.speed = Math.max(speed - acceleration, -MAX_SPEED);
 			}
 		} else if (controller.isSpaceKeyPressed()) {
+			this.brake = true;
 			float signum = Math.signum(this.speed) * -1;
 			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
 			this.speed = minMax.apply(speed + signum * brake, 0f);
 		} else {
+			this.brake = false;
 			float signum = Math.signum(this.speed) * -1;
 			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
 			this.speed = minMax.apply(speed + signum * rollout, 0f);
