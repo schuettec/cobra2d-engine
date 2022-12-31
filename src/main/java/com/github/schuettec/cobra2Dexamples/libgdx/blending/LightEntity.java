@@ -27,7 +27,7 @@ public class LightEntity extends TexturedEntity {
 		Point textureCenter = renderer.getTextureCenter(textureId);
 		LibGdxExtendedAccess extendedRenderer = renderer.extendedRenderer(LibGdxExtendedAccess.class);
 
-		extendedRenderer.drawLightTexture(textureId, 1f, (float) texturePosition.getRoundX(),
+		extendedRenderer.drawLightTexture(textureId, (float) texturePosition.getRoundX(),
 		    (float) texturePosition.getRoundY(), textureCenter.getRoundX(), textureCenter.getRoundY(),
 		    (float) textureDimension.width, (float) textureDimension.height, (float) this.getScale(),
 		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.width, textureDimension.height, false,

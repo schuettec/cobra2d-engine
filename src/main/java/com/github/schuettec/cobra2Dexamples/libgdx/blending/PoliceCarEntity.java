@@ -153,10 +153,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		        .scale(-1));
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
-		extendedRenderer.drawLightTexture(brakeLightTextureId, 1f, (float) leftLight.getRoundX(),
-		    (float) leftLight.getRoundY(), lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
-		    (float) lightTextureDimension.width, (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.width, lightTextureDimension.height, false, false);
+		extendedRenderer.drawLightTexture(brakeLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
+		    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
+		    lightTextureDimension.height, false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -172,10 +172,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
-		extendedRenderer.drawLightTexture(frontLightTextureId, 1f, (float) leftLight.getRoundX(),
-		    (float) leftLight.getRoundY(), lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
-		    (float) lightTextureDimension.width, (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.width, lightTextureDimension.height, false, false);
+		extendedRenderer.drawLightTexture(frontLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
+		    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
+		    lightTextureDimension.height, false, false);
 	}
 
 	@Override
