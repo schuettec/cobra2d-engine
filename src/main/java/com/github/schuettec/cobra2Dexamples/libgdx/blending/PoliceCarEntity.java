@@ -69,20 +69,23 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	 */
 	private float speed;
 
+	private boolean brake;
+
 	private String redLightTextureId;
 	private String blueLightTextureId;
 	private String frontLightTextureId;
 	private String brakeLightTextureId;
-	private boolean brake;
+	private String brakeLightColorTextureId;
 
 	public PoliceCarEntity(String carTextureId, String redLightTextureId, String blueLightTextureId,
-	    String frontLightTextureId, String brakeLightTextureId, Point worldCoordinates, int layer,
-	    boolean playerControlled) {
+	    String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId, Point worldCoordinates,
+	    int layer, boolean playerControlled) {
 		super(carTextureId, worldCoordinates, layer, playerControlled);
 		this.redLightTextureId = redLightTextureId;
 		this.blueLightTextureId = blueLightTextureId;
 		this.frontLightTextureId = frontLightTextureId;
 		this.brakeLightTextureId = brakeLightTextureId;
+		this.brakeLightColorTextureId = brakeLightColorTextureId;
 	}
 
 	@Override
@@ -90,6 +93,22 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		super.render(renderer, screenTranslation);
 
 		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), screenTranslation);
+
+		if (brake) {
+			Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
+			Dimension carTextureDimension = renderer.getTextureDimension(textureId);
+			Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8,
+			    Math2D.normalizeAngle(getDegrees()));
+			leftLight = leftLight.translate(screenTranslation)
+			    .translate(lightTextureCenter.clone()
+			        .scale(-1));
+
+			Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightColorTextureId);
+			renderer.drawTexture(brakeLightColorTextureId, 1f, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+			    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
+			    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
+			    lightTextureDimension.height, false, false);
+		}
 
 		if (lightsOn) {
 			if (blue) {
