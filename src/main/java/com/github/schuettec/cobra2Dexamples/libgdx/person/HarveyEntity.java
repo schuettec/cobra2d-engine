@@ -5,6 +5,7 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.World;
 
 public class HarveyEntity extends AnimationEntity {
@@ -17,13 +18,27 @@ public class HarveyEntity extends AnimationEntity {
 	private float turningSpeed;
 
 	private boolean running;
+	private String headTextureId;
 
-	public HarveyEntity(String textureId, String animationTextureId, Point worldCoordinates, int frameCols, int frameRows,
-	    int layer, boolean playerControlled) {
-		super(textureId, animationTextureId, worldCoordinates, frameCols, frameRows, ANIMATION_FRAME_DURATION, layer,
-		    playerControlled);
+	public HarveyEntity(String headTextureId, String staticAnimationTextureId, String animationTextureId,
+	    Point worldCoordinates, int frameCols, int frameRows, int layer, boolean playerControlled) {
+		super(staticAnimationTextureId, animationTextureId, worldCoordinates, frameCols, frameRows,
+		    ANIMATION_FRAME_DURATION, layer, playerControlled);
+		this.headTextureId = headTextureId;
 		this.stepSpeed = DEFAULT_STEP_SPEED;
 		this.turningSpeed = DEFAULT_TURNING_SPEED;
+	}
+
+	@Override
+	public void render(RendererAccess renderer, Point screenTranslation) {
+		super.render(renderer, screenTranslation);
+		renderHead(renderer, screenTranslation);
+	}
+
+	private void renderHead(RendererAccess renderer, Point screenTranslation) {
+		Point texturePosition = renderer.getTexturePosition(headTextureId, getPosition(), screenTranslation);
+		renderer.drawTexture(headTextureId, 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
+		    (float) getDegrees());
 	}
 
 	@Override

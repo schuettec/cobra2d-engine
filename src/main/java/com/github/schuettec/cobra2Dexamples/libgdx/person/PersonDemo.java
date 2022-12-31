@@ -34,7 +34,8 @@ public class PersonDemo {
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), 0, false);
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
 
-		HarveyEntity h = new HarveyEntity("walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0), 4, 4, 2, false);
+		HarveyEntity h = new HarveyEntity("head", "walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0), 4, 4, 2,
+		    false);
 		h.setLayer(5);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
@@ -49,6 +50,7 @@ public class PersonDemo {
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("walkcyle_harvey", new URL("resource:walkcyle_harvey.png"));
 		engine.addImage("walkcyle_harvey_static", new URL("resource:walkcyle_harvey_static.png"));
+		engine.addImage("head", new URL("resource:head.png"));
 
 		engine.start();
 	}
