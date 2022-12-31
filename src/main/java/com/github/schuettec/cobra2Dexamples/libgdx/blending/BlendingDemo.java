@@ -35,7 +35,7 @@ public class BlendingDemo {
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
 		// TexturedEntity t2 = new TexturedEntity("police", new Point(300, 300), 1, true);
 		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-light", "police-blue-light", "front-light",
-		    new Point(300, 300), 2, true);
+		    "brake-light", new Point(300, 300), 2, true);
 
 		// LightEntity l = new LightEntity("light", new Point(300, 300), 0, false);
 		// l.setLayer(4);
@@ -52,8 +52,9 @@ public class BlendingDemo {
 		engine.addImage("police", new URL("resource:cars/police.png"));
 		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
 		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
+		engine.addImage("front-light", new URL("resource:cars/front-light.png"));
+		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
 		engine.addImage("light", new URL("resource:light.png"));
-		engine.addImage("front-light", new URL("resource:front-light.png"));
 
 		engine.start();
 	}
