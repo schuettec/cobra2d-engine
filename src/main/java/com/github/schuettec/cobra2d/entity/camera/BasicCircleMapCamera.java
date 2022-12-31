@@ -13,7 +13,12 @@ import com.github.schuettec.cobra2d.world.World;
 
 public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractCamera {
 
+	private boolean drawEntityPoints;
+	private boolean drawCollisionShape;
+	private boolean drawCameraOutline;
+
 	private boolean playerControlled;
+
 	private Point screenPosition;
 
 	public BasicCircleMapCamera(Point worldCoordinates, double radius, boolean playerControlled) {
@@ -92,6 +97,37 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public Point getScreenPosition() {
 		return screenPosition;
+	}
+
+	@Override
+	public boolean isDrawEntityPoints() {
+		return drawEntityPoints;
+	}
+
+	@Override
+	public boolean isDrawCollisionShape() {
+		return drawCollisionShape;
+	}
+
+	@Override
+	public boolean isDrawCameraOutline() {
+		return drawCameraOutline;
+	}
+
+	public void setDrawEntityPoints(boolean drawEntityPoints) {
+		this.drawEntityPoints = drawEntityPoints;
+	}
+
+	public void setDrawCollisionShape(boolean drawCollisionShape) {
+		this.drawCollisionShape = drawCollisionShape;
+	}
+
+	public void setDrawCameraOutline(boolean drawCameraOutline) {
+		this.drawCameraOutline = drawCameraOutline;
+	}
+
+	public void setPlayerControlled(boolean playerControlled) {
+		this.playerControlled = playerControlled;
 	}
 
 }

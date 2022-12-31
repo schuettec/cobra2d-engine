@@ -18,6 +18,20 @@ import com.github.schuettec.cobra2d.world.World;
 
 public interface AbstractCamera extends Camera {
 
+	public boolean isDrawEntityPoints();
+
+	public boolean isDrawCollisionShape();
+
+	public boolean isDrawCameraOutline();
+
+	public void setDrawEntityPoints(boolean drawEntityPoints);
+
+	public void setDrawCollisionShape(boolean drawCollisionShape);
+
+	public void setDrawCameraOutline(boolean drawCameraOutline);
+
+	public void setPlayerControlled(boolean playerControlled);
+
 	public void drawCameraOutline(final RendererAccess renderer);
 
 	default void drawPoint(RendererAccess renderer, Point point, int radius, Color color) {
@@ -70,7 +84,8 @@ public interface AbstractCamera extends Camera {
 				HasCollisionShape hasCollisionShape = (HasCollisionShape) entity;
 				Shape entityShape = hasCollisionShape.getCollisionShape(true, true, true)
 				    .translate(cameraTranslation);
-				if (entityShape.isPointBased()) {
+
+				if (isDrawCollisionShape() && entityShape.isPointBased()) {
 					entityShape.getPoints()
 					    .stream()
 					    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
@@ -86,10 +101,12 @@ public interface AbstractCamera extends Camera {
 					    .forEach(p -> collisionPoints.add(p));
 				}
 			}
-			// Render entity base-point
-			Point entityPosition = entity.getPosition()
-			    .translate(cameraTranslation);
-			drawPoint(renderer, entityPosition, 2, Color.YELLOW);
+			if (isDrawEntityPoints()) {
+				// Render entity base-point
+				Point entityPosition = entity.getPosition()
+				    .translate(cameraTranslation);
+				drawPoint(renderer, entityPosition, 2, Color.YELLOW);
+			}
 		}
 
 		// Draw collision points
@@ -97,7 +114,10 @@ public interface AbstractCamera extends Camera {
 		    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
 
 		// Draw camera outline
-		drawCameraOutline(renderer);
+		if (isDrawCameraOutline()) {
+			// Draw camera outline
+			drawCameraOutline(renderer);
+		}
 
 	}
 

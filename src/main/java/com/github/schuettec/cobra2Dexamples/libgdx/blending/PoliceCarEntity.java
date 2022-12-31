@@ -1,5 +1,8 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 
+import static com.github.schuettec.cobra2d.math.Math2D.getCircle;
+import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
+
 import java.awt.Dimension;
 import java.util.function.BiFunction;
 
@@ -97,17 +100,12 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		if (brake) {
 			Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
 			Dimension carTextureDimension = renderer.getTextureDimension(textureId);
-			Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8,
-			    Math2D.normalizeAngle(getDegrees()));
+			Point leftLight = getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8, normalizeAngle(getDegrees()));
 			leftLight = leftLight.translate(screenTranslation)
 			    .translate(lightTextureCenter.clone()
 			        .scale(-1));
-
-			Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightColorTextureId);
 			renderer.drawTexture(brakeLightColorTextureId, 1f, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
-			    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
-			    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
-			    lightTextureDimension.height, false, false);
+			    (float) degrees);
 		}
 
 		if (lightsOn) {
@@ -131,15 +129,12 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightTextureId);
-
 		Dimension carTextureDimension = renderer.getTextureDimension(textureId);
 		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8,
 		    Math2D.normalizeAngle(getDegrees() + currentDegrees));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
 		        .scale(-1));
-
-		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
 		extendedRenderer.drawLightTexture(brakeLightTextureId, 1f, (float) leftLight.getRoundX(),
