@@ -103,6 +103,10 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		camera.viewportHeight = resolutionY;
 
 		loadTextures();
+
+		world.getRenderables()
+		    .stream()
+		    .forEach(r -> r.initialize(rendererAccess));
 	}
 
 	@Override
@@ -164,6 +168,11 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	@Override
 	public void finish() {
 		this.state = RendererState.FINISHED;
+
+		world.getRenderables()
+		    .stream()
+		    .forEach(r -> r.dispose());
+
 		shapeRenderer.dispose();
 		spriteRenderer.dispose();
 		disposeTextures();

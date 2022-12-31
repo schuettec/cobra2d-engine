@@ -110,7 +110,7 @@ public class WindowRenderer implements Renderer {
 
 	public WindowRenderer() {
 		try {
-			this.controller = new SwingController();
+			this.controller = new SwingController(this);
 			this.rendererAccess = new Java2DRendererAccess(this);
 			this.textures = new ImageMemory();
 

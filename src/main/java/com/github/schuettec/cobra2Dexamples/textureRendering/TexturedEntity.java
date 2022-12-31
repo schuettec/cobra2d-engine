@@ -30,19 +30,19 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 
 	@Override
 	public void render(RendererAccess renderer, Point screenTranslation) {
-		Dimension textureDimension = renderer.getTextureDimension(textureId);
-		createRectangleShape(textureDimension);
+		createCollisionShape(renderer);
 		/*
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
-		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), screenTranslation);
-		Point textureCenter = renderer.getTextureCenter(textureId);
-		renderer.drawTexture(textureId, 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
-		    textureCenter.getRoundX(), textureCenter.getRoundY(), (float) textureDimension.width,
-		    (float) textureDimension.height, (float) this.getScale(), (float) this.getScale(), (float) getDegrees(), 0, 0,
-		    textureDimension.width, textureDimension.height, false, false);
+		Point texturePosition = renderer.getTexturePosition(getTextureId(), getPosition(), screenTranslation);
+		renderer.drawTexture(getTextureId(), 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
+		    (float) getDegrees());
+	}
 
+	protected void createCollisionShape(RendererAccess renderer) {
+		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
+		createRectangleShape(textureDimension);
 	}
 
 	@Override
@@ -72,6 +72,10 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 
 	public void rotateRight() {
 		setDegrees(normalizeAngle(getDegrees() + 5));
+	}
+
+	public String getTextureId() {
+		return textureId;
 	}
 
 }

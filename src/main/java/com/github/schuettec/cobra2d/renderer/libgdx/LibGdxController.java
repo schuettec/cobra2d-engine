@@ -1,10 +1,16 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import static com.github.schuettec.cobra2d.math.Math2D.getAngle;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.camera.InputContext;
+import com.github.schuettec.cobra2d.math.Point;
 
 public class LibGdxController implements Controller {
+
+	private InputContext cameraRelativeInput;
 
 	@Override
 	public boolean isKeyPressed(int keyCode) {
@@ -83,5 +89,29 @@ public class LibGdxController implements Controller {
 	@Override
 	public boolean isMinusKeyPressed() {
 		return isKeyPressed(Keys.NUMPAD_SUBTRACT);
+	}
+
+	@Override
+	public Point getMousePositionOnScreen() {
+		int y = Gdx.input.getY();
+		return new Point(Gdx.input.getX(), Gdx.graphics.getHeight() - y);
+
+	}
+
+	@Override
+	public double getMouseDegreesRelativeToScreenCenter() {
+		int width = Gdx.graphics.getWidth();
+		int height = Gdx.graphics.getHeight();
+		return getAngle(new Point(width / 2.0, height / 2.0), getMousePositionOnScreen());
+	}
+
+	@Override
+	public void setCameraRelativeInput(InputContext input) {
+		this.cameraRelativeInput = input;
+	}
+
+	@Override
+	public InputContext getCameraRelativeInput() {
+		return cameraRelativeInput;
 	}
 }

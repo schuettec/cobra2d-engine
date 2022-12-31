@@ -1,8 +1,10 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import java.awt.Dimension;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.World;
 
@@ -24,5 +26,11 @@ public interface Camera extends Updatable, HasCollisionShape {
 	 *        this camera.
 	 */
 	void render(final RendererAccess renderer, final World map, final List<Collision> capturedEntities);
+
+	public Point getScreenPosition();
+
+	public void setScreenPosition(Point screenPosition);
+
+	public Dimension getDimension();
 
 }

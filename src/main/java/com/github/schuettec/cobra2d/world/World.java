@@ -15,6 +15,7 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
 import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.Collisions;
+import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
@@ -22,6 +23,7 @@ import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 
 /**
@@ -69,6 +71,8 @@ public class World {
 	private boolean calculateFullEntityCollisionPoints = true;
 
 	private Controller controller;
+
+	private Camera cameraForInput;
 
 	public World(Controller controller) {
 		this.controller = controller;
@@ -168,6 +172,9 @@ public class World {
 	}
 
 	public void update(float deltaTime) {
+		Camera cameraForInput = this.getCameraForInput();
+		InputContext input = getCameraRelativeInput(controller, cameraForInput);
+		controller.setCameraRelativeInput(input);
 		for (Updatable updatable : updateables) {
 			updatable.update(this, deltaTime, controller);
 		}
@@ -180,6 +187,15 @@ public class World {
 			List<Collision> cameraCollisions = map.getCollisions();
 			cameraCollisionMap.put(camera, cameraCollisions);
 		}
+	}
+
+	private InputContext getCameraRelativeInput(Controller controller, Camera cameraForInput) {
+		Point mousePositionOnScreen = controller.getMousePositionOnScreen();
+		Point mouseWorldCoordinates = cameraForInput.getPosition()
+		    .clone()
+		    .translate(mousePositionOnScreen)
+		    .translate(new Point(-cameraForInput.getDimension().width / 2.0, -cameraForInput.getDimension().height / 2.0));
+		return new InputContext(mouseWorldCoordinates);
 	}
 
 	public List<Collision> getCameraCollision(Camera camera) {
@@ -337,6 +353,14 @@ public class World {
 	public CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstaclesExcept,
 	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
 		return Collisions.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
+	public Camera getCameraForInput() {
+		return this.cameraForInput;
+	}
+
+	public void setCameraForInput(Camera camera) {
+		this.cameraForInput = camera;
 	}
 
 }

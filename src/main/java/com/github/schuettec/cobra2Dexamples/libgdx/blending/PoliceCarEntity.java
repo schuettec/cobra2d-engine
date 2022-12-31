@@ -72,6 +72,9 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	 */
 	private float speed;
 
+	/**
+	 * True if the car currently brakes.
+	 */
 	private boolean brake;
 
 	private String redLightTextureId;
@@ -99,7 +102,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	public void render(RendererAccess renderer, Point screenTranslation) {
 		super.render(renderer, screenTranslation);
 
-		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), screenTranslation);
+		Point texturePosition = renderer.getTexturePosition(getTextureId(), getPosition(), screenTranslation);
 
 		if (brake) {
 			renderBrakeLightColor(renderer, screenTranslation);
@@ -133,7 +136,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 	private void renderBrakeLightColor(RendererAccess renderer, Point screenTranslation) {
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
-		Dimension carTextureDimension = renderer.getTextureDimension(textureId);
+		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8, normalizeAngle(getDegrees()));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
@@ -145,7 +148,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightTextureId);
-		Dimension carTextureDimension = renderer.getTextureDimension(textureId);
+		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8,
 		    Math2D.normalizeAngle(getDegrees() + currentDegrees));
 		leftLight = leftLight.translate(screenTranslation)
@@ -163,7 +166,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
 		Point lightTextureCenter = renderer.getTextureCenter(frontLightTextureId);
 
-		Dimension textureDimension = renderer.getTextureDimension(textureId);
+		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = getCircle(getPosition(), textureDimension.width, normalizeAngle(getDegrees() + currentDegrees));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()

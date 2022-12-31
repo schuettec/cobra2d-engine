@@ -1,15 +1,30 @@
 package com.github.schuettec.cobra2d.renderer.j2d;
 
+import static com.github.schuettec.cobra2d.math.Math2D.getAngle;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.camera.InputContext;
+import com.github.schuettec.cobra2d.math.Point;
 
-public class SwingController implements Controller, KeyListener {
+public class SwingController implements Controller, KeyListener, MouseMotionListener {
 	private final boolean[] pressedKeys = new boolean[1000];
 	private boolean controlDown;
 	private boolean shiftDown;
 	private boolean altDown;
+	private Point mousePosition;
+
+	private WindowRenderer renderer;
+	private InputContext cameraRelativeInput;
+
+	public SwingController(WindowRenderer renderer) {
+		super();
+		this.renderer = renderer;
+	}
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
@@ -110,6 +125,38 @@ public class SwingController implements Controller, KeyListener {
 	@Override
 	public boolean isMinusKeyPressed() {
 		return isKeyPressed(KeyEvent.VK_MINUS);
+	}
+
+	@Override
+	public Point getMousePositionOnScreen() {
+		return mousePosition;
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		this.mousePosition = Point.ofAWT(e.getPoint());
+	}
+
+	@Override
+	public double getMouseDegreesRelativeToScreenCenter() {
+		int width = renderer.getWorldViewSize().width;
+		int height = renderer.getWorldViewSize().height;
+		return getAngle(new Point(width / 2.0, height / 2.0), getMousePositionOnScreen());
+	}
+
+	@Override
+	public void setCameraRelativeInput(InputContext input) {
+		this.cameraRelativeInput = input;
+	}
+
+	@Override
+	public InputContext getCameraRelativeInput() {
+		return cameraRelativeInput;
 	}
 
 }

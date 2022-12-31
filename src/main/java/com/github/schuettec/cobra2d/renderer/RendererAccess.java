@@ -39,13 +39,13 @@ public interface RendererAccess {
 
 	int getHeight();
 
-	void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
-	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
-	    boolean flipX, boolean flipY);
-
 	void drawTexture(String textureId, float alpha, float roundX, float roundY, float degrees);
 
 	void drawTexture(String textureId, float alpha, float roundX, float roundY, float degrees, float scale);
+
+	void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
+	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
+	    boolean flipX, boolean flipY);
 
 	Dimension getTextureDimension(String textureId);
 
@@ -60,4 +60,5 @@ public interface RendererAccess {
 		return position.translate(screenTranslation)
 		    .translate(textureCenterCorrection);
 	}
+
 }

@@ -3,7 +3,9 @@ package com.github.schuettec.cobra2d.renderer.libgdx;
 import java.awt.Dimension;
 
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -46,6 +48,22 @@ public class LibGdxExtendedAccess {
 		    .drawTexture(textureId, 1f, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY,
 		        srcWidth, srcHeight, flipX, flipY);
 		spriteRenderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	public Texture getTexture(String textureId) {
+		return renderer.getTexture(textureId);
+	}
+
+	public void drawTextureRegion(TextureRegion textureRegion, float alpha, float x, float y, float degrees) {
+		Point textureCenter = new Point(textureRegion.getRegionWidth() / 2.0, textureRegion.getRegionHeight() / 2.0);
+
+		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
+		spriteRenderer.begin();
+		com.badlogic.gdx.graphics.Color color = spriteRenderer.getColor();
+		spriteRenderer.setColor(color.r, color.g, color.b, alpha);
+		spriteRenderer.draw(textureRegion, x, y, (float) textureCenter.getRoundX(), (float) textureCenter.getRoundY(),
+		    (float) textureRegion.getRegionWidth(), (float) textureRegion.getRegionHeight(), 1f, 1f, (float) degrees);
+		spriteRenderer.end();
 	}
 
 }

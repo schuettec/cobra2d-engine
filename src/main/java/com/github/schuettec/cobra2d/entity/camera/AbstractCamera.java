@@ -32,8 +32,6 @@ public interface AbstractCamera extends Camera {
 
 	public void setPlayerControlled(boolean playerControlled);
 
-	public void drawCameraOutline(final RendererAccess renderer);
-
 	default void drawPoint(RendererAccess renderer, Point point, int radius, Color color) {
 		renderer.fillCircle(point.getRoundX(), point.getRoundY(), radius, color);
 	}
@@ -79,49 +77,69 @@ public interface AbstractCamera extends Camera {
 				renderable.render(renderer, cameraTranslation);
 			}
 
-			// Render entity shape and get collision points
-			if (entity instanceof HasCollisionShape) {
-				HasCollisionShape hasCollisionShape = (HasCollisionShape) entity;
-				Shape entityShape = hasCollisionShape.getCollisionShape(true, true, true)
-				    .translate(cameraTranslation);
-
-				if (isDrawCollisionShape() && entityShape.isPointBased()) {
-					entityShape.getPoints()
-					    .stream()
-					    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
-				}
-
-				CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
-				if (collisionMap.hasCollision(entity)) {
-					List<Collision> collisions = collisionMap.getCollision(entity);
-					collisions.stream()
-					    .flatMap(c -> c.getPoints()
-					        .stream())
-					    .map(p -> p.translate(cameraTranslation))
-					    .forEach(p -> collisionPoints.add(p));
-				}
-			}
-			if (isDrawEntityPoints()) {
-				// Render entity base-point
-				Point entityPosition = entity.getPosition()
-				    .translate(cameraTranslation);
-				drawPoint(renderer, entityPosition, 2, Color.YELLOW);
-			}
+			getCollisionPoints(collisionPoints, renderer, map, cameraTranslation, entity);
+			drawEntityPoint(renderer, cameraTranslation, entity);
 		}
 
-		// Draw collision points
-		collisionPoints.stream()
-		    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
+		drawCollisionPoints(renderer, collisionPoints);
 
+		drawCameraOutline(renderer);
+
+	}
+
+	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, World map,
+	    Point cameraTranslation, Entity entity) {
+		// Render entity shape and get collision points
+		if (isDrawCollisionShape() && entity instanceof HasCollisionShape) {
+			HasCollisionShape hasCollisionShape = (HasCollisionShape) entity;
+			Shape entityShape = hasCollisionShape.getCollisionShape(true, true, true)
+			    .translate(cameraTranslation);
+
+			drawCollisionShape(renderer, entityShape);
+
+			CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
+			if (collisionMap.hasCollision(entity)) {
+				List<Collision> collisions = collisionMap.getCollision(entity);
+				collisions.stream()
+				    .flatMap(c -> c.getPoints()
+				        .stream())
+				    .map(p -> p.translate(cameraTranslation))
+				    .forEach(p -> collisionPoints.add(p));
+			}
+		}
+	}
+
+	default void drawCollisionShape(final RendererAccess renderer, Shape entityShape) {
+		if (isDrawCollisionShape() && entityShape.isPointBased()) {
+			entityShape.getPoints()
+			    .stream()
+			    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
+		}
+	}
+
+	default void drawCameraOutline(final RendererAccess renderer) {
 		// Draw camera outline
 		if (isDrawCameraOutline()) {
 			// Draw camera outline
 			drawCameraOutline(renderer);
 		}
-
 	}
 
-	public Point getScreenPosition();
+	default void drawCollisionPoints(final RendererAccess renderer, List<Point> collisionPoints) {
+		// Draw collision points
+		if (isDrawCollisionShape()) {
+			collisionPoints.stream()
+			    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
+		}
+	}
 
-	public void setScreenPosition(Point screenPosition);
+	default void drawEntityPoint(final RendererAccess renderer, Point cameraTranslation, Entity entity) {
+		if (isDrawEntityPoints()) {
+			// Render entity base-point
+			Point entityPosition = entity.getPosition()
+			    .translate(cameraTranslation);
+			drawPoint(renderer, entityPosition, 2, Color.YELLOW);
+		}
+	}
+
 }

@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -140,6 +141,10 @@ public class Cobra2DEngine {
 
 	public Controller getController() {
 		return controller;
+	}
+
+	public void setCameraForInput(Camera camera) {
+		world.setCameraForInput(camera);
 	}
 
 }

@@ -1,6 +1,9 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
+import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import static java.util.Objects.isNull;
+
+import java.awt.Dimension;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
@@ -128,6 +131,11 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 
 	public void setPlayerControlled(boolean playerControlled) {
 		this.playerControlled = playerControlled;
+	}
+
+	@Override
+	public Dimension getDimension() {
+		return new Dimension(saveRound(getRadius()), saveRound(getRadius()));
 	}
 
 }

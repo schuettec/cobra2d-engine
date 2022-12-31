@@ -17,17 +17,17 @@ public class LightEntity extends TexturedEntity {
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
-		Dimension textureDimension = renderer.getTextureDimension(textureId);
+		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
 		createRectangleShape(textureDimension);
 		/*
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
-		Point texturePosition = renderer.getTexturePosition(textureId, getPosition(), position);
-		Point textureCenter = renderer.getTextureCenter(textureId);
+		Point texturePosition = renderer.getTexturePosition(getTextureId(), getPosition(), position);
+		Point textureCenter = renderer.getTextureCenter(getTextureId());
 		LibGdxExtendedAccess extendedRenderer = renderer.extendedRenderer(LibGdxExtendedAccess.class);
 
-		extendedRenderer.drawLightTexture(textureId, (float) texturePosition.getRoundX(),
+		extendedRenderer.drawLightTexture(getTextureId(), (float) texturePosition.getRoundX(),
 		    (float) texturePosition.getRoundY(), textureCenter.getRoundX(), textureCenter.getRoundY(),
 		    (float) textureDimension.width, (float) textureDimension.height, (float) this.getScale(),
 		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.width, textureDimension.height, false,
