@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
-import java.awt.Dimension;
 import java.util.Optional;
 
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -10,6 +9,7 @@ import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;

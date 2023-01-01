@@ -1,8 +1,7 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 
-import java.awt.Dimension;
-
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
@@ -29,9 +28,9 @@ public class LightEntity extends TexturedEntity {
 
 		extendedRenderer.drawLightTexture(getTextureId(), (float) texturePosition.getRoundX(),
 		    (float) texturePosition.getRoundY(), textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.width, (float) textureDimension.height, (float) this.getScale(),
-		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.width, textureDimension.height, false,
-		    false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getRoundHeight(), (float) this.getScale(),
+		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.getRoundWidth(),
+		    textureDimension.getRoundHeight(), false, false);
 
 	}
 

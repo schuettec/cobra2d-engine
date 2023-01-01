@@ -1,12 +1,11 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
-import java.awt.Dimension;
-
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicPolygonEntity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.renderer.Color;

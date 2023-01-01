@@ -1,9 +1,9 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
-import java.awt.Dimension;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;

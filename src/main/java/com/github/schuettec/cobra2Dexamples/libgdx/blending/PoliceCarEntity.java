@@ -3,12 +3,12 @@ package com.github.schuettec.cobra2Dexamples.libgdx.blending;
 import static com.github.schuettec.cobra2d.math.Math2D.getCircle;
 import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 
-import java.awt.Dimension;
 import java.util.function.BiFunction;
 
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
@@ -137,7 +137,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private void renderBrakeLightColor(RendererAccess renderer, Point screenTranslation) {
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
-		Point leftLight = getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8, normalizeAngle(getDegrees()));
+		Point leftLight = getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8, normalizeAngle(getDegrees()));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
 		        .scale(-1));
@@ -149,7 +149,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
-		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.width / 2.0 - 8,
+		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8,
 		    Math2D.normalizeAngle(getDegrees() + currentDegrees));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
@@ -157,9 +157,9 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
 		extendedRenderer.drawLightTexture(brakeLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
-		    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
-		    lightTextureDimension.height, false, false);
+		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
+		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
+		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -167,7 +167,8 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		Point lightTextureCenter = renderer.getTextureCenter(frontLightTextureId);
 
 		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
-		Point leftLight = getCircle(getPosition(), textureDimension.width, normalizeAngle(getDegrees() + currentDegrees));
+		Point leftLight = getCircle(getPosition(), textureDimension.getWidth(),
+		    normalizeAngle(getDegrees() + currentDegrees));
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
 		        .scale(-1));
@@ -176,9 +177,9 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
 		extendedRenderer.drawLightTexture(frontLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.width,
-		    (float) lightTextureDimension.height, (float) 1, 1, (float) degrees, 0, 0, lightTextureDimension.width,
-		    lightTextureDimension.height, false, false);
+		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
+		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
+		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override

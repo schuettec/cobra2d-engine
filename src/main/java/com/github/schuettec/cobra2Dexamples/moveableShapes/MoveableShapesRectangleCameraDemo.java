@@ -1,11 +1,11 @@
 package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
-import java.awt.Dimension;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 

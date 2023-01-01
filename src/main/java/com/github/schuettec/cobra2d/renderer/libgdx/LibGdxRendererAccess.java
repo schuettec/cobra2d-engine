@@ -1,11 +1,10 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
-import java.awt.Dimension;
-
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -25,8 +24,8 @@ public class LibGdxRendererAccess implements RendererAccess {
 		Point textureCenter = getTextureCenter(textureId);
 		Dimension textureDimension = getTextureDimension(textureId);
 		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.width, (float) textureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
-		    textureDimension.width, textureDimension.height, false, false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
+		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override
@@ -34,8 +33,8 @@ public class LibGdxRendererAccess implements RendererAccess {
 		Point textureCenter = getTextureCenter(textureId);
 		Dimension textureDimension = getTextureDimension(textureId);
 		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.width, (float) textureDimension.height, (float) scale, scale, (float) degrees, 0, 0,
-		    textureDimension.width, textureDimension.height, false, false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) scale, scale,
+		    (float) degrees, 0, 0, textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override

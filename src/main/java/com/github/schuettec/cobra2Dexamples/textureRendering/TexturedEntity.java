@@ -2,12 +2,11 @@ package com.github.schuettec.cobra2Dexamples.textureRendering;
 
 import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 
-import java.awt.Dimension;
-
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;

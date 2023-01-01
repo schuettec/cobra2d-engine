@@ -2,8 +2,6 @@ package com.github.schuettec.cobra2d.math;
 
 import static java.util.Arrays.asList;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.util.List;
@@ -13,10 +11,10 @@ import com.github.schuettec.cobra2d.entity.skills.Entity;
 public class Math2D {
 
 	public static List<EntityPoint> getRectangle(Dimension dimension) {
-		return getRectangle(dimension.width, dimension.height);
+		return getRectangle(dimension.getWidth(), dimension.getHeight());
 	}
 
-	public static List<EntityPoint> getRectangle(int width, int height) {
+	public static List<EntityPoint> getRectangle(double width, double height) {
 		double dX = Math2D.saveRound(width / 2.0);
 		double dY = Math2D.saveRound(height / 2.0);
 		EntityPoint ep1 = new EntityPoint(new Point(-dX, dY));
@@ -84,7 +82,7 @@ public class Math2D {
 	 * @return
 	 */
 	public static Point getRelativePointTranslation(final Point realWorld, final Rectangle viewport) {
-		final Point renderPos = new Point(realWorld.x - viewport.x, realWorld.y - viewport.y);
+		final Point renderPos = new Point(realWorld.x - viewport.getX(), realWorld.y - viewport.getY());
 		return renderPos;
 	}
 
@@ -317,7 +315,7 @@ public class Math2D {
 	public static Rectangle getHuellRect(final List<Point> punktliste) {
 		final Point x1 = new Point(Math2D.getPointMinX(punktliste).x, Math2D.getPointMinY(punktliste).y);
 		final Point x3 = new Point(Math2D.getPointMaxX(punktliste).x, Math2D.getPointMaxY(punktliste).y);
-		final Rectangle rect = new Rectangle(x1.getPoint(), new Dimension(saveRound(x3.x - x1.x), saveRound(x3.y - x1.y)));
+		final Rectangle rect = new Rectangle(x1, new Dimension(saveRound(x3.x - x1.x), saveRound(x3.y - x1.y)));
 		return rect;
 	}
 

@@ -2,8 +2,7 @@ package com.github.schuettec.cobra2d.renderer;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
-import java.awt.Dimension;
-
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -51,7 +50,7 @@ public interface RendererAccess {
 
 	default Point getTextureCenter(String textureId) {
 		Dimension textureDimension = getTextureDimension(textureId);
-		return new Point(saveRound(textureDimension.width / 2.0), saveRound(textureDimension.height / 2.0));
+		return new Point(saveRound(textureDimension.getWidth() / 2.0), saveRound(textureDimension.getHeight() / 2.0));
 	}
 
 	default Point getTexturePosition(String textureId, Point position, Point screenTranslation) {

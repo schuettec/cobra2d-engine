@@ -1,12 +1,12 @@
 package com.github.schuettec.cobra2Dexamples.physics;
 
-import java.awt.Dimension;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2Dexamples.DemoUtils;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
@@ -25,22 +25,22 @@ public class PhysicsBallsDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		// PhysicsWallEntity wall = new PhysicsWallEntity(new Point(0, 0), new Dimension(759, 0));
+		PhysicsWallEntity wall = new PhysicsWallEntity(new Point(300, 0), new Dimension(0.3, 10));
 
-		PhysicsBallEntity ball1 = new PhysicsBallEntity(new Point(0, 0), 30, 200, 35);
-		PhysicsBallEntity ball2 = new PhysicsBallEntity(new Point(0, 300), 30, 200, 85);
-		PhysicsBallEntity ball3 = new PhysicsBallEntity(new Point(300, 0), 30, 200, 115);
-		PhysicsBallEntity ball4 = new PhysicsBallEntity(new Point(300, 300), 30, 200, 125);
-		PhysicsBallEntity ball5 = new PhysicsBallEntity(new Point(70, 60), 30, 200, 35);
-		PhysicsBallEntity ball6 = new PhysicsBallEntity(new Point(70, 300), 30, 200, 85);
-		PhysicsBallEntity ball7 = new PhysicsBallEntity(new Point(140, 150), 30, 200, 115);
-		PhysicsBallEntity ball8 = new PhysicsBallEntity(new Point(180, 450), 30, 200, 125);
+		PhysicsBallEntity ball1 = new PhysicsBallEntity(new Point(0, 0), 0.03, 200000, 30);
+		// PhysicsBallEntity ball2 = new PhysicsBallEntity(new Point(0, 300), 30, 200, 85);
+		// PhysicsBallEntity ball3 = new PhysicsBallEntity(new Point(300, 0), 30, 200, 115);
+		// PhysicsBallEntity ball4 = new PhysicsBallEntity(new Point(300, 300), 30, 200, 125);
+		// PhysicsBallEntity ball5 = new PhysicsBallEntity(new Point(70, 60), 30, 200, 35);
+		// PhysicsBallEntity ball6 = new PhysicsBallEntity(new Point(70, 300), 30, 200, 85);
+		// PhysicsBallEntity ball7 = new PhysicsBallEntity(new Point(140, 150), 30, 200, 115);
+		// PhysicsBallEntity ball8 = new PhysicsBallEntity(new Point(180, 450), 30, 200, 125);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 
-		engine.addEntity( ball1, ball2, ball3, ball4, ball5, ball6, ball7, ball8);
+		engine.addEntity(wall, ball1);// , ball2, ball3, ball4, ball5, ball6, ball7, ball8);
 		engine.addEntity(camera);
 		engine.start();
 	}

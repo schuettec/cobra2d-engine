@@ -1,11 +1,10 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
-import java.awt.Dimension;
-
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -25,8 +24,8 @@ public class LibGdxExtendedAccess {
 		Dimension textureDimension = renderer.getRendererAccess()
 		    .getTextureDimension(textureId);
 		drawLightTexture(textureId, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.width, (float) textureDimension.height, (float) 1, 1, (float) degrees, 0, 0,
-		    textureDimension.width, textureDimension.height, false, false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
+		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float degrees, float scale) {
@@ -35,8 +34,8 @@ public class LibGdxExtendedAccess {
 		Dimension textureDimension = renderer.getRendererAccess()
 		    .getTextureDimension(textureId);
 		drawLightTexture(textureId, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.width, (float) textureDimension.height, (float) scale, scale, (float) degrees, 0, 0,
-		    textureDimension.width, textureDimension.height, false, false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) scale, scale,
+		    (float) degrees, 0, 0, textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float originX, float originY, float width,

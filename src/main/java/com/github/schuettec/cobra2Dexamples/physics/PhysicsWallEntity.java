@@ -1,7 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.physics;
 
-import java.awt.Dimension;
-
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -9,6 +7,7 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.physics.StaticBody;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -27,16 +26,13 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(getPosition().getRoundX(), getPosition().getRoundY());
 		bodyDef.angle = getRadians();
-		bodyDef.allowSleep = false;
-		bodyDef.angularDamping = 0f;
-		bodyDef.linearDamping = 0f;
 		return bodyDef;
 	}
 
 	@Override
 	public void createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
-		polygonShape.setAsBox(getDimension().width / 2.0f, getDimension().height / 2.0f);
+		polygonShape.setAsBox((float) getDimension().getWidth() / 2.0f, (float) getDimension().getHeight() / 2.0f);
 		body.createFixture(polygonShape, 5.0f);
 		this.body = body;
 	}

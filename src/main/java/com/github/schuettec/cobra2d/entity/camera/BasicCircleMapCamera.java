@@ -3,11 +3,10 @@ package com.github.schuettec.cobra2d.entity.camera;
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import static java.util.Objects.isNull;
 
-import java.awt.Dimension;
-
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;

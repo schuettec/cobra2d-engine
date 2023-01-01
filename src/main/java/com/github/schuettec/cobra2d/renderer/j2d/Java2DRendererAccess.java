@@ -1,9 +1,9 @@
 package com.github.schuettec.cobra2d.renderer.j2d;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.image.VolatileImage;
 
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;

@@ -4,7 +4,6 @@ import static com.github.schuettec.cobra2d.entity.skills.Skill.asSkill;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
-import java.awt.Dimension;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -32,6 +31,7 @@ import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 
@@ -237,7 +237,7 @@ public class Cobra2DWorld {
 		}
 		Point mouseWorldCoordinates = cameraPosition.clone()
 		    .translate(mousePositionOnScreen)
-		    .translate(new Point(-cameraDimension.width / 2.0, -cameraDimension.height / 2.0));
+		    .translate(new Point(-cameraDimension.getWidth() / 2.0, -cameraDimension.getHeight() / 2.0));
 		return new InputContext(mouseWorldCoordinates);
 	}
 

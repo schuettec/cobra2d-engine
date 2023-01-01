@@ -2,12 +2,12 @@ package com.github.schuettec.cobra2d.entity.camera;
 
 import static java.util.Objects.isNull;
 
-import java.awt.Dimension;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
@@ -51,11 +51,11 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenTranslation(renderer);
 		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
-		Point rectangleCorrection = new Point(-(getDimension().width / 2.0), -(getDimension().height / 2.0));
+		Point rectangleCorrection = new Point(-(getDimension().getWidth() / 2.0), -(getDimension().getHeight() / 2.0));
 		screenTranslation.translate(rectangleCorrection);
 		Dimension dimension = getDimension();
-		renderer.fillRectangle(screenTranslation.getRoundX() - 1, screenTranslation.getRoundY() - 1, dimension.width + 1,
-		    dimension.height + 1, Color.BLACK);
+		renderer.fillRectangle((float) screenTranslation.getRoundX() - 1, (float) screenTranslation.getRoundY() - 1,
+		    (float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
 	}
 
 	@Override

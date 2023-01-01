@@ -4,7 +4,6 @@ import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofLineBased;
 import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofNonLineBased;
 import static java.util.Objects.nonNull;
 
-import java.awt.Rectangle;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -22,6 +21,7 @@ import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
+import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.math.Shape;
 
 /**
@@ -439,8 +439,8 @@ public abstract class Collisions {
 		    .map(p -> p.getCoordinates())
 		    .collect(Collectors.toList());
 		Rectangle huellRect = Math2D.getHuellRect(points);
-		Point centerOfPolygon = new Point(huellRect.getLocation().x + Math2D.saveRound(huellRect.width / 2.0),
-		    huellRect.getLocation().y + Math2D.saveRound(huellRect.height / 2.0));
+		Point centerOfPolygon = new Point(huellRect.getX() + Math2D.saveRound(huellRect.getWidth() / 2.0),
+		    huellRect.getY() + Math2D.saveRound(huellRect.getHeight() / 2.0));
 		if (isPointInPolygon(centerOfPolygon, p2)) {
 			return Arrays.asList(ofNonLineBased(centerOfPolygon));
 		} else {
