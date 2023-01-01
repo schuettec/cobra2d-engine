@@ -228,7 +228,7 @@ public class Cobra2DWorld {
 		Point mousePositionOnScreen = controller.getMousePositionOnScreen();
 		Point cameraPosition = null;
 		Dimension cameraDimension = null;
-		if (nonNull(cameraPosition)) {
+		if (nonNull(cameraForInput)) {
 			cameraPosition = cameraForInput.getPosition();
 			cameraDimension = cameraForInput.getDimension();
 		} else {

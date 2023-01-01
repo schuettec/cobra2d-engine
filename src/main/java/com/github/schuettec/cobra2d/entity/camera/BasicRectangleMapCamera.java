@@ -1,11 +1,13 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
+import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.EntityPoint;
@@ -19,10 +21,12 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	private boolean drawEntityPoints;
 	private boolean drawCollisionShape;
 	private boolean drawCameraOutline;
+	private boolean drawMouse;
 
 	private boolean playerControlled;
 
 	private Point screenPosition;
+	private Point mousePosition;
 
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
@@ -48,6 +52,12 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
+	public void render(RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
+		AbstractCamera.super.render(renderer, map, capturedEntities);
+		drawMouse(renderer);
+	}
+
+	@Override
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenTranslation(renderer);
 		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
@@ -65,8 +75,19 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		    Color.GREEN);
 	}
 
+	protected void drawMouse(RendererAccess renderer) {
+		if (isDrawMouse() && nonNull(mousePosition)) {
+			// Point screenTranslation = getScreenTranslation(renderer).scale(-1);
+			Point toDraw = mousePosition;
+			System.out.println(toDraw);
+			drawPoint(renderer, toDraw, 5, Color.CORAL);
+		}
+	}
+
 	@Override
 	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+		this.mousePosition = controller.getMousePositionRelativeToInputCamera();
+
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
@@ -149,6 +170,14 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	public void setPlayerControlled(boolean playerControlled) {
 		this.playerControlled = playerControlled;
+	}
+
+	public boolean isDrawMouse() {
+		return drawMouse;
+	}
+
+	public void setDrawMouse(boolean drawMouse) {
+		this.drawMouse = drawMouse;
 	}
 
 }

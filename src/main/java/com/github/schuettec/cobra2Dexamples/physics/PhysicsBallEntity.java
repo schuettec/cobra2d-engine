@@ -16,6 +16,7 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Circle;
+import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -47,6 +48,8 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
 		    getPosition().getRoundY() * renderScaleConversionFactor);
+		// System.out.println("Wall entity (world): x=" + getPosition().getRoundX() + ", y=" + getPosition().getRoundY());
+		// System.out.println("Wall entity (physx): x=" + bodyDef.position.x + ", y=" + bodyDef.position.y);
 		bodyDef.angle = getRadians();
 		bodyDef.angularDamping = 0f;
 		bodyDef.linearDamping = 0f;
@@ -56,8 +59,13 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	@Override
 	public void createFixture(Body body) {
 		CircleShape shape = new CircleShape();
-		float radius = (float) getCollisionShape(true, false, false).getRadius() * renderScaleConversionFactor;
+		double worldRadius = getCollisionShape(true, false, false).getRadius();
+		float radius = (float) worldRadius * renderScaleConversionFactor;
 		shape.setRadius(radius);
+
+		// System.out.println("Wall entity (world): radius=" + worldRadius);
+		// System.out.println("Wall entity (physx): radius=" + radius);
+
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
@@ -80,6 +88,16 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		setDegrees(degrees);
 		setPosition(saveRound(position.x / renderScaleConversionFactor),
 		    saveRound(position.y / renderScaleConversionFactor));
+		// System.out.println("Wall entity (world): x=" + getPosition().getRoundX() + ", y=" + getPosition().getRoundY());
+		// System.out.println("Wall entity (physx): x=" + position.x + ", y=" + position.y);
+
+		Point mousePoint = controller.getMousePositionRelativeToInputCamera();
+		boolean inCircle = Math2D.isInCircle(mousePoint, getPosition(), getRadius());
+		if (inCircle) {
+			System.out.println("IS IN ");
+			Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(getDegrees(), forceToApply);
+			this.body.applyForce(vForce, new Vector2(), true);
+		}
 	}
 
 	@Override
