@@ -30,7 +30,7 @@ import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererException;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class WindowRenderer implements Renderer {
 
@@ -92,7 +92,7 @@ public class WindowRenderer implements Renderer {
 		bufferGraphics.scale(1, -1);
 		// To be compatible with OpenGL the coordinate system is changes to y-up
 		// In OpenGL the coordinate system's origin is at the bottem left corner of the screen.
-		World map = engine.getWorld();
+		Cobra2DWorld map = engine.getWorld();
 		Set<Camera> cameras = map.getCameras();
 		for (Camera camera : cameras) {
 			List<Collision> capturedEntities = map.getCameraCollision(camera);

@@ -2,14 +2,22 @@ package com.github.schuettec.cobra2d.world;
 
 import static com.github.schuettec.cobra2d.entity.skills.Skill.asSkill;
 import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
+import java.awt.Dimension;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
@@ -23,25 +31,32 @@ import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 
 /**
  * This is the map data structure. This class makes all {@link Entity} objects
- * accessible that are currently existing in the world. The {@link World} also
+ * accessible that are currently existing in the world. The {@link Cobra2DWorld} also
  * manages all the collisions for the current frame.
  *
  *
  * <p>
  * <b>Note: The map is intended to be used in the rendering thread or at least
- * in one thread managing all the entities calls. Therefore this {@link World} is
+ * in one thread managing all the entities calls. Therefore this {@link Cobra2DWorld} is
  * not thread safe.</b>
  * </p>
  *
  * @author Chris
  *
  */
-public class World {
+public class Cobra2DWorld {
+
+	private static final float TIME_STEP = 1 / 165f;
+
+	private static final int VELOCITY_ITERATIONS = 6;
+
+	private static final int POSITION_ITERATIONS = 2;
 
 	// this would be a useful regression test
 	// public static void main(String[] args) {
@@ -60,12 +75,20 @@ public class World {
 
 	protected Set<Entity> allEntities;
 
+	protected Set<Obstacle> physicEntities;
+
 	protected Set<Obstacle> obstacles;
 	protected Set<Updatable> updateables;
 	protected Set<Renderable> renderables;
 	protected Set<Camera> cameras;
+	protected Set<PhysicBody> physicBodies;
 
-	private java.util.Map<Camera, List<Collision>> cameraCollisionMap;
+	/**
+	 * Holds the listeners that are notified if an entity with the specified skill was added/removed.
+	 */
+	protected Map<Class<? extends Skill>, WorldListener> listenersBySkills = new Hashtable<>();
+
+	private Map<Camera, List<Collision>> cameraCollisionMap;
 
 	private boolean calculateFullCameraCollisionPoints = false;
 	private boolean calculateFullEntityCollisionPoints = true;
@@ -74,52 +97,44 @@ public class World {
 
 	private Camera cameraForInput;
 
-	public World(Controller controller) {
+	private World physicsWorld;
+	private float accumulator = 0;
+
+	public Cobra2DWorld(Controller controller) {
+		// Create a default physics world with zero gravity
+		this.physicsWorld = new World(new Vector2(), true);
+
 		this.controller = controller;
 		this.allEntities = new HashSet<Entity>();
 		this.obstacles = new HashSet<>();
 		this.updateables = new HashSet<>();
 		this.renderables = new HashSet<>();
+		this.physicBodies = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
+
+		this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
+			@Override
+			public void entityAdded(Entity entity) {
+				PhysicBody physicBody = (PhysicBody) entity;
+				BodyDef bodyDef = physicBody.createBodyDef();
+				Body body = physicsWorld.createBody(bodyDef);
+				physicBody.createFixture(body);
+			}
+
+			@Override
+			public void entityRemoved(Entity entity) {
+				PhysicBody physicBody = (PhysicBody) entity;
+				Body body = physicBody.getBody();
+				physicsWorld.destroyBody(body);
+			}
+
+		});
 	}
 
-	// public class AdHocDetection {
-	// public List<CollisionDetail> getCollision(Shape shape, boolean all) {
-	// return Collisions.detectFirstCollision(shape, obstacles, all);
-	// }
-	//
-	// public List<CollisionDetail> getCollision(Shape shape, Set<? extends Obstacle> ignore, boolean all) {
-	// Set<? extends Obstacle> toCheck = filter(ignore);
-	// return Collisions.detectFirstCollision(shape, toCheck, all);
-	// }
-	//
-	// public boolean hasCollision(Shape shape, boolean all) {
-	// return Collisions.detectFirstCollision(shape, obstacles, all) != null;
-	// }
-	//
-	// public boolean hasCollision(Shape shape, Set<? extends Obstacle> ignore, boolean all) {
-	// Set<? extends Obstacle> toCheck = filter(ignore);
-	// return Collisions.detectFirstCollision(shape, toCheck, all) != null;
-	// }
-	//
-	// private Set<? extends Obstacle> filter(Set<? extends Obstacle> ignore) {
-	// Set<? extends Obstacle> toCheck = new HashSet<>(obstacles);
-	// if (ignore != null) {
-	// toCheck.removeAll(ignore);
-	// }
-	// return toCheck;
-	// }
-	// }
-	//
-	// /**
-	// * @return Returns an object that supports ad-hoc collision detection functions.
-	// * This object is separated from the map because it supports time
-	// * consuming features that are not recommended to be used heavily.
-	// */
-	// public AdHocDetection adHocDetection() {
-	// return new AdHocDetection();
-	// }
+	public void setGravity(float xForce, float yForce) {
+		this.physicsWorld.setGravity(new Vector2(xForce, yForce));
+	}
 
 	public void addEntity(Entity... entities) {
 		for (Entity e : entities) {
@@ -137,6 +152,7 @@ public class World {
 		addOnDemand(Obstacle.class, this.obstacles, entity);
 		addOnDemand(Updatable.class, this.updateables, entity);
 		addOnDemand(Renderable.class, this.renderables, entity);
+		addOnDemand(PhysicBody.class, this.physicBodies, entity);
 	}
 
 	public void removeEntity(Entity... entities) {
@@ -155,23 +171,31 @@ public class World {
 		removeOnDemand(Updatable.class, this.updateables, entity);
 		removeOnDemand(Renderable.class, this.renderables, entity);
 		removeOnDemand(Camera.class, this.cameras, entity);
+		removeOnDemand(PhysicBody.class, this.physicBodies, entity);
 	}
 
 	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> obstacles, Entity entity) {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.add(asSkill.get());
+			notifyAdd(skillType, entity);
 		}
+	}
+
+	private Optional<WorldListener> skillWorldlistener(Class<? extends Skill> skillType) {
+		return Optional.ofNullable(listenersBySkills.get(skillType));
 	}
 
 	private <S extends Skill> void removeOnDemand(Class<S> skillType, Set<S> obstacles, Entity entity) {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.remove(asSkill.get());
+			notifyRemove(skillType, entity);
 		}
 	}
 
-	public void update(float deltaTime) {
+	public void update(float requestedFps, float deltaTime) {
+		doPhysicsStep(deltaTime);
 		Camera cameraForInput = this.getCameraForInput();
 		InputContext input = getCameraRelativeInput(controller, cameraForInput);
 		controller.setCameraRelativeInput(input);
@@ -189,12 +213,31 @@ public class World {
 		}
 	}
 
+	private void doPhysicsStep(float deltaTime) {
+		// fixed time step
+		// max frame time to avoid spiral of death (on slow devices)
+		float frameTime = Math.min(deltaTime, 0.25f);
+		accumulator += frameTime;
+		while (accumulator >= TIME_STEP) {
+			physicsWorld.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+			accumulator -= TIME_STEP;
+		}
+	}
+
 	private InputContext getCameraRelativeInput(Controller controller, Camera cameraForInput) {
 		Point mousePositionOnScreen = controller.getMousePositionOnScreen();
-		Point mouseWorldCoordinates = cameraForInput.getPosition()
-		    .clone()
+		Point cameraPosition = null;
+		Dimension cameraDimension = null;
+		if (nonNull(cameraPosition)) {
+			cameraPosition = cameraForInput.getPosition();
+			cameraDimension = cameraForInput.getDimension();
+		} else {
+			cameraPosition = new Point(0, 0);
+			cameraDimension = new Dimension(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		}
+		Point mouseWorldCoordinates = cameraPosition.clone()
 		    .translate(mousePositionOnScreen)
-		    .translate(new Point(-cameraForInput.getDimension().width / 2.0, -cameraForInput.getDimension().height / 2.0));
+		    .translate(new Point(-cameraDimension.width / 2.0, -cameraDimension.height / 2.0));
 		return new InputContext(mouseWorldCoordinates);
 	}
 
@@ -361,6 +404,14 @@ public class World {
 
 	public void setCameraForInput(Camera camera) {
 		this.cameraForInput = camera;
+	}
+
+	private <S extends Skill> void notifyAdd(Class<S> skillType, Entity entity) {
+		skillWorldlistener(skillType).ifPresent(l -> l.entityAdded(entity));
+	}
+
+	private <S extends Skill> void notifyRemove(Class<S> skillType, Entity entity) {
+		skillWorldlistener(skillType).ifPresent(l -> l.entityRemoved(entity));
 	}
 
 }

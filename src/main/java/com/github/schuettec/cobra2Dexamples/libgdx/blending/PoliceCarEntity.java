@@ -16,7 +16,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable, Updatable {
 
@@ -182,7 +182,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	}
 
 	@Override
-	public void update(World map, float deltaTime, Controller controller) {
+	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
 		float acceleration = MAX_SPEED / SECONDS_TO_MAX_SPEED * deltaTime;
 		float brake = MAX_SPEED / SECONDS_TO_BRAKE * deltaTime;
 		float rollout = MAX_SPEED / SECONDS_TO_ROLL_OUT * deltaTime;

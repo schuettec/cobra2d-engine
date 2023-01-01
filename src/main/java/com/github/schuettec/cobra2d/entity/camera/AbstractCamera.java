@@ -14,7 +14,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public interface AbstractCamera extends Camera {
 
@@ -54,7 +54,7 @@ public interface AbstractCamera extends Camera {
 		return sorted;
 	}
 
-	default void render(final RendererAccess renderer, World map, List<Collision> capturedEntities) {
+	default void render(final RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
 		capturedEntities = sortByLayer(capturedEntities);
 
 		Point screenTranslation = getScreenTranslation(renderer);
@@ -87,7 +87,7 @@ public interface AbstractCamera extends Camera {
 
 	}
 
-	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, World map,
+	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, Cobra2DWorld map,
 	    Point cameraTranslation, Entity entity) {
 		// Render entity shape and get collision points
 		if (isDrawCollisionShape() && entity instanceof HasCollisionShape) {

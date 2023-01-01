@@ -1,7 +1,7 @@
 package com.github.schuettec.cobra2Dexamples.bouncingBalls;
 
 import java.util.HashSet;
-import java.util.Optional;
+import java.util.List;
 import java.util.Set;
 
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -10,6 +10,7 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
 import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
@@ -18,7 +19,7 @@ import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class BallEntity extends BasicCircleEntity implements CircleRenderable, Updatable, Obstacle {
 
@@ -31,7 +32,7 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 	}
 
 	@Override
-	public void update(World map, float deltaTime, Controller controller) {
+	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
 		double frameSpeed = currentSpeed * deltaTime;
 
 		// Calculate the collision shape at next frame
@@ -39,57 +40,61 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 		Circle nextShape = getCollisionShape(true, true, false).translate(nextPosition);
 		CollisionMap collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
 
-		// CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
+		List<Collision> collisions = collisionMap.getCollisions();
+		for (Collision collision : collisions) {
+			HasCollisionShape opponent = collision.getOpponent();
+			if (opponent instanceof WallEntity) {
+				Set<Line> alreadyManagedLines = new HashSet<>();
+				for (CollisionDetail c : collision.getCollisionDetails()) {
+					// Berechne Einfallswinkel.
+					Line opponentLine = c.getOpponentLine();
 
-		Optional<Collision> wallCollision = collisionMap.getCollisions()
-		    .stream()
-		    .filter(c -> c.getOpponent() instanceof WallEntity)
-		    .findFirst();
+					if (!alreadyManagedLines.contains(opponentLine)) {
+						alreadyManagedLines.add(opponentLine);
 
-		if (wallCollision.isPresent()) {
-			Collision collision = wallCollision.get();
+						// Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
+						// Line movement = new Line(getPosition(), nextPosition);
 
-			Set<Line> alreadyManagedLines = new HashSet<>();
-			for (CollisionDetail c : collision.getCollisionDetails()) {
-				// Berechne Einfallswinkel.
-				Line opponentLine = c.getOpponentLine();
+						double myAngle = getDegrees();
+						double opponentAngle = Math2D.getAngle(opponentLine.getX1(), opponentLine.getX2());
 
-				if (!alreadyManagedLines.contains(opponentLine)) {
-					alreadyManagedLines.add(opponentLine);
+						double normalizedMyAngle = modulo360(myAngle - opponentAngle);
 
-					// Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
-					// Line movement = new Line(getPosition(), nextPosition);
-
-					double myAngle = getDegrees();
-					double opponentAngle = Math2D.getAngle(opponentLine.getX1(), opponentLine.getX2());
-
-					double normalizedMyAngle = modulo360(myAngle - opponentAngle);
-
-					double newAngle = 360 - normalizedMyAngle;
-					double resultAngle = modulo360(newAngle + opponentAngle);
-					setDegrees(resultAngle);
+						double newAngle = 360 - normalizedMyAngle;
+						double resultAngle = modulo360(newAngle + opponentAngle);
+						setDegrees(resultAngle);
+					}
 				}
+			} else {
+				// Meh physics engine?
+				// double myAngle = getDegrees();
+				// double opponentAngle = opponent.getDegrees();
+				//
+				// double normalizedMyAngle = modulo360(myAngle - opponentAngle);
+				// double newAngle = 360 - normalizedMyAngle;
+				// double resultAngle = modulo360(newAngle + opponentAngle);
+				// setDegrees(resultAngle);
 			}
 		}
 
-		// Calculate the collision shape at next frame
+		// // Calculate the collision shape at next frame
+		// nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
+		// nextShape = getCollisionShape(true, true, false).translate(nextPosition);
+		//
+		// collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
+		// wallCollision = collisionMap.getCollisions()
+		// .stream()
+		// .filter(c -> c.getOpponent() instanceof WallEntity)
+		// .findFirst();
+		//
+		// if (wallCollision.isPresent()) {
+		// setDegrees(modulo360(getDegrees() + 15));
+		// nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
+		// this.setPosition(nextPosition);
+		// } else {
 		nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
-		nextShape = getCollisionShape(true, true, false).translate(nextPosition);
-
-		collisionMap = map.detectCollision(nextShape, map.getObstaclesExcept(this), true, true, false);
-		wallCollision = collisionMap.getCollisions()
-		    .stream()
-		    .filter(c -> c.getOpponent() instanceof WallEntity)
-		    .findFirst();
-
-		if (wallCollision.isPresent()) {
-			setDegrees(modulo360(getDegrees() + 15));
-			nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
-			this.setPosition(nextPosition);
-		} else {
-			nextPosition = Math2D.getCircle(getPosition(), frameSpeed, getDegrees());
-			this.setPosition(nextPosition);
-		}
+		this.setPosition(nextPosition);
+		// }
 	}
 
 	private double modulo360(double d) {
@@ -102,9 +107,9 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 	}
 
 	@Override
-	public void render(RendererAccess renderer, Point position) {
+	public void render(RendererAccess renderer, Point screenTranslation) {
 		Circle collisionShape = getCollisionShapeInWorldCoordinates();
-		renderCircle(collisionShape, renderer, position);
+		renderCircle(collisionShape, renderer, screenTranslation);
 	}
 
 	@Override

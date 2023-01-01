@@ -13,7 +13,7 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class WallEntity extends BasicRectangleEntity implements PolygonRenderable, Obstacle, Updatable {
 
@@ -37,7 +37,7 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 	}
 
 	@Override
-	public void update(World map, float deltaTime, Controller controller) {
+	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
 
 		CollisionMap collisionMap = map.detectCollision(this, map.getObstaclesExcept(this), true, true, false);
 

@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -54,6 +55,13 @@ public interface Entity extends Skill {
 	 * @return Returns the current rotation of the entity.
 	 */
 	public double getDegrees();
+
+	/**
+	 * @return Returns the rotation of this entity in radians.
+	 */
+	default float getRadians() {
+		return Math2D.toRadians(getDegrees());
+	}
 
 	/**
 	 * Sets the rotation like {@link #setDegrees(double)}.

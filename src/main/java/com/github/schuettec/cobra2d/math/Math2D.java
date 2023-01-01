@@ -389,4 +389,12 @@ public class Math2D {
 		return d;
 	}
 
+	/**
+	 * @param degrees Degrees.
+	 * @return Returns radians.
+	 */
+	public static float toRadians(double degrees) {
+		return (float) Math.toRadians(degrees);
+	}
+
 }

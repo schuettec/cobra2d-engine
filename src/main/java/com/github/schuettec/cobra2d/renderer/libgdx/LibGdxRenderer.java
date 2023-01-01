@@ -28,7 +28,7 @@ import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererException;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
@@ -39,12 +39,13 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	private Cobra2DEngine engine;
-	private World world;
+	private Cobra2DWorld world;
 
 	private RendererState state;
 
 	private int resolutionX;
 	private int resolutionY;
+	private int refreshRate;
 
 	private LibGdxRendererAccess rendererAccess;
 	private LibGdxController controller;
@@ -67,6 +68,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		this.world = engine.getWorld();
 		this.resolutionX = resolutionX;
 		this.resolutionY = resolutionY;
+		this.refreshRate = refreshRate;
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		// Anti-Aliasing here ------------------------vv
@@ -116,7 +118,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		if (controller.isEscapePressed()) {
 			engine.shutdownEngine();
 		} else {
-			world.update(deltaTime);
+			world.update(refreshRate, deltaTime);
 			camera.update();
 
 			ScreenUtils.clear(Color.BLACK);

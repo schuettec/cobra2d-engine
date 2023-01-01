@@ -20,13 +20,13 @@ import com.github.schuettec.cobra2d.resource.URLClasspathHandler;
 import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
 import com.github.schuettec.cobra2d.resource.URLResourceTypeHandler;
 import com.github.schuettec.cobra2d.resource.URLStreamHandlerRegistry;
-import com.github.schuettec.cobra2d.world.World;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class Cobra2DEngine {
 
 	private Cobra2DProperties cobra2DConfig;
 	private Renderer renderer;
-	private World world;
+	private Cobra2DWorld world;
 	private ActiveWorldUpdater worldUpdater;
 	private Controller controller;
 
@@ -45,7 +45,7 @@ public class Cobra2DEngine {
 
 		this.renderer = createRenderer(rendererType);
 		this.controller = renderer.getController();
-		this.world = new World(controller);
+		this.world = new Cobra2DWorld(controller);
 
 		boolean createWorldUpdater = cobra2DConfig.isCreateWorldUpdater();
 		if (createWorldUpdater) {
@@ -79,7 +79,7 @@ public class Cobra2DEngine {
 		return renderer;
 	}
 
-	public World getWorld() {
+	public Cobra2DWorld getWorld() {
 		return this.world;
 	}
 
