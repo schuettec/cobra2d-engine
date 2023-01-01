@@ -79,7 +79,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		if (isDrawMouse() && nonNull(mousePosition)) {
 			// Point screenTranslation = getScreenTranslation(renderer).scale(-1);
 			Point toDraw = mousePosition;
-			System.out.println(toDraw);
 			drawPoint(renderer, toDraw, 5, Color.CORAL);
 		}
 	}
