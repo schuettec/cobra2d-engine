@@ -15,8 +15,8 @@ public class Math2D {
 	}
 
 	public static List<EntityPoint> getRectangle(double width, double height) {
-		double dX = Math2D.saveRound(width / 2.0);
-		double dY = Math2D.saveRound(height / 2.0);
+		double dX = Math2D.saveRound(width / 2.0d);
+		double dY = Math2D.saveRound(height / 2.0d);
 		EntityPoint ep1 = new EntityPoint(new Point(-dX, dY));
 		EntityPoint ep2 = new EntityPoint(new Point(dX, dY));
 		EntityPoint ep3 = new EntityPoint(new Point(+dX, -dY));
@@ -32,8 +32,8 @@ public class Math2D {
 	 * @return Returns the middlepoint in the picture
 	 */
 	public static Point getMiddlepoint(final BufferedImage image) {
-		final double middleX = image.getWidth() / 2.0;
-		final double middleY = image.getHeight() / 2.0;
+		final double middleX = image.getWidth() / 2.0d;
+		final double middleY = image.getHeight() / 2.0d;
 		final Point middleInPicture = new Point(middleX, middleY);
 		return middleInPicture;
 	}
@@ -49,7 +49,7 @@ public class Math2D {
 		final double h = min;
 		min = Math.min(min, max);
 		max = Math.max(h, max);
-		return (Math.random() * (max - min + 1) + min);
+		return (Math.random() * (max - min + 1d) + min);
 	}
 
 	// /**
@@ -121,7 +121,7 @@ public class Math2D {
 		    .getScreenSize().width;
 		final double sy = Toolkit.getDefaultToolkit()
 		    .getScreenSize().height;
-		return new Point((sx - width) / 2, (sy - height) / 2);
+		return new Point((sx - width) / 2d, (sy - height) / 2d);
 	}
 
 	public static Point getMittelpunkt(final Point start, final Point ende) {
@@ -315,7 +315,7 @@ public class Math2D {
 	public static Rectangle getHuellRect(final List<Point> punktliste) {
 		final Point x1 = new Point(Math2D.getPointMinX(punktliste).x, Math2D.getPointMinY(punktliste).y);
 		final Point x3 = new Point(Math2D.getPointMaxX(punktliste).x, Math2D.getPointMaxY(punktliste).y);
-		final Rectangle rect = new Rectangle(x1, new Dimension(saveRound(x3.x - x1.x), saveRound(x3.y - x1.y)));
+		final Rectangle rect = new Rectangle(x1, new Dimension(x3.x - x1.x, x3.y - x1.y));
 		return rect;
 	}
 

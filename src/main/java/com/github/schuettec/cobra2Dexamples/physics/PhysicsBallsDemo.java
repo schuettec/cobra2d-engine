@@ -25,9 +25,9 @@ public class PhysicsBallsDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		PhysicsWallEntity wall = new PhysicsWallEntity(new Point(300, 0), new Dimension(0.3, 10));
+		PhysicsWallEntity wall = new PhysicsWallEntity(new Point(300, 0), new Dimension(100, 799));
 
-		PhysicsBallEntity ball1 = new PhysicsBallEntity(new Point(0, 0), 0.03, 200000, 30);
+		PhysicsBallEntity ball1 = new PhysicsBallEntity(new Point(0, 0), 30, 20000, 30);
 		// PhysicsBallEntity ball2 = new PhysicsBallEntity(new Point(0, 300), 30, 200, 85);
 		// PhysicsBallEntity ball3 = new PhysicsBallEntity(new Point(300, 0), 30, 200, 115);
 		// PhysicsBallEntity ball4 = new PhysicsBallEntity(new Point(300, 300), 30, 200, 125);

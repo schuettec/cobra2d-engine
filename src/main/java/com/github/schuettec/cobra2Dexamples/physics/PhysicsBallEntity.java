@@ -33,7 +33,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a 3cm radius ball on the screen that has
 	 * 30 Pixels radius.
 	 */
-	private double renderScaleConversionFactor = 1000;
+	private float renderScaleConversionFactor = 1 / 100f;
 
 	public PhysicsBallEntity(Point worldCoordinates, double radius, double forceToApply, double degrees) {
 		super(worldCoordinates, radius);
@@ -45,7 +45,8 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	public BodyDef createBodyDef() {
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(getPosition().getRoundX(), getPosition().getRoundY());
+		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
+		    getPosition().getRoundY() * renderScaleConversionFactor);
 		bodyDef.angle = getRadians();
 		bodyDef.angularDamping = 0f;
 		bodyDef.linearDamping = 0f;
@@ -55,7 +56,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	@Override
 	public void createFixture(Body body) {
 		CircleShape shape = new CircleShape();
-		float radius = (float) getCollisionShape(true, false, false).getRadius();
+		float radius = (float) getCollisionShape(true, false, false).getRadius() * renderScaleConversionFactor;
 		shape.setRadius(radius);
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
@@ -74,16 +75,16 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	@Override
 	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
 		Vector2 position = body.getPosition();
-		System.out.println(position);
 		float radians = body.getAngle();
 		double degrees = Math.toDegrees(radians);
 		setDegrees(degrees);
-		setPosition(saveRound(position.x), saveRound(position.y));
+		setPosition(saveRound(position.x / renderScaleConversionFactor),
+		    saveRound(position.y / renderScaleConversionFactor));
 	}
 
 	@Override
 	public void render(RendererAccess renderer, Point screenTranslation) {
-		Circle collisionShape = getCollisionShapeInWorldCoordinates().scale(renderScaleConversionFactor);
+		Circle collisionShape = getCollisionShapeInWorldCoordinates();
 		renderCircle(collisionShape, renderer, screenTranslation);
 	}
 
