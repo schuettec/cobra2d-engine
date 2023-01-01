@@ -34,8 +34,8 @@ public class LibGdxExtendedAccess {
 		Dimension textureDimension = renderer.getRendererAccess()
 		    .getTextureDimension(textureId);
 		drawLightTexture(textureId, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) scale, scale,
-		    (float) degrees, 0, 0, textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
+		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), scale, scale, (float) degrees, 0, 0,
+		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float originX, float originY, float width,

@@ -34,7 +34,7 @@ public class AnimationDemo {
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
 
-		AnimationEntity h = new AnimationEntity("walkcyle_harvey", "walkcyle_harvey_static", new Point(500, 500), 4, 4,
+		AnimationEntity h = new AnimationEntity("walkcyle_harvey_static", "walkcyle_harvey", new Point(200, 200), 4, 4,
 		    0.05f, 2, false);
 		h.setLayer(2);
 

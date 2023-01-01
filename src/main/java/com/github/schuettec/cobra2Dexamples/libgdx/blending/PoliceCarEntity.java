@@ -114,15 +114,18 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 			if (blue) {
 				renderer.drawTexture(blueLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
 				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
-				extendedRenderer.drawLightTexture(policeBlueAlarmLightTextureId, 1f,
+
+				extendedRenderer.drawLightTexture(policeBlueAlarmLightTextureId,
 				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees());
+				    (float) getDegrees(), 1f);
+
 			} else {
 				renderer.drawTexture(redLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
 				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
-				extendedRenderer.drawLightTexture(policeRedAlarmLightTextureId, 1f,
+
+				extendedRenderer.drawLightTexture(policeRedAlarmLightTextureId,
 				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees());
+				    (float) getDegrees(), 1f);
 			}
 		}
 
