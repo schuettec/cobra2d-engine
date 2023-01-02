@@ -5,7 +5,6 @@ import java.util.Properties;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicCircleMapCamera;
-import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -35,7 +34,10 @@ public class MoveableShapesCircleCameraDemo {
 
 		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
 
-		Camera camera = new BasicCircleMapCamera(new Point(1, 1), 799, true);
+		BasicCircleMapCamera camera = new BasicCircleMapCamera(new Point(1, 1), 799, true);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		camera.scale(0.5);

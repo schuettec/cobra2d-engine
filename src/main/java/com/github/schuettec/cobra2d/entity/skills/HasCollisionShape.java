@@ -1,5 +1,11 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import java.util.List;
+
+import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.math.Math2D;
+import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.math.Shape;
 
 public interface HasCollisionShape extends Entity {
@@ -22,4 +28,24 @@ public interface HasCollisionShape extends Entity {
 	 * @return Returns the shape.
 	 */
 	public Shape getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates);
+
+	/**
+	 * @return Returns the collision shape dimension for the initial collision shape without rotation and translation in
+	 *         world coordinates. Only the scale factor is applied.
+	 */
+	default Dimension getCollisionShapeDimension() {
+		return getDimension(true, false, false);
+	}
+
+	/**
+	 * @return Returns the collision shape dimension for the initial collision shape without scaling, rotation and
+	 *         translation in
+	 *         world coordinates.
+	 */
+	default Dimension getDimension(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
+		Shape collisionShape = getCollisionShape(applyScaling, applyRotation, applyWorldCoordinates);
+		List<Point> points = collisionShape.getPoints();
+		Rectangle huellRect = Math2D.getHuellRect(points);
+		return huellRect.getDimension();
+	}
 }

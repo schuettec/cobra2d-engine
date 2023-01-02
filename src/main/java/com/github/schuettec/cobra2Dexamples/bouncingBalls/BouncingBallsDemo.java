@@ -34,9 +34,12 @@ public class BouncingBallsDemo {
 		BallEntity ball5 = new BallEntity(new Point(70, 60), 30, 200, 35);
 		BallEntity ball6 = new BallEntity(new Point(70, 300), 30, 200, 85);
 		BallEntity ball7 = new BallEntity(new Point(140, 150), 30, 200, 115);
-		BallEntity ball8 = new BallEntity(new Point(180, 450), 30, 200, 125);
+		BallEntity ball8 = new BallEntity(new Point(180, 350), 30, 200, 125);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 

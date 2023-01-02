@@ -109,7 +109,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		createRectangleShape(dimension);
 	}
 
-	public Dimension getDimension() {
+	public Dimension getCollisionShapeDimension() {
 		return dimension;
 	}
 

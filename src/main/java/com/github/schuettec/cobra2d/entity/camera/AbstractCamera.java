@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
+import static java.util.Objects.isNull;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -110,7 +112,7 @@ public interface AbstractCamera extends Camera {
 	}
 
 	default Point getHalfDimensionTranslation() {
-		Dimension cameraDimension = getDimension();
+		Dimension cameraDimension = getCollisionShapeDimension();
 		return new Point(cameraDimension.getWidth() / 2.0, cameraDimension.getHeight() / 2.0);
 	}
 
@@ -131,9 +133,7 @@ public interface AbstractCamera extends Camera {
 			HasCollisionShape hasCollisionShape = (HasCollisionShape) entity;
 			Shape entityShape = hasCollisionShape.getCollisionShape(true, true, true)
 			    .translate(cameraTranslation);
-
 			drawCollisionShape(renderer, entityShape);
-
 			CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
 			if (collisionMap.hasCollision(entity)) {
 				List<Collision> collisions = collisionMap.getCollision(entity);
@@ -148,9 +148,21 @@ public interface AbstractCamera extends Camera {
 
 	default void drawCollisionShape(final RendererAccess renderer, Shape entityShape) {
 		if (isDrawCollisionShape() && entityShape.isPointBased()) {
-			entityShape.getPoints()
-			    .stream()
-			    .forEach(p -> drawPoint(renderer, p, 5, Color.BLUE));
+			Point firstPoint = null;
+			Point lastPoint = null;
+			for (Point p : entityShape.getPoints()) {
+				drawPoint(renderer, p, 5, Color.BLUE);
+				if (isNull(lastPoint)) {
+					lastPoint = p;
+					firstPoint = p;
+				} else {
+					renderer.drawLine(lastPoint.getRoundX(), lastPoint.getRoundY(), p.getRoundX(), p.getRoundY(), Color.YELLOW);
+					lastPoint = p;
+				}
+			}
+
+			renderer.drawLine(firstPoint.getRoundX(), firstPoint.getRoundY(), lastPoint.getRoundX(), lastPoint.getRoundY(),
+			    Color.YELLOW);
 		}
 	}
 

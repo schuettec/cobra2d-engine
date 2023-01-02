@@ -39,6 +39,9 @@ public class AnimationDemo {
 		h.setLayer(2);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
 
 		engine.addEntity(t1, t2, h, camera);
 

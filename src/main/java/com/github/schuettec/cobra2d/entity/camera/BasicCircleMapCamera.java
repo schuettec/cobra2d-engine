@@ -1,7 +1,6 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
-import static java.util.Objects.isNull;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
@@ -37,17 +36,9 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 		this.screenPosition = new Point(0, 0);
 	}
 
-	public Point getScreenTranslation(RendererAccess renderer) {
-		Point screenTranslation = getScreenPosition();
-		if (isNull(screenTranslation)) {
-			screenTranslation = new Point(renderer.getWidth() / 2.0, renderer.getHeight() / 2.0);
-		}
-		return screenTranslation;
-	}
-
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
-		Point screenTranslation = getScreenTranslation(renderer);
+		Point screenTranslation = getScreenPosition();
 		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(), Math2D.saveRound(getRadius() + 1),
 		    Color.BLACK);
 	}
@@ -55,8 +46,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public void drawCameraOutline(RendererAccess renderer) {
 		// Draw camera outline.
-		CircleRenderable.renderCircle(getCollisionShape(true, true, false), renderer, getScreenTranslation(renderer),
-		    Color.GREEN);
+		CircleRenderable.renderCircle(getCollisionShape(true, true, false), renderer, getScreenPosition(), Color.GREEN);
 	}
 
 	@Override
@@ -135,8 +125,8 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	}
 
 	@Override
-	public Dimension getDimension() {
-		return new Dimension(saveRound(getRadius()), saveRound(getRadius()));
+	public Dimension getCollisionShapeDimension() {
+		return new Dimension(saveRound(getRadius() * 2), saveRound(getRadius() * 2));
 	}
 
 	@Override

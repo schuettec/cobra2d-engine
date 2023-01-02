@@ -52,9 +52,10 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenPosition();
 		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
-		Point rectangleCorrection = new Point(-(getDimension().getWidth() / 2.0), -(getDimension().getHeight() / 2.0));
+		Point rectangleCorrection = new Point(-(getCollisionShapeDimension().getWidth() / 2.0),
+		    -(getCollisionShapeDimension().getHeight() / 2.0));
 		screenTranslation.translate(rectangleCorrection);
-		Dimension dimension = getDimension();
+		Dimension dimension = getCollisionShapeDimension();
 		renderer.fillRectangle((float) screenTranslation.getRoundX() - 1, (float) screenTranslation.getRoundY() - 1,
 		    (float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
 	}

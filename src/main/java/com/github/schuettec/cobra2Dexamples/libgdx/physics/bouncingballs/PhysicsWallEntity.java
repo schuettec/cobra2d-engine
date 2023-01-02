@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs;
 
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
@@ -36,8 +35,6 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.StaticBody;
 		bodyDef.position.set(getPosition().getRoundX() * toPhysxFactor, getPosition().getRoundY() * toPhysxFactor);
-		System.out.println("Wall entity (world): x=" + getPosition().getRoundX() + ", y=" + getPosition().getRoundY());
-		System.out.println("Wall entity (physx): x=" + bodyDef.position.x + ", y=" + bodyDef.position.y);
 		bodyDef.angle = getRadians();
 		return bodyDef;
 	}
@@ -45,20 +42,11 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 	@Override
 	public void createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
-		double width = getDimension().getWidth();
-		double height = getDimension().getHeight();
+		double width = getCollisionShapeDimension().getWidth();
+		double height = getCollisionShapeDimension().getHeight();
 		float phWidth = (float) width * toPhysxFactor;
 		float phHeight = (float) height * toPhysxFactor;
-		System.out.println("Wall entity (world): width=" + width + " height=" + height);
-		System.out.println("Wall entity (physx): width=" + phWidth + " height=" + phHeight);
 		polygonShape.setAsBox(phWidth / 2.0f, phHeight / 2.0f);
-
-		for (int i = 0; i < polygonShape.getVertexCount(); i++) {
-			Vector2 vertex = new Vector2();
-			polygonShape.getVertex(i, vertex);
-			System.out.println(i + " " + vertex);
-		}
-
 		body.createFixture(polygonShape, 5.0f);
 		this.body = body;
 	}

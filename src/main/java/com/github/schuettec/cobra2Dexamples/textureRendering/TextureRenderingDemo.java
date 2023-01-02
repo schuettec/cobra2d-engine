@@ -34,6 +34,10 @@ public class TextureRenderingDemo {
 		TexturedEntity t2 = new TexturedEntity("chair", new Point(300, 300), 1, true);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
+
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		// camera.scale(0.5);

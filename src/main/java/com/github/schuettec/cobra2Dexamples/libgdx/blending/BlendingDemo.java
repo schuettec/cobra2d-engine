@@ -42,6 +42,10 @@ public class BlendingDemo {
 		l.setLayer(4);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
+
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(800, 400));
 		// camera.scale(0.5);

@@ -35,6 +35,10 @@ public class MoveableShapesRectangleCameraDemo {
 		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(1, 1), new Dimension(799, 799), true);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
+
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		camera.scale(0.75);
