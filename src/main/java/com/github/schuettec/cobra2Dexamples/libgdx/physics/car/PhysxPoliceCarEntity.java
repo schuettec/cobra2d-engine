@@ -337,7 +337,6 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 
 		// Be very careful here: The angle in the physics world is different to renderer/cobra2D-world angle.
 		// An angle of 0° in physics engine is "north", in cobra2d/libgdx the angle of 0° is "east".
-
 		// Rotate to match physics angle;
 		Polygon collisionShape = getCollisionShape(true, false, false).rotate(90);
 		Rectangle huellRect = Math2D.getHuellRect(collisionShape.getPoints());

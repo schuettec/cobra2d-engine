@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.physics.car;
 
+import static java.lang.String.valueOf;
+
 import java.net.URL;
 import java.util.Properties;
 
@@ -16,9 +18,14 @@ public class PhysxCarDemo {
 
 	public static void main(String[] args) throws Exception {
 
+		int xRes = 1920;
+		float xResHalf = xRes / 2.0f;
+		int yRes = 1080;
+		float yResHalf = yRes / 2.0f;
+
 		final Properties properties = new Properties();
-		properties.put(Cobra2DProperties.RESOLUTION_X, "1920"); // 1920
-		properties.put(Cobra2DProperties.RESOLUTION_Y, "1080"); // 1080
+		properties.put(Cobra2DProperties.RESOLUTION_X, valueOf(xRes)); // 1920
+		properties.put(Cobra2DProperties.RESOLUTION_Y, valueOf(yRes)); // 1080
 		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
 		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
 		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
@@ -32,11 +39,10 @@ public class PhysxCarDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
-		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(20, 400), new Dimension(20, 789));
-		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(779, 400), new Dimension(20, 789));
-		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(400, 779), new Dimension(789, 20));
-		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(400, 19), new Dimension(789, 20));
-		PhysicsWallEntity block = new PhysicsWallEntity(new Point(400, 400), new Dimension(200, 200));
+		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(-xResHalf + 10, 0), new Dimension(20, yRes));
+		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(xResHalf - 10, 0), new Dimension(20, yRes));
+		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(10, yResHalf - 10), new Dimension(xRes, 20));
+		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(10, -yResHalf + 10), new Dimension(xRes, 20));
 
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
@@ -50,7 +56,7 @@ public class PhysxCarDemo {
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
 
-		engine.addEntity(wall1, wall2, wall3, wall4, block, t1, t2, b1, camera);
+		engine.addEntity(wall1, wall2, wall3, wall4, t1, t2, b1, camera); // wall2, wall3, wall4, block,
 
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
