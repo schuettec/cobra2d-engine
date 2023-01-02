@@ -37,8 +37,6 @@ public interface AbstractCamera extends Camera {
 		renderer.fillCircle(point.getRoundX(), point.getRoundY(), radius, color);
 	}
 
-	public Point getScreenTranslation(RendererAccess renderer);
-
 	default List<Collision> sortByLayer(List<Collision> capturedEntities) {
 		Comparator<Renderable> layerComparator = Comparator.comparingInt(Renderable::getLayer);
 		Comparator<Collision> collisionComparator = Comparator.comparing(Collision::getOpponent, (e1, e2) -> {
@@ -58,28 +56,21 @@ public interface AbstractCamera extends Camera {
 	default void render(final RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
 		capturedEntities = sortByLayer(capturedEntities);
 
-		Point screenTranslation = getScreenTranslation(renderer);
-
 		List<Point> collisionPoints = new LinkedList<>();
-
-		Point position = getPosition();
-
-		// Scale to -2 because the translation of the camera must be subtracted from entity world coordinates.
-		Point cameraTranslation = position.scale(-1)
-		    // Then translate to the screen position.
-		    .translate(screenTranslation);
 
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
 
+			Point worldToScreenTranslation = getWorldToScreenTranslation();
+
 			// Render entity
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
-				renderable.render(renderer, cameraTranslation);
+				renderable.render(renderer, worldToScreenTranslation);
 			}
 
-			getCollisionPoints(collisionPoints, renderer, map, cameraTranslation, entity);
-			drawEntityPoint(renderer, cameraTranslation, entity);
+			getCollisionPoints(collisionPoints, renderer, map, worldToScreenTranslation, entity);
+			drawEntityPoint(renderer, worldToScreenTranslation, entity);
 		}
 
 		drawCollisionPoints(renderer, collisionPoints);
@@ -88,24 +79,38 @@ public interface AbstractCamera extends Camera {
 
 	}
 
+	default Point getScreenToWorldTranslation() {
+		Point cameraPosition = getPosition();
+		return new Point(0, 0).translate(cameraPosition)
+		    .translate(getScreenPosition().clone()
+		        .translate(getHalfDimensionTranslation().scale(-1))
+		        .scale(-1))
+		    .translate(getHalfDimensionTranslation().scale(-1));
+	}
+
+	default Point getWorldToScreenTranslation() {
+		Point cameraPosition = getPosition();
+		return new Point(0, 0).translate(cameraPosition.clone()
+		    .scale(-1))
+		    .translate(getScreenPosition().clone()
+		        .translate(getHalfDimensionTranslation().scale(-1))
+		        .scale(-1))
+		    .translate(getHalfDimensionTranslation());
+	}
+
+	default Point getHalfDimensionTranslation() {
+		Dimension cameraDimension = getDimension();
+		return new Point(cameraDimension.getWidth() / 2.0, cameraDimension.getHeight() / 2.0);
+	}
+
 	default Point screenToWorldCoordinates(Point screenCoordinates) {
-		Point cameraPosition = null;
-		Dimension cameraDimension = null;
-		cameraPosition = getPosition();
-		cameraDimension = getDimension();
-		Point mouseWorldCoordinates = screenCoordinates.translate(cameraPosition)
-		    .translate(new Point(-cameraDimension.getWidth() / 2.0, -cameraDimension.getHeight() / 2.0));
-		return mouseWorldCoordinates;
+		return screenCoordinates.clone()
+		    .translate(getScreenToWorldTranslation());
 	}
 
 	default Point worldToScreenCoordinates(Point worldCoordinates) {
-		Point cameraPosition = null;
-		Dimension cameraDimension = null;
-		cameraPosition = getPosition();
-		cameraDimension = getDimension();
-		Point mouseWorldCoordinates = worldCoordinates.translate(cameraPosition.scale(-1))
-		    .translate(new Point(cameraDimension.getWidth() / 2.0, cameraDimension.getHeight() / 2.0));
-		return mouseWorldCoordinates;
+		return worldCoordinates.clone()
+		    .translate(getWorldToScreenTranslation());
 	}
 
 	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, Cobra2DWorld map,

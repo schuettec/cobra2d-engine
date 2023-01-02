@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
@@ -31,7 +30,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
-		this.screenPosition = null;
+		this.screenPosition = new Point(0, 0);
 	}
 
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled,
@@ -42,16 +41,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public Point getScreenTranslation(RendererAccess renderer) {
-		Point screenTranslation = screenPosition;
-		if (isNull(screenPosition)) {
-			screenTranslation = new Point(renderer.getWidth() / 2.0, renderer.getHeight() / 2.0);
-		}
-
-		return screenTranslation;
-	}
-
-	@Override
 	public void render(RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
 		AbstractCamera.super.render(renderer, map, capturedEntities);
 		drawMouse(renderer);
@@ -59,7 +48,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
-		Point screenTranslation = getScreenTranslation(renderer);
+		Point screenTranslation = getScreenPosition();
 		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
 		Point rectangleCorrection = new Point(-(getDimension().getWidth() / 2.0), -(getDimension().getHeight() / 2.0));
 		screenTranslation.translate(rectangleCorrection);
@@ -71,8 +60,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	@Override
 	public void drawCameraOutline(RendererAccess renderer) {
 		// Draw camera outline.
-		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenTranslation(renderer),
-		    Color.GREEN);
+		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenPosition(), Color.GREEN);
 	}
 
 	protected void drawMouse(RendererAccess renderer) {
@@ -119,7 +107,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	public void setScreenPosition(Point point) {
-		this.screenPosition = point.clone();
+		this.screenPosition = point;
 	}
 
 	@Override
@@ -136,7 +124,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	@Override
 	public Point getScreenPosition() {
-		return screenPosition;
+		return screenPosition.clone();
 	}
 
 	@Override
