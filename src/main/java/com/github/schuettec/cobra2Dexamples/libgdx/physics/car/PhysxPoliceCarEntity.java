@@ -305,7 +305,11 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		Vector2 currentForwardNormal = getForwardVelocity();
 		float currentForwardSpeed = currentForwardNormal.len();
 		currentForwardNormal.nor();
-		float dragForceMagnitude = -2 * currentForwardSpeed;
+
+		// Chris: Evtl. manipulate this for drifting with handbrake. Lower value causes the car to slide with less friction.
+		float dragForceFactore = 10;
+
+		float dragForceMagnitude = -dragForceFactore * currentForwardSpeed;
 
 		Vector2 force = currentForwardNormal.scl(dragForceMagnitude);
 		body.applyForce(force, body.getWorldCenter(), true);
