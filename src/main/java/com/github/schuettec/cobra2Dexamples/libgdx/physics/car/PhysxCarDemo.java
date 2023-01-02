@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2Dexamples.libgdx.physics.car;
 import java.net.URL;
 import java.util.Properties;
 
+import com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs.PhysicsWallEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
@@ -31,6 +32,12 @@ public class PhysxCarDemo {
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.initialize();
 
+		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(20, 400), new Dimension(20, 789));
+		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(779, 400), new Dimension(20, 789));
+		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(400, 779), new Dimension(789, 20));
+		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(400, 19), new Dimension(789, 20));
+		PhysicsWallEntity block = new PhysicsWallEntity(new Point(400, 400), new Dimension(200, 200));
+
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
 
@@ -39,8 +46,11 @@ public class PhysxCarDemo {
 		    new Dimension(216, 100), 2, true);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
 
-		engine.addEntity(t1, t2, b1, camera);
+		engine.addEntity(wall1, wall2, wall3, wall4, block, t1, t2, b1, camera);
 
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));

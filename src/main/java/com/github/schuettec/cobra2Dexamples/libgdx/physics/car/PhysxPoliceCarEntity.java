@@ -8,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -17,6 +19,8 @@ import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Polygon;
+import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
@@ -81,6 +85,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	private BodyDef bodyDef;
 
 	private Dimension dimension;
+	private Fixture fixture;
 
 	public PhysxPoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId,
 	    String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
@@ -96,6 +101,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		this.brakeLightColorTextureId = brakeLightColorTextureId;
 
 		this.dimension = dimension;
+
+		createRectangleShape(dimension);
 	}
 
 	protected void createCollisionShape(RendererAccess renderer) {
@@ -329,11 +336,26 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	@Override
 	public void createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
-		Dimension dimension = getDimension();
+
+		// Be very careful here: The angle in the physics world is different to renderer/cobra2D-world angle.
+		// An angle of 0° in physics engine is "north", in cobra2d/libgdx the angle of 0° is "east".
+
+		// Rotate to match physics angle;
+		Polygon collisionShape = getCollisionShape(true, false, false).rotate(90);
+		Rectangle huellRect = Math2D.getHuellRect(collisionShape.getPoints());
+		Dimension dimension = huellRect.getDimension();
 		float width = (float) dimension.getWidth() * renderScaleConversionFactor;
 		float height = (float) dimension.getHeight() * renderScaleConversionFactor;
 		polygonShape.setAsBox(width / 2.0f, height / 2.0f);
-		body.createFixture(polygonShape, 5.0f);
+
+		// Create a fixture definition to apply our shape to
+		FixtureDef fixtureDef = new FixtureDef();
+		fixtureDef.shape = polygonShape;
+		fixtureDef.density = 5f;
+		fixtureDef.friction = 0f;
+		fixtureDef.restitution = 1f;
+		// Create our fixture and attach it to the body
+		this.fixture = body.createFixture(fixtureDef);
 		this.body = body;
 	}
 
