@@ -11,7 +11,7 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -34,39 +34,10 @@ public class PhysxCarDemo {
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
-		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
-		engine.initialize();
-
-		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(-xResHalf + 10, 0), new Dimension(20, yRes));
-		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(xResHalf - 10, 0), new Dimension(20, yRes));
-		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(10, yResHalf - 10), new Dimension(xRes, 20));
-		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(10, -yResHalf + 10), new Dimension(xRes, 20));
-
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(), 0, false);
-		List<HasCollisionShape> floorEntities = t1
-		    .placeWithCreator(() -> new TexturedEntity("floor", new Point(), 0, false))
-		    .placeEastOf()
-		    .placeEastOf()
-		    .placeEastOf()
-		    .placeEastOf()
-		    .getCreated();
-
-		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
-		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
-		    new Dimension(216, 100), 2, true);
-
-		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
-		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(true);
-		camera.setDrawEntityPoints(true);
-
-		engine.addEntity(floorEntities);
-		engine.addEntity(wall1, wall2, wall3, wall4, b1, camera); // wall2, wall3, wall4, block,
-
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
 		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
@@ -77,6 +48,37 @@ public class PhysxCarDemo {
 		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
 		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
 		engine.addImage("light", new URL("resource:light.png"));
+
+		engine.initialize();
+
+		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(-xResHalf + 10, 0), new Dimension(20, yRes));
+		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(xResHalf - 10, 0), new Dimension(20, yRes));
+		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(10, yResHalf - 10), new Dimension(xRes, 20));
+		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(10, -yResHalf + 10), new Dimension(xRes, 20));
+		engine.addEntity(wall1, wall2, wall3, wall4); // wall2, wall3, wall4, block,
+
+		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawEntityPoints(true);
+		engine.addEntity(camera);
+
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(), 0, false);
+		engine.addEntity(t1);
+		List<Placeable> floorEntities = t1
+		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), 0, false))
+		    .placeEastOf()
+		    .placeEastOf()
+		    .placeEastOf()
+		    .placeEastOf()
+		    .getCreated();
+		engine.addEntity(floorEntities);
+
+		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
+		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
+		    new Dimension(216, 100), 2, true);
+
+		engine.addEntity(b1);
 
 		engine.start();
 	}

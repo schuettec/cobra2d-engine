@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CountDownLatch;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
@@ -25,6 +26,8 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
+import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererException;
@@ -57,8 +60,13 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private Map<String, URL> textureLocations = new Hashtable<>();
 	private Map<String, Texture> textures = new Hashtable<>();
 
+	private CountDownLatch waitForRenderer = new CountDownLatch(1);
+
+	private boolean started;
+
 	public LibGdxRenderer() {
 		this.controller = new LibGdxController();
+		this.state = RendererState.CREATED;
 	}
 
 	@Override
@@ -69,6 +77,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		this.resolutionX = resolutionX;
 		this.resolutionY = resolutionY;
 		this.refreshRate = refreshRate;
+
+		this.started = false;
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		// Anti-Aliasing here ------------------------vv
@@ -85,13 +95,36 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		config.setForegroundFPS(refreshRate);
 		config.setTitle("Cobra2D Engine");
 
-		this.state = RendererState.INITIALIZED;
-		new Lwjgl3Application(LibGdxRenderer.this, config);
+		Thread initializer = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				new Lwjgl3Application(LibGdxRenderer.this, config);
+			}
+		});
+		initializer.start();
+
+		try {
+			waitForRenderer.await();
+			this.state = RendererState.INITIALIZED;
+		} catch (InterruptedException e) {
+			throw new RuntimeException("Interrupted while waiting for renderer.");
+		}
+	}
+
+	@Override
+	public void entityAdded(Entity entity) {
+		// Only initialize entities if the entity was added after renderer was started.
+		if (RendererState.INITIALIZED.equals(state)) {
+			Renderer.super.entityAdded(entity);
+			((Renderable) entity).initialize(rendererAccess);
+		}
 	}
 
 	@Override
 	public void create() {
-		this.state = RendererState.CREATED;
+
+		loadTextures();
 
 		this.rendererAccess = new LibGdxRendererAccess(this);
 
@@ -104,35 +137,42 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
 
-		loadTextures();
-
 		world.getRenderables()
 		    .stream()
 		    .forEach(r -> r.initialize(rendererAccess));
+
+		waitForRenderer.countDown();
 	}
 
 	@Override
 	public void render() {
-		float deltaTime = Gdx.graphics.getDeltaTime();
+		if (started) {
+			float deltaTime = Gdx.graphics.getDeltaTime();
 
-		if (controller.isEscapePressed()) {
-			engine.shutdownEngine();
-		} else {
-			world.update(refreshRate, deltaTime);
-			camera.update();
+			if (controller.isEscapePressed()) {
+				engine.shutdownEngine();
+			} else {
+				world.update(refreshRate, deltaTime);
+				camera.update();
 
-			ScreenUtils.clear(Color.BLACK);
+				ScreenUtils.clear(Color.BLACK);
 
-			Set<Camera> cameras = world.getCameras();
-			for (Camera camera : cameras) {
-				List<Collision> capturedEntities = world.getCameraCollision(camera);
+				Set<Camera> cameras = world.getCameras();
+				for (Camera camera : cameras) {
+					List<Collision> capturedEntities = world.getCameraCollision(camera);
 
-				renderClippingMask(camera);
+					renderClippingMask(camera);
 
-				renderCameraView(camera, capturedEntities);
+					renderCameraView(camera, capturedEntities);
 
+				}
 			}
 		}
+	}
+
+	@Override
+	public void start() {
+		this.started = true;
 	}
 
 	private void renderCameraView(Camera camera, List<Collision> capturedEntities) {
@@ -222,14 +262,11 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void addTexture(String textureId, URL url) {
-		textureLocations.put(textureId, url);
-		loadTextureOnDemand(textureId, url);
-	}
-
-	private void loadTextureOnDemand(String textureId, URL url) {
-		// load texture on demand
-		if (RendererState.CREATED.equals(state)) {
-			loadTexture(textureId, url);
+		// Textures cannot be loaded if the renderer is initialized.
+		if (!RendererState.CREATED.equals(state)) {
+			throw new IllegalAccessError("Cannot add texture after initializing the renderer.");
+		} else {
+			textureLocations.put(textureId, url);
 		}
 	}
 

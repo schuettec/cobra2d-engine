@@ -23,11 +23,12 @@ public class TextureRenderingDemo {
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
-		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
+		engine.addImage("chair", new URL("resource:chair.png"));
+		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.initialize();
 
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
@@ -44,9 +45,6 @@ public class TextureRenderingDemo {
 
 		engine.addEntity(t1, t2, camera);
 		// engine.addEntity(camera);
-
-		engine.addImage("chair", new URL("resource:chair.png"));
-		engine.addImage("floor", new URL("resource:floor.png"));
 
 		engine.start();
 	}

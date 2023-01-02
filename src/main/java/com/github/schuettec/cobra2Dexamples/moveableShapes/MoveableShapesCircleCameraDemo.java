@@ -21,7 +21,6 @@ public class MoveableShapesCircleCameraDemo {
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
-		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 

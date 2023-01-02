@@ -1,7 +1,5 @@
 package com.github.schuettec.cobra2d.engine;
 
-import static java.util.Objects.nonNull;
-
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -14,69 +12,52 @@ import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
-import com.github.schuettec.cobra2d.renderer.j2d.ImageMemoryException;
-import com.github.schuettec.cobra2d.renderer.j2d.WindowRenderer;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderer;
 import com.github.schuettec.cobra2d.resource.URLClasspathHandler;
 import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
 import com.github.schuettec.cobra2d.resource.URLResourceTypeHandler;
 import com.github.schuettec.cobra2d.resource.URLStreamHandlerRegistry;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldListener;
 
 public class Cobra2DEngine {
 
 	private Cobra2DProperties cobra2DConfig;
 	private Renderer renderer;
 	private Cobra2DWorld world;
-	private ActiveWorldUpdater worldUpdater;
 	private Controller controller;
+	private boolean rendererStarted;
 
 	public Cobra2DEngine(final Properties properties) {
 		super();
 		this.cobra2DConfig = new Cobra2DProperties(properties);
+		this.rendererStarted = false;
+		ResourceLocation resourceLocation = cobra2DConfig.getResourceLocation();
+		setupEnvironment(resourceLocation);
+		RendererType rendererType = cobra2DConfig.getRendererType();
+		this.renderer = createRenderer(rendererType);
+		this.controller = renderer.getController();
+		this.world = new Cobra2DWorld(this, controller);
 	}
 
 	public void initialize() {
-		RendererType rendererType = cobra2DConfig.getRendererType();
 		int refreshRate = cobra2DConfig.getRefreshRate();
-		ResourceLocation resourceLocation = cobra2DConfig.getResourceLocation();
-
-		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
-		boolean doRender = cobra2DConfig.hasRenderer();
-
-		this.renderer = createRenderer(rendererType);
-		this.controller = renderer.getController();
-		this.world = new Cobra2DWorld(controller);
-
-		boolean createWorldUpdater = cobra2DConfig.isCreateWorldUpdater();
-		if (createWorldUpdater) {
-			this.worldUpdater = new ActiveWorldUpdater(refreshRate, doMapUpdate, doRender, world, renderer);
-		}
-
-		setupEnvironment(resourceLocation);
-	}
-
-	public void start() {
 		int resolutionX = cobra2DConfig.getResolutionX();
 		int resolutionY = cobra2DConfig.getResolutionY();
 		int bitDepth = cobra2DConfig.getBitDepth();
-		int refreshRate = cobra2DConfig.getRefreshRate();
 		boolean fullscreen = cobra2DConfig.getFullscreen();
 
 		renderer.initializeRenderer(this, resolutionX, resolutionY, bitDepth, refreshRate, fullscreen);
+	}
 
-		if (nonNull(worldUpdater)) {
-			this.worldUpdater.start();
-		}
+	public void start() {
+		this.renderer.start();
+		this.rendererStarted = true;
 	}
 
 	private Renderer createRenderer(RendererType rendererType) {
 		Renderer renderer = null;
-		if (RendererType.JAVA2D.equals(rendererType)) {
-			renderer = new WindowRenderer();
-		} else if (RendererType.LIBGDX.equals(rendererType)) {
-			renderer = new LibGdxRenderer();
-		}
+		renderer = new LibGdxRenderer();
 		return renderer;
 	}
 
@@ -85,9 +66,6 @@ public class Cobra2DEngine {
 	}
 
 	public void shutdownEngine() {
-		if (nonNull(worldUpdater)) {
-			this.worldUpdater.stop();
-		}
 		this.renderer.finish();
 	}
 
@@ -120,13 +98,15 @@ public class Cobra2DEngine {
 		URL.setURLStreamHandlerFactory(registry);
 	}
 
-	public void addImage(String address, URL ressourceURL) throws ImageMemoryException {
+	public void addImage(String address, URL ressourceURL) {
 		renderer.addTexture(address, ressourceURL);
 	}
 
 	public void addEntity(List<? extends Entity> entities) {
 		entities.stream()
-		    .forEach(e -> world.addEntity(e));
+		    .forEach(e -> {
+			    world.addEntity(e);
+		    });
 	}
 
 	public void addEntity(Entity... entities) {
@@ -151,6 +131,10 @@ public class Cobra2DEngine {
 
 	public void setCameraForInput(Camera camera) {
 		world.setCameraForInput(camera);
+	}
+
+	public WorldListener getRenderer() {
+		return renderer;
 	}
 
 }

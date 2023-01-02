@@ -24,11 +24,15 @@ public class PersonDemo {
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
-		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
+		engine.addImage("floor", new URL("resource:floor.png"));
+		engine.addImage("walkcyle_harvey", new URL("resource:walkcyle_harvey.png"));
+		engine.addImage("walkcyle_harvey_static", new URL("resource:walkcyle_harvey_static.png"));
+		engine.addImage("head", new URL("resource:head.png"));
+
 		engine.initialize();
 
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), 0, false);
@@ -46,11 +50,6 @@ public class PersonDemo {
 		engine.setCameraForInput(camera);
 
 		engine.addEntity(t1, t2, h, camera);
-
-		engine.addImage("floor", new URL("resource:floor.png"));
-		engine.addImage("walkcyle_harvey", new URL("resource:walkcyle_harvey.png"));
-		engine.addImage("walkcyle_harvey_static", new URL("resource:walkcyle_harvey_static.png"));
-		engine.addImage("head", new URL("resource:head.png"));
 
 		engine.start();
 	}

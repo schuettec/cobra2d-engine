@@ -9,6 +9,7 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class TexturedEntity extends BasicRectangleEntity implements Renderable, Updatable {
@@ -28,14 +29,19 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 	}
 
 	@Override
+	public void initialize(LibGdxRendererAccess rendererAccess) {
+		Renderable.super.initialize(rendererAccess);
+		createCollisionShape(rendererAccess);
+	}
+
+	@Override
 	public void render(RendererAccess renderer, Point screenTranslation) {
-		createCollisionShape(renderer);
 		/*
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
 		 */
 		Point texturePosition = renderer.getTexturePosition(getTextureId(), getPosition(), screenTranslation);
-		renderer.drawTexture(getTextureId(), 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
+		renderer.drawTexture(getTextureId(), 1f, texturePosition.getRoundX(), texturePosition.getRoundY(),
 		    (float) getDegrees());
 	}
 

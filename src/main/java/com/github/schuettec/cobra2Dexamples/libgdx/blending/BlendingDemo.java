@@ -24,11 +24,21 @@ public class BlendingDemo {
 		properties.put(Cobra2DProperties.FULLSCREEN, "false");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
-		properties.put(Cobra2DProperties.CREATE_WORLD_UPDATER, "false");
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
+		engine.addImage("floor", new URL("resource:floor.png"));
+		engine.addImage("police", new URL("resource:cars/police.png"));
+		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
+		engine.addImage("police-blue-alarm-light", new URL("resource:cars/police-blue-alarm-light.png"));
+		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
+		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
+		engine.addImage("front-light", new URL("resource:cars/front-light.png"));
+		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
+		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
+		engine.addImage("light", new URL("resource:light.png"));
+
 		engine.initialize();
 
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
@@ -51,16 +61,6 @@ public class BlendingDemo {
 		// camera.scale(0.5);
 
 		engine.addEntity(t1, t2, l, b1, camera);
-		engine.addImage("floor", new URL("resource:floor.png"));
-		engine.addImage("police", new URL("resource:cars/police.png"));
-		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
-		engine.addImage("police-blue-alarm-light", new URL("resource:cars/police-blue-alarm-light.png"));
-		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
-		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
-		engine.addImage("front-light", new URL("resource:cars/front-light.png"));
-		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
-		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
-		engine.addImage("light", new URL("resource:light.png"));
 
 		engine.start();
 	}

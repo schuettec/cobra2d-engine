@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
@@ -14,49 +15,63 @@ import com.github.schuettec.cobra2d.math.Point;
 public interface Placeable extends HasCollisionShape {
 
 	class PlaceableCreator {
-		Supplier<HasCollisionShape> creator;
+		Supplier<Placeable> creator;
 		Placeable placeable;
-		List<HasCollisionShape> created = new LinkedList<>();
+		List<Placeable> created = new LinkedList<>();
+		private Cobra2DEngine engine;
 
-		PlaceableCreator(Supplier<HasCollisionShape> creator, Placeable placeable) {
+		PlaceableCreator(Cobra2DEngine engine, Supplier<Placeable> creator, Placeable placeable) {
 			super();
+			this.engine = engine;
 			this.creator = creator;
 			this.placeable = placeable;
 		}
 
-		private HasCollisionShape create() {
-			HasCollisionShape creat = creator.get();
-			created.add(creat);
-			return creat;
+		PlaceableCreator(Cobra2DEngine engine, Supplier<Placeable> creator, Placeable placeable, List<Placeable> created) {
+			this.engine = engine;
+			this.creator = creator;
+			this.placeable = placeable;
+			this.created = created;
+		}
+
+		private Placeable create() {
+			Placeable create = creator.get();
+			created.add(create);
+			engine.addEntity(create);
+			return create;
 		}
 
 		public PlaceableCreator placeNorthOf() {
-			placeable.place(create(), north());
-			return this;
+			Placeable create = create();
+			placeable.place(create, north());
+			return new PlaceableCreator(engine, creator, create, created);
 		}
 
 		public PlaceableCreator placeSouthOf() {
-			placeable.place(create(), south());
-			return this;
+			Placeable create = create();
+			placeable.place(create, south());
+			return new PlaceableCreator(engine, creator, create, created);
 		}
 
 		public PlaceableCreator placeWesthOf() {
-			placeable.place(create(), west());
-			return this;
+			Placeable create = create();
+			placeable.place(create, west());
+			return new PlaceableCreator(engine, creator, create, created);
 		}
 
 		public PlaceableCreator placeEastOf() {
-			placeable.place(create(), east());
-			return this;
+			Placeable create = create();
+			placeable.place(create, east());
+			return new PlaceableCreator(engine, creator, create, created);
 		}
 
-		public List<HasCollisionShape> getCreated() {
+		public List<Placeable> getCreated() {
 			return created;
 		}
 	}
 
-	default PlaceableCreator placeWithCreator(Supplier<HasCollisionShape> creator) {
-		return new PlaceableCreator(creator, this);
+	default PlaceableCreator placeWithCreator(Cobra2DEngine engine, Supplier<Placeable> creator) {
+		return new PlaceableCreator(engine, creator, this);
 	}
 
 	default Placeable placeNorthOf(HasCollisionShape otherEntity) {

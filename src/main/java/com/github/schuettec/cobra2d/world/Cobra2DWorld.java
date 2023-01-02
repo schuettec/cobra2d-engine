@@ -17,6 +17,7 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
 import com.github.schuettec.cobra2d.entity.CollisionMap;
@@ -98,7 +99,10 @@ public class Cobra2DWorld {
 	private World physicsWorld;
 	private float accumulator = 0;
 
-	public Cobra2DWorld(Controller controller) {
+	private Cobra2DEngine engine;
+
+	public Cobra2DWorld(Cobra2DEngine engine, Controller controller) {
+		this.engine = engine;
 		// Create a default physics world with zero gravity
 		this.physicsWorld = new World(new Vector2(), true);
 
@@ -128,6 +132,7 @@ public class Cobra2DWorld {
 			}
 
 		});
+		this.listenersBySkills.put(Renderable.class, engine.getRenderer());
 	}
 
 	public void setGravity(float xForce, float yForce) {

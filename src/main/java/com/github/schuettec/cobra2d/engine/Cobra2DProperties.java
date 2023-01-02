@@ -29,14 +29,6 @@ public class Cobra2DProperties {
 		return !RendererType.NONE.equals(getRendererType());
 	}
 
-	public boolean isCreateWorldUpdater() {
-		if (properties.containsKey(CREATE_WORLD_UPDATER)) {
-			return Boolean.parseBoolean(properties.getProperty(CREATE_WORLD_UPDATER));
-		} else {
-			return false;
-		}
-	}
-
 	public boolean isCreateController() {
 		return Boolean.parseBoolean(properties.getProperty(CREATE_CONTROLLER));
 	}
@@ -129,11 +121,6 @@ public class Cobra2DProperties {
 	 * renderer.
 	 */
 	public static final String CREATE_CONTROLLER = "create-controller";
-	/**
-	 * This constant defines the property key, used to instruct the engine to create an input controller for the specified
-	 * renderer.
-	 */
-	public static final String CREATE_WORLD_UPDATER = "create-world-updater";
 	/**
 	 * Property keys required for a valid engine configuration-
 	 */
