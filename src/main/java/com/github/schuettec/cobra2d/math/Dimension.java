@@ -13,6 +13,11 @@ public class Dimension implements Cloneable {
 		this.height = height;
 	}
 
+	public Dimension() {
+		this.width = 0;
+		this.height = 0;
+	}
+
 	public Dimension half() {
 		return new Dimension(width / 2.0d, height / 2.0d);
 	}

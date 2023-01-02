@@ -9,9 +9,63 @@ import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.math.Shape;
 
 public interface HasCollisionShape extends Entity {
+
+	enum RectanglePoint {
+
+		/**
+		 * Top-Left
+		 */
+		TL(new Point(0.5, -0.5)),
+		/**
+		 * Top-Right
+		 */
+		TR(new Point(-0.5, -0.5)),
+		/**
+		 * Bottom-Left
+		 */
+		BL(new Point(0.5, 0.5)),
+		/**
+		 * Bottom-Right
+		 */
+		BR(new Point(-0.5, 0.5));
+
+		Point translation;
+
+		private RectanglePoint(Point translation) {
+			this.translation = translation;
+		}
+
+		Point getTranslation() {
+			return translation;
+		}
+
+	}
+
+	/**
+	 * Same like {@link #setPositionByPoint(RectanglePoint, Point)} with {@link RectanglePoint#BL} as default.
+	 */
+	default void setPositionByPoint(Point point) {
+		setPositionByPoint(RectanglePoint.BL, point);
+	}
+
+	/**
+	 * Sets the position by a specified reference point. Example: If the point is specified as {@link RectanglePoint#BL}
+	 * then the position is set relative to the bottem-left point by adding half of the objects dimension.
+	 * 
+	 * @param specifiedPointType The specified point type.
+	 * @param point The point in world coordinates.
+	 */
+	default void setPositionByPoint(RectanglePoint specifiedPointType, Point point) {
+		Dimension dimension = getCollisionShapeDimension();
+		setPosition(point.clone()
+		    .translate(specifiedPointType.getTranslation()
+		        .scale(dimension.getWidth(), dimension.getHeight())));
+	}
+
 	/**
 	 * @return Returns the {@link Shape} representing the collision shape of
-	 *         this entity <b>in world coordinates</b>. Therefore any scaling, translation or rotating operations must be
+	 *         this entity <b>in world coordinates</b>. Therefore any scaling, translation or rotating operations must
+	 *         be
 	 *         applied. Implementations must make sure that the
 	 *         {@link Shape} is translated to world coordinates and reflects all
 	 *         properties like scaling etc.
