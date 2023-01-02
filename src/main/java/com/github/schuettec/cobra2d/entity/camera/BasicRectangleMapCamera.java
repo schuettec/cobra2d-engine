@@ -77,15 +77,14 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	protected void drawMouse(RendererAccess renderer) {
 		if (isDrawMouse() && nonNull(mousePosition)) {
-			// Point screenTranslation = getScreenTranslation(renderer).scale(-1);
-			Point toDraw = mousePosition;
+			Point toDraw = worldToScreenCoordinates(mousePosition);
 			drawPoint(renderer, toDraw, 5, Color.CORAL);
 		}
 	}
 
 	@Override
 	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
-		this.mousePosition = controller.getMousePositionRelativeToInputCamera();
+		this.mousePosition = controller.getMousePositionWorldCoordinates();
 
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {

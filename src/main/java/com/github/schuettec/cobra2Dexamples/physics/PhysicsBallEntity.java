@@ -48,8 +48,6 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
 		    getPosition().getRoundY() * renderScaleConversionFactor);
-		// System.out.println("Wall entity (world): x=" + getPosition().getRoundX() + ", y=" + getPosition().getRoundY());
-		// System.out.println("Wall entity (physx): x=" + bodyDef.position.x + ", y=" + bodyDef.position.y);
 		bodyDef.angle = getRadians();
 		bodyDef.angularDamping = 0f;
 		bodyDef.linearDamping = 0f;
@@ -62,9 +60,6 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		double worldRadius = getCollisionShape(true, false, false).getRadius();
 		float radius = (float) worldRadius * renderScaleConversionFactor;
 		shape.setRadius(radius);
-
-		// System.out.println("Wall entity (world): radius=" + worldRadius);
-		// System.out.println("Wall entity (physx): radius=" + radius);
 
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
@@ -88,10 +83,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		setDegrees(degrees);
 		setPosition(saveRound(position.x / renderScaleConversionFactor),
 		    saveRound(position.y / renderScaleConversionFactor));
-		// System.out.println("Wall entity (world): x=" + getPosition().getRoundX() + ", y=" + getPosition().getRoundY());
-		// System.out.println("Wall entity (physx): x=" + position.x + ", y=" + position.y);
-
-		Point mousePoint = controller.getMousePositionRelativeToInputCamera();
+		Point mousePoint = controller.getMousePositionWorldCoordinates();
 		boolean inCircle = Math2D.isInCircle(mousePoint, getPosition(), getRadius());
 		if (inCircle) {
 			System.out.println("IS IN ");

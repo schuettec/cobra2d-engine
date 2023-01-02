@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2d.entity.skills;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
+import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -33,4 +34,19 @@ public interface Camera extends Updatable, HasCollisionShape {
 
 	public Dimension getDimension();
 
+	/**
+	 * Translates screen coordinates to world coordinates.
+	 * 
+	 * @param screenCoords The screen coordinates.
+	 * @return Returns the {@link InputContext}.
+	 */
+	Point screenToWorldCoordinates(Point screenCoords);
+
+	/**
+	 * Translates worlds coordinates to screen coordinates.
+	 * 
+	 * @param worldCoords The worlds coordinates.
+	 * @return Returns the {@link InputContext}.
+	 */
+	Point worldToScreenCoordinates(Point worldCoords);
 }

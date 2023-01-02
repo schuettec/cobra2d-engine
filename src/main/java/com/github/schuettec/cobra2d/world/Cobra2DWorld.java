@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -31,7 +30,6 @@ import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
-import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 
@@ -226,19 +224,11 @@ public class Cobra2DWorld {
 
 	private InputContext getCameraRelativeInput(Controller controller, Camera cameraForInput) {
 		Point mousePositionOnScreen = controller.getMousePositionOnScreen();
-		Point cameraPosition = null;
-		Dimension cameraDimension = null;
 		if (nonNull(cameraForInput)) {
-			cameraPosition = cameraForInput.getPosition();
-			cameraDimension = cameraForInput.getDimension();
+			return new InputContext(cameraForInput.screenToWorldCoordinates(mousePositionOnScreen));
 		} else {
-			cameraPosition = new Point(0, 0);
-			cameraDimension = new Dimension(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+			return new InputContext(mousePositionOnScreen);
 		}
-		Point mouseWorldCoordinates = cameraPosition.clone()
-		    .translate(mousePositionOnScreen)
-		    .translate(new Point(-cameraDimension.getWidth() / 2.0, -cameraDimension.getHeight() / 2.0));
-		return new InputContext(mouseWorldCoordinates);
 	}
 
 	public List<Collision> getCameraCollision(Camera camera) {

@@ -52,7 +52,7 @@ public interface Controller {
 
 	public abstract void setCameraRelativeInput(InputContext input);
 
-	default Point getMousePositionRelativeToInputCamera() {
+	default Point getMousePositionWorldCoordinates() {
 		return getCameraRelativeInput().getMouseWorldCoordinates();
 	}
 

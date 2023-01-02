@@ -10,6 +10,7 @@ import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.Color;
@@ -85,6 +86,26 @@ public interface AbstractCamera extends Camera {
 
 		drawCameraOutline(renderer);
 
+	}
+
+	default Point screenToWorldCoordinates(Point screenCoordinates) {
+		Point cameraPosition = null;
+		Dimension cameraDimension = null;
+		cameraPosition = getPosition();
+		cameraDimension = getDimension();
+		Point mouseWorldCoordinates = screenCoordinates.translate(cameraPosition)
+		    .translate(new Point(-cameraDimension.getWidth() / 2.0, -cameraDimension.getHeight() / 2.0));
+		return mouseWorldCoordinates;
+	}
+
+	default Point worldToScreenCoordinates(Point worldCoordinates) {
+		Point cameraPosition = null;
+		Dimension cameraDimension = null;
+		cameraPosition = getPosition();
+		cameraDimension = getDimension();
+		Point mouseWorldCoordinates = worldCoordinates.translate(cameraPosition.scale(-1))
+		    .translate(new Point(cameraDimension.getWidth() / 2.0, cameraDimension.getHeight() / 2.0));
+		return mouseWorldCoordinates;
 	}
 
 	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, Cobra2DWorld map,
