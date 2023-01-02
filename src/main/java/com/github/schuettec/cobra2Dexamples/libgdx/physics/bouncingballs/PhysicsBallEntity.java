@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.physics;
+package com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
@@ -86,7 +86,6 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		Point mousePoint = controller.getMousePositionWorldCoordinates();
 		boolean inCircle = Math2D.isInCircle(mousePoint, getPosition(), getRadius());
 		if (inCircle) {
-			System.out.println("IS IN ");
 			Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(getDegrees(), forceToApply);
 			this.body.applyForce(vForce, new Vector2(), true);
 		}

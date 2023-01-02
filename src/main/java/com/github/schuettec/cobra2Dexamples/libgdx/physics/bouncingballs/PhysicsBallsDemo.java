@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.physics;
+package com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs;
 
 import java.util.Properties;
 

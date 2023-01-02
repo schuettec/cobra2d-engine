@@ -18,12 +18,15 @@ import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public interface AbstractCamera extends Camera {
+	public boolean isCenterOnScreen();
 
 	public boolean isDrawEntityPoints();
 
 	public boolean isDrawCollisionShape();
 
 	public boolean isDrawCameraOutline();
+
+	public void setCenterOnScreen(boolean centerOnScreen);
 
 	public void setDrawEntityPoints(boolean drawEntityPoints);
 
@@ -54,6 +57,8 @@ public interface AbstractCamera extends Camera {
 	}
 
 	default void render(final RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
+		centerOnScreen(renderer);
+
 		capturedEntities = sortByLayer(capturedEntities);
 
 		List<Point> collisionPoints = new LinkedList<>();
@@ -77,6 +82,12 @@ public interface AbstractCamera extends Camera {
 
 		drawCameraOutline(renderer);
 
+	}
+
+	default void centerOnScreen(final RendererAccess renderer) {
+		if (isCenterOnScreen()) {
+			setScreenPosition(new Point(renderer.getWidth() / 2.0, renderer.getHeight() / 2.0));
+		}
 	}
 
 	default Point getScreenToWorldTranslation() {

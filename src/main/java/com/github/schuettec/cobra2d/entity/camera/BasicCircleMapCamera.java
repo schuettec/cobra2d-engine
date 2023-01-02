@@ -19,6 +19,8 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	private boolean drawCollisionShape;
 	private boolean drawCameraOutline;
 
+	private boolean centerOnScreen = true;
+
 	private boolean playerControlled;
 
 	private Point screenPosition;
@@ -26,7 +28,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	public BasicCircleMapCamera(Point worldCoordinates, double radius, boolean playerControlled) {
 		super(worldCoordinates, radius);
 		this.playerControlled = playerControlled;
-		this.screenPosition = null;
+		this.screenPosition = new Point(0, 0);
 	}
 
 	public BasicCircleMapCamera(Point worldCoordinates, double radius, boolean playerControlled, Point screenPosition) {
@@ -135,6 +137,16 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public Dimension getDimension() {
 		return new Dimension(saveRound(getRadius()), saveRound(getRadius()));
+	}
+
+	@Override
+	public boolean isCenterOnScreen() {
+		return centerOnScreen;
+	}
+
+	@Override
+	public void setCenterOnScreen(boolean centerOnScreen) {
+		this.centerOnScreen = centerOnScreen;
 	}
 
 }

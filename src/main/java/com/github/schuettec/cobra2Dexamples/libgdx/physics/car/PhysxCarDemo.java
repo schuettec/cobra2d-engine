@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.libgdx.blending;
+package com.github.schuettec.cobra2Dexamples.libgdx.physics.car;
 
 import java.net.URL;
 import java.util.Properties;
@@ -11,7 +11,7 @@ import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
-public class BlendingDemo {
+public class PhysxCarDemo {
 
 	public static void main(String[] args) throws Exception {
 
@@ -33,20 +33,15 @@ public class BlendingDemo {
 
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
 		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
-		// TexturedEntity t2 = new TexturedEntity("police", new Point(300, 300), 1, true);
-		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
-		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
-		    2, true);
 
-		LightEntity l = new LightEntity("light", new Point(300, 300), 0, false);
-		l.setLayer(4);
+		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
+		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
+		    new Dimension(216, 100), 2, true);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
-		// Set screen position or the camera is centered automatically
-		// camera.setScreenPosition(new Point(800, 400));
-		// camera.scale(0.5);
 
-		engine.addEntity(t1, t2, l, b1, camera);
+		engine.addEntity(t1, t2, b1, camera);
+
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
 		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));

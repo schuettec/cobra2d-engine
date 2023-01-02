@@ -22,6 +22,8 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	private boolean drawCameraOutline;
 	private boolean drawMouse;
 
+	private boolean centerOnScreen = true;
+
 	private boolean playerControlled;
 
 	private Point screenPosition;
@@ -164,6 +166,16 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	public void setDrawMouse(boolean drawMouse) {
 		this.drawMouse = drawMouse;
+	}
+
+	@Override
+	public boolean isCenterOnScreen() {
+		return centerOnScreen;
+	}
+
+	@Override
+	public void setCenterOnScreen(boolean centerOnScreen) {
+		this.centerOnScreen = centerOnScreen;
 	}
 
 }
