@@ -222,8 +222,6 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		    .cpy();
 		float currentSpeed = getForwardVelocity().dot(currentForwardNormal);
 
-		System.out.println(currentSpeed);
-
 		// if true, the user does not break or accelerate
 		boolean roll = true;
 
@@ -353,7 +351,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		fixtureDef.shape = polygonShape;
 		fixtureDef.density = 5f;
 		fixtureDef.friction = 0f;
-		fixtureDef.restitution = 1f;
+		fixtureDef.restitution = 0.5f;
 		// Create our fixture and attach it to the body
 		this.fixture = body.createFixture(fixtureDef);
 		this.body = body;
