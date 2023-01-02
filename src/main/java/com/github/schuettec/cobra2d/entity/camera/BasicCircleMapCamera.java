@@ -108,25 +108,35 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 		return drawCameraOutline;
 	}
 
+	@Override
 	public void setDrawEntityPoints(boolean drawEntityPoints) {
 		this.drawEntityPoints = drawEntityPoints;
 	}
 
+	@Override
 	public void setDrawCollisionShape(boolean drawCollisionShape) {
 		this.drawCollisionShape = drawCollisionShape;
 	}
 
+	@Override
 	public void setDrawCameraOutline(boolean drawCameraOutline) {
 		this.drawCameraOutline = drawCameraOutline;
 	}
 
+	@Override
 	public void setPlayerControlled(boolean playerControlled) {
 		this.playerControlled = playerControlled;
 	}
 
 	@Override
 	public Dimension getCollisionShapeDimension() {
-		return new Dimension(saveRound(getRadius() * 2), saveRound(getRadius() * 2));
+		return getDimension(true, false);
+	}
+
+	@Override
+	public Dimension getDimension(boolean applyScaling, boolean applyRotation) {
+		Dimension dimension = new Dimension(saveRound(getRadius() * 2), saveRound(getRadius() * 2));
+		return dimension;
 	}
 
 	@Override

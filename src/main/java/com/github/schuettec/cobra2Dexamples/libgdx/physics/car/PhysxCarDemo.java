@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2Dexamples.libgdx.physics.car;
 import static java.lang.String.valueOf;
 
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs.PhysicsWallEntity;
@@ -10,6 +11,7 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
+import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -44,8 +46,14 @@ public class PhysxCarDemo {
 		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(10, yResHalf - 10), new Dimension(xRes, 20));
 		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(10, -yResHalf + 10), new Dimension(xRes, 20));
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(), 0, false);
+		List<HasCollisionShape> floorEntities = t1
+		    .placeWithCreator(() -> new TexturedEntity("floor", new Point(), 0, false))
+		    .placeEastOf()
+		    .placeEastOf()
+		    .placeEastOf()
+		    .placeEastOf()
+		    .getCreated();
 
 		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
 		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
@@ -56,7 +64,8 @@ public class PhysxCarDemo {
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
 
-		engine.addEntity(wall1, wall2, wall3, wall4, t1, t2, b1, camera); // wall2, wall3, wall4, block,
+		engine.addEntity(floorEntities);
+		engine.addEntity(wall1, wall2, wall3, wall4, b1, camera); // wall2, wall3, wall4, block,
 
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));

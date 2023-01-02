@@ -21,6 +21,10 @@ public class Point implements Shape, Cloneable {
 		this(p.x, p.y);
 	}
 
+	public Point() {
+		this(0, 0);
+	}
+
 	public int getRoundX() {
 		return (int) Math.round(x);
 	}
@@ -119,10 +123,12 @@ public class Point implements Shape, Cloneable {
 	/**
 	 * This implementation does nothing, because a {@link Point} cannot be rotated.
 	 */
+	@Override
 	public Point rotate(double degrees) {
 		return this;
 	}
 
+	@Override
 	public Point translate(Point translation) {
 		this.x += translation.x;
 		this.y += translation.y;
@@ -130,10 +136,18 @@ public class Point implements Shape, Cloneable {
 	}
 
 	/**
-	 * This implementation does nothing, because a {@link Point} cannot be scaled.
+	 * Multiplies X and Y with a scale factor.
 	 */
+	@Override
 	public Point scale(double scaleFactor) {
 		return new Point(getX() * scaleFactor, getY() * scaleFactor);
+	}
+
+	/**
+	 * Multiplies X and Y with a scale factor.
+	 */
+	public Point scale(double scaleFactorX, double scaleFactorY) {
+		return new Point(getX() * scaleFactorX, getY() * scaleFactorY);
 	}
 
 	public java.awt.Point toAwtPoint() {

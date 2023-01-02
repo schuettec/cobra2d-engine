@@ -3,12 +3,12 @@ package com.github.schuettec.cobra2d.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 
-public class BasicPolygonEntity extends BasicEntity implements HasCollisionShape {
+public class BasicPolygonEntity extends BasicEntity implements Placeable {
 
 	/**
 	 *

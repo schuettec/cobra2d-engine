@@ -6,6 +6,7 @@ import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.net.URL;
+import java.util.List;
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -121,6 +122,11 @@ public class Cobra2DEngine {
 
 	public void addImage(String address, URL ressourceURL) throws ImageMemoryException {
 		renderer.addTexture(address, ressourceURL);
+	}
+
+	public void addEntity(List<? extends Entity> entities) {
+		entities.stream()
+		    .forEach(e -> world.addEntity(e));
 	}
 
 	public void addEntity(Entity... entities) {

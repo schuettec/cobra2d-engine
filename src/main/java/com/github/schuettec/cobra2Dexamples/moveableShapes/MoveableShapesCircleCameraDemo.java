@@ -34,7 +34,7 @@ public class MoveableShapesCircleCameraDemo {
 
 		MoveablePolygonEntity p2 = new MoveablePolygonEntity(new Point(130, 230), new Dimension(200, 200), false);
 
-		BasicCircleMapCamera camera = new BasicCircleMapCamera(new Point(1, 1), 799, true);
+		BasicCircleMapCamera camera = new BasicCircleMapCamera(new Point(1, 1), 750, true);
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);

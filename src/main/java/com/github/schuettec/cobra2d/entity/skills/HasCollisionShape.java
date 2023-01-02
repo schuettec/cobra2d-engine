@@ -34,7 +34,7 @@ public interface HasCollisionShape extends Entity {
 	 *         world coordinates. Only the scale factor is applied.
 	 */
 	default Dimension getCollisionShapeDimension() {
-		return getDimension(true, false, false);
+		return getDimension(true, false);
 	}
 
 	/**
@@ -42,8 +42,8 @@ public interface HasCollisionShape extends Entity {
 	 *         translation in
 	 *         world coordinates.
 	 */
-	default Dimension getDimension(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
-		Shape collisionShape = getCollisionShape(applyScaling, applyRotation, applyWorldCoordinates);
+	default Dimension getDimension(boolean applyScaling, boolean applyRotation) {
+		Shape collisionShape = getCollisionShape(applyScaling, applyRotation, false);
 		List<Point> points = collisionShape.getPoints();
 		Rectangle huellRect = Math2D.getHuellRect(points);
 		return huellRect.getDimension();

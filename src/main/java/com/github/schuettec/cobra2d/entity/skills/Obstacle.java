@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
+
 /**
  * An obstacle is an entity with a collision shape that is used to detect collisions with other obstacles. For obstacles
  * a collision detection is calculated on each world update.
@@ -8,6 +10,6 @@ package com.github.schuettec.cobra2d.entity.skills;
  * purposes like detecting entities being captures by a camera's viewport.
  *
  */
-public interface Obstacle extends HasCollisionShape {
+public interface Obstacle extends Placeable {
 
 }

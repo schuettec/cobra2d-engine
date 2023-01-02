@@ -1,6 +1,6 @@
 package com.github.schuettec.cobra2d.entity;
 
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 
@@ -10,7 +10,7 @@ import com.github.schuettec.cobra2d.math.Point;
  *
  * @author schuettec
  */
-public class BasicCircleEntity extends BasicEntity implements HasCollisionShape {
+public class BasicCircleEntity extends BasicEntity implements Placeable {
 
 	/**
 	 *

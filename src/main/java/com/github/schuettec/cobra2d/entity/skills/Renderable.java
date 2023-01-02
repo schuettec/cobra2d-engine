@@ -1,10 +1,11 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRendererAccess;
 
-public interface Renderable extends HasCollisionShape {
+public interface Renderable extends Placeable {
 
 	public default void initialize(LibGdxRendererAccess rendererAccess) {
 	}
