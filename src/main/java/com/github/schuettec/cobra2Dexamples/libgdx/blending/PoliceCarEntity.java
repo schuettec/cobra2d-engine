@@ -87,8 +87,9 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 	public PoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId, String policeBlueAlarmLightTextureId,
 	    String redLightTextureId, String blueLightTextureId, String frontLightTextureId, String brakeLightTextureId,
-	    String brakeLightColorTextureId, Point worldCoordinates, int layer, boolean playerControlled) {
-		super(carTextureId, worldCoordinates, layer, playerControlled);
+	    String brakeLightColorTextureId, Point worldCoordinates, Dimension initialDimension, int layer,
+	    boolean playerControlled) {
+		super(carTextureId, worldCoordinates, initialDimension, layer, playerControlled);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
 		this.redLightTextureId = redLightTextureId;
@@ -144,8 +145,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
 		        .scale(-1));
-		renderer.drawTexture(brakeLightColorTextureId, 1f, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
-		    (float) degrees);
+		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(), (float) degrees);
 	}
 
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -159,10 +159,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		        .scale(-1));
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
-		extendedRenderer.drawLightTexture(brakeLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		extendedRenderer.drawLightTexture(brakeLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
 		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
+		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
+		    lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -179,10 +179,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
-		extendedRenderer.drawLightTexture(frontLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		extendedRenderer.drawLightTexture(frontLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
 		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
+		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
+		    lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override

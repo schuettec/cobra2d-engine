@@ -59,5 +59,4 @@ public interface RendererAccess {
 		return position.translate(screenTranslation)
 		    .translate(textureCenterCorrection);
 	}
-
 }

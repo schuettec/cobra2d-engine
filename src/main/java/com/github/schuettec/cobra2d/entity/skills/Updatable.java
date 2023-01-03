@@ -21,4 +21,5 @@ public interface Updatable extends Entity {
 	 * @param controller The controller for user inputer.
 	 */
 	public void update(Cobra2DWorld map, float deltaTime, Controller controller);
+
 }

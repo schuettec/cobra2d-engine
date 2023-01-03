@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2Dexamples.libgdx.person;
 import com.github.schuettec.cobra2Dexamples.libgdx.animation.AnimationEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -21,8 +22,9 @@ public class HarveyEntity extends AnimationEntity {
 	private String headTextureId;
 
 	public HarveyEntity(String headTextureId, String staticAnimationTextureId, String animationTextureId,
-	    Point worldCoordinates, int frameCols, int frameRows, int layer, boolean playerControlled) {
-		super(staticAnimationTextureId, animationTextureId, worldCoordinates, frameCols, frameRows,
+	    Point worldCoordinates, Dimension initialDimension, int frameCols, int frameRows, int layer,
+	    boolean playerControlled) {
+		super(staticAnimationTextureId, animationTextureId, worldCoordinates, initialDimension, frameCols, frameRows,
 		    ANIMATION_FRAME_DURATION, layer, playerControlled);
 		this.headTextureId = headTextureId;
 		this.stepSpeed = DEFAULT_STEP_SPEED;
@@ -37,7 +39,7 @@ public class HarveyEntity extends AnimationEntity {
 
 	private void renderHead(RendererAccess renderer, Point screenTranslation) {
 		Point texturePosition = renderer.getTexturePosition(headTextureId, getPosition(), screenTranslation);
-		renderer.drawTexture(headTextureId, 1f, (float) texturePosition.getRoundX(), (float) texturePosition.getRoundY(),
+		renderer.drawTexture(headTextureId, 1f, texturePosition.getRoundX(), texturePosition.getRoundY(),
 		    (float) getDegrees());
 	}
 

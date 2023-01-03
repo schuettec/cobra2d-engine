@@ -3,16 +3,26 @@ package com.github.schuettec.cobra2d.engine;
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.imageio.ImageIO;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.renderer.Renderer;
+import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderer;
+import com.github.schuettec.cobra2d.resource.RessourceUtil;
 import com.github.schuettec.cobra2d.resource.URLClasspathHandler;
 import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
 import com.github.schuettec.cobra2d.resource.URLResourceTypeHandler;
@@ -28,6 +38,8 @@ public class Cobra2DEngine {
 	private Controller controller;
 	private boolean rendererStarted;
 
+	private Map<String, URL> textures;
+
 	public Cobra2DEngine(final Properties properties) {
 		super();
 		this.cobra2DConfig = new Cobra2DProperties(properties);
@@ -37,7 +49,10 @@ public class Cobra2DEngine {
 		RendererType rendererType = cobra2DConfig.getRendererType();
 		this.renderer = createRenderer(rendererType);
 		this.controller = renderer.getController();
-		this.world = new Cobra2DWorld(this, controller);
+
+		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
+		this.world = new Cobra2DWorld(this, controller, doMapUpdate);
+		this.textures = new Hashtable<>();
 	}
 
 	public void initialize() {
@@ -57,7 +72,9 @@ public class Cobra2DEngine {
 
 	private Renderer createRenderer(RendererType rendererType) {
 		Renderer renderer = null;
-		renderer = new LibGdxRenderer();
+		if (RendererType.LIBGDX.equals(rendererType)) {
+			renderer = new LibGdxRenderer();
+		}
 		return renderer;
 	}
 
@@ -100,6 +117,7 @@ public class Cobra2DEngine {
 
 	public void addImage(String address, URL ressourceURL) {
 		renderer.addTexture(address, ressourceURL);
+		this.textures.put(address, ressourceURL);
 	}
 
 	public void addEntity(List<? extends Entity> entities) {
@@ -137,4 +155,31 @@ public class Cobra2DEngine {
 		return renderer;
 	}
 
+	/**
+	 * This is a util method to get the size of a texture before the renderer was started. This method reads the specified
+	 * texture and analyzes the size.
+	 * 
+	 * Note: This method requires, that the texture was added to the engine before.
+	 * 
+	 * Note: Do not use this method during rendering. Use {@link RendererAccess} for
+	 * efficient renderer interaction.
+	 * 
+	 * @param textureId The texture id added to the engine before.
+	 * @return Returns the dimension.
+	 */
+	public Dimension dimensionOf(String textureId) {
+		if (this.textures.containsKey(textureId)) {
+			URL url = this.textures.get(textureId);
+			try (InputStream ressource = RessourceUtil.getRessource(url)) {
+				BufferedImage img = ImageIO.read(ressource);
+				return new Dimension(img.getWidth(), img.getHeight());
+			} catch (IOException e) {
+				throw new RuntimeException(
+				    "Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
+			}
+		} else {
+			throw new RuntimeException(
+			    "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
+		}
+	}
 }

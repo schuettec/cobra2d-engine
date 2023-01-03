@@ -69,12 +69,13 @@ public class PhysxCarDemo {
 		camera.setDrawEntityPoints(true);
 		engine.addEntity(camera);
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(), 0, false);
+		Dimension floorDimension = engine.dimensionOf("floor");
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0, false);
 		engine.addEntity(t1);
 		t1.setPositionByPoint(RectanglePoint.BL, new Point(20, 20));
 
 		List<Placeable> floorEntities = t1
-		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), 0, false))
+		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), floorDimension, 0, false))
 		    .placeEastOf()
 		    .placeEastOf()
 		    .placeEastOf()
@@ -95,9 +96,10 @@ public class PhysxCarDemo {
 		    .getCreated();
 		engine.addEntity(floorEntities);
 
+		Dimension policeDimension = engine.dimensionOf("police");
 		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
 		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
-		    new Dimension(216, 100), 2, true);
+		    policeDimension, 2, true);
 
 		engine.addEntity(b1);
 

@@ -31,8 +31,9 @@ public class TextureRenderingDemo {
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.initialize();
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
-		TexturedEntity t2 = new TexturedEntity("chair", new Point(300, 300), 1, true);
+		Dimension floorDimension = engine.dimensionOf("floor");
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0, false);
+		TexturedEntity t2 = new TexturedEntity("chair", new Point(300, 300), floorDimension, 1, true);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(800, 800), false);
 		camera.setDrawCameraOutline(true);

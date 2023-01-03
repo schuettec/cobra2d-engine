@@ -9,7 +9,6 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class TexturedEntity extends BasicRectangleEntity implements Renderable, Updatable {
@@ -21,15 +20,16 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 
 	protected boolean playerControlled;
 
-	public TexturedEntity(String textureId, Point worldCoordinates, int layer, boolean playerControlled) {
-		super(worldCoordinates, new Dimension(0, 0));
+	public TexturedEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
+	    boolean playerControlled) {
+		super(worldCoordinates, intialDimension);
 		this.layer = layer;
 		this.textureId = textureId;
 		this.playerControlled = playerControlled;
 	}
 
 	@Override
-	public void initialize(LibGdxRendererAccess rendererAccess) {
+	public void initialize(RendererAccess rendererAccess) {
 		Renderable.super.initialize(rendererAccess);
 		createCollisionShape(rendererAccess);
 	}
@@ -45,8 +45,8 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 		    (float) getDegrees());
 	}
 
-	protected void createCollisionShape(RendererAccess renderer) {
-		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
+	protected void createCollisionShape(RendererAccess rendererAccess) {
+		Dimension textureDimension = rendererAccess.getTextureDimension(getTextureId());
 		createRectangleShape(textureDimension);
 	}
 

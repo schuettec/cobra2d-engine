@@ -3,10 +3,10 @@ package com.github.schuettec.cobra2Dexamples.libgdx.animation;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxAnimation;
-import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRendererAccess;
 
 public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 
@@ -19,9 +19,10 @@ public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 
 	private String animationTextureId;
 
-	public AnimationEntity(String textureId, String animationTextureId, Point worldCoordinates, int frameCols,
-	    int frameRows, float frameDuration, int layer, boolean playerControlled) {
-		super(textureId, worldCoordinates, layer, playerControlled);
+	public AnimationEntity(String textureId, String animationTextureId, Point worldCoordinates,
+	    Dimension initialDimension, int frameCols, int frameRows, float frameDuration, int layer,
+	    boolean playerControlled) {
+		super(textureId, worldCoordinates, initialDimension, layer, playerControlled);
 		this.animationTextureId = animationTextureId;
 		this.frameCols = frameCols;
 		this.frameRows = frameRows;
@@ -29,7 +30,7 @@ public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 	}
 
 	@Override
-	public void initialize(LibGdxRendererAccess rendererAccess) {
+	public void initialize(RendererAccess rendererAccess) {
 		super.initialize(rendererAccess);
 		this.animation = createAnimation(rendererAccess);
 	}
