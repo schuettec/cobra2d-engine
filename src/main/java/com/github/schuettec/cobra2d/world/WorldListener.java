@@ -9,4 +9,12 @@ public interface WorldListener {
 
 	default void entityRemoved(final Entity entity) {
 	}
+
+	default void beforeUpdate() {
+
+	}
+
+	default void afterUpdate() {
+
+	}
 }

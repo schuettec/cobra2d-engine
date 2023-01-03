@@ -7,6 +7,7 @@ import static java.util.Objects.nonNull;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -57,21 +58,6 @@ public class Cobra2DWorld {
 
 	private static final int POSITION_ITERATIONS = 2;
 
-	// this would be a useful regression test
-	// public static void main(String[] args) {
-	// Map map = new Map();
-	// Entity e1 = new AbstractPolygonObstacle((Point) null, new EntityPoint[]
-	// {});
-	// Entity e2 = new AbstractPolygonObstacle((Point) null, new EntityPoint[]
-	// {});
-	// map.detectedCollision = new HashSet<Collision>();
-	// map.detectedCollision.add(new Collision(e1, null, new
-	// LinkedList<Point>()));
-	// map.detectedCollision.add(new Collision(e1, e2, new
-	// LinkedList<Point>()));
-	// System.out.println(map.detectedCollision.size());
-	// }
-
 	protected Set<Entity> allEntities;
 
 	protected Set<Obstacle> physicEntities;
@@ -82,6 +68,8 @@ public class Cobra2DWorld {
 	protected Set<Camera> cameras;
 	protected Set<PhysicBody> physicBodies;
 
+	private transient List<WorldListener> listeners;
+
 	/**
 	 * Holds the listeners that are notified if an entity with the specified skill was added/removed.
 	 */
@@ -90,7 +78,6 @@ public class Cobra2DWorld {
 	private Map<Camera, List<Collision>> cameraCollisionMap;
 
 	private boolean calculateFullCameraCollisionPoints = false;
-	private boolean calculateFullEntityCollisionPoints = true;
 
 	private Controller controller;
 
@@ -101,8 +88,11 @@ public class Cobra2DWorld {
 
 	private Cobra2DEngine engine;
 
-	public Cobra2DWorld(Cobra2DEngine engine, Controller controller) {
+	private boolean updateWorld;
+
+	public Cobra2DWorld(Cobra2DEngine engine, Controller controller, boolean updateWorld) {
 		this.engine = engine;
+		this.updateWorld = updateWorld;
 		// Create a default physics world with zero gravity
 		this.physicsWorld = new World(new Vector2(), true);
 
@@ -114,6 +104,8 @@ public class Cobra2DWorld {
 		this.physicBodies = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
+
+		this.listeners = new LinkedList<>();
 
 		this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
 			@Override
@@ -133,6 +125,14 @@ public class Cobra2DWorld {
 
 		});
 		this.listenersBySkills.put(Renderable.class, engine.getRenderer());
+	}
+
+	public void addWorldListener(final WorldListener listener) {
+		this.listeners.add(listener);
+	}
+
+	public void removeWorldListener(final WorldListener listener) {
+		this.listeners.remove(listener);
 	}
 
 	public void setGravity(float xForce, float yForce) {
@@ -181,8 +181,9 @@ public class Cobra2DWorld {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.add(asSkill.get());
-			notifyAdd(skillType, entity);
+			notifyAddBySkill(skillType, entity);
 		}
+		notifyAdded(entity);
 	}
 
 	private Optional<WorldListener> skillWorldlistener(Class<? extends Skill> skillType) {
@@ -193,18 +194,32 @@ public class Cobra2DWorld {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.remove(asSkill.get());
-			notifyRemove(skillType, entity);
+			notifyRemovedBySkill(skillType, entity);
 		}
+		notifyRemoved(entity);
 	}
 
 	public void update(float requestedFps, float deltaTime) {
-		doPhysicsStep(deltaTime);
+		notifyBeforeUpdate();
+
+		calculateCameraRelativeInput();
+
+		if (isUpdateWorld()) {
+			updateWorld(deltaTime);
+		}
+
+		updateCameras();
+
+		notifyAfterUpdate();
+	}
+
+	private void calculateCameraRelativeInput() {
 		Camera cameraForInput = this.getCameraForInput();
 		InputContext input = getCameraRelativeInput(controller, cameraForInput);
 		controller.setCameraRelativeInput(input);
-		for (Updatable updatable : updateables) {
-			updatable.update(this, deltaTime, controller);
-		}
+	}
+
+	private void updateCameras() {
 		cameraCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras
 		for (Camera camera : cameras) {
@@ -213,6 +228,13 @@ public class Cobra2DWorld {
 			CollisionMap map = detectCollision(cameraSet, renderables, false, calculateFullCameraCollisionPoints, false);
 			List<Collision> cameraCollisions = map.getCollisions();
 			cameraCollisionMap.put(camera, cameraCollisions);
+		}
+	}
+
+	private void updateWorld(float deltaTime) {
+		doPhysicsStep(deltaTime);
+		for (Updatable updatable : updateables) {
+			updatable.update(this, deltaTime, controller);
 		}
 	}
 
@@ -401,12 +423,37 @@ public class Cobra2DWorld {
 		this.cameraForInput = camera;
 	}
 
-	private <S extends Skill> void notifyAdd(Class<S> skillType, Entity entity) {
-		skillWorldlistener(skillType).ifPresent(l -> l.entityAdded(entity));
+	public boolean isUpdateWorld() {
+		return updateWorld;
 	}
 
-	private <S extends Skill> void notifyRemove(Class<S> skillType, Entity entity) {
+	private <S extends Skill> void notifyAddBySkill(Class<S> skillType, Entity entity) {
+		skillWorldlistener(skillType).ifPresent(l -> l.entityAdded(entity));
+
+	}
+
+	private void notifyAdded(Entity entity) {
+		listeners.stream()
+		    .forEach(l -> l.entityAdded(entity));
+	}
+
+	private <S extends Skill> void notifyRemovedBySkill(Class<S> skillType, Entity entity) {
 		skillWorldlistener(skillType).ifPresent(l -> l.entityRemoved(entity));
+	}
+
+	private void notifyRemoved(Entity entity) {
+		listeners.stream()
+		    .forEach(l -> l.entityRemoved(entity));
+	}
+
+	private void notifyBeforeUpdate() {
+		listeners.stream()
+		    .forEach(l -> l.beforeUpdate());
+	}
+
+	private void notifyAfterUpdate() {
+		listeners.stream()
+		    .forEach(l -> l.afterUpdate());
 	}
 
 }

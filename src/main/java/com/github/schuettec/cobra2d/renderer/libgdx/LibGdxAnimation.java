@@ -32,12 +32,12 @@ public interface LibGdxAnimation extends LibGdxRenderable {
 		    .translate(textureCenterCorrection);
 
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(renderer);
-		extendedRenderer.drawTextureRegion(currentFrame, 1f, (float) texturePosition.getRoundX(),
-		    (float) texturePosition.getRoundY(), (float) getDegrees());
+		extendedRenderer.drawTextureRegion(currentFrame, 1f, texturePosition.getRoundX(), texturePosition.getRoundY(),
+		    (float) getDegrees());
 		return nextState;
 	}
 
-	default Animation<TextureRegion> createAnimation(LibGdxRendererAccess rendererAccess) {
+	default Animation<TextureRegion> createAnimation(RendererAccess rendererAccess) {
 		LibGdxExtendedAccess extendedRenderer = getExtendedRenderer(rendererAccess);
 		Texture texture = extendedRenderer.getTexture(getAnimationTextureId());
 		int tileWidth = texture.getWidth() / getFrameCols();

@@ -10,14 +10,14 @@ public class LightEntity extends TexturedEntity {
 
 	private static final long serialVersionUID = 1L;
 
-	public LightEntity(String textureId, Point worldCoordinates, int layer, boolean playerControlled) {
-		super(textureId, worldCoordinates, layer, playerControlled);
+	public LightEntity(String textureId, Point worldCoordinates, Dimension initialDimension, int layer,
+	    boolean playerControlled) {
+		super(textureId, worldCoordinates, initialDimension, layer, playerControlled);
 	}
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
 		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
-		createRectangleShape(textureDimension);
 		/*
 		 * Without the next translation, the texture is rendered at the entities center point,
 		 * so we have to translate by the half of the texture dimension
@@ -26,11 +26,10 @@ public class LightEntity extends TexturedEntity {
 		Point textureCenter = renderer.getTextureCenter(getTextureId());
 		LibGdxExtendedAccess extendedRenderer = renderer.extendedRenderer(LibGdxExtendedAccess.class);
 
-		extendedRenderer.drawLightTexture(getTextureId(), (float) texturePosition.getRoundX(),
-		    (float) texturePosition.getRoundY(), textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getRoundHeight(), (float) this.getScale(),
-		    (float) this.getScale(), (float) getDegrees(), 0, 0, textureDimension.getRoundWidth(),
-		    textureDimension.getRoundHeight(), false, false);
+		extendedRenderer.drawLightTexture(getTextureId(), texturePosition.getRoundX(), texturePosition.getRoundY(),
+		    textureCenter.getRoundX(), textureCenter.getRoundY(), (float) textureDimension.getWidth(),
+		    textureDimension.getRoundHeight(), (float) this.getScale(), (float) this.getScale(), (float) getDegrees(), 0, 0,
+		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 
 	}
 

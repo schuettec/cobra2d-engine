@@ -91,7 +91,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	    String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
 	    String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId, Point worldCoordinates,
 	    Dimension dimension, int layer, boolean playerControlled) {
-		super(carTextureId, worldCoordinates, layer, playerControlled);
+		super(carTextureId, worldCoordinates, dimension, layer, playerControlled);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
 		this.redLightTextureId = redLightTextureId;
@@ -105,10 +105,12 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		createRectangleShape(dimension);
 	}
 
+	@Override
 	protected void createCollisionShape(RendererAccess renderer) {
 		createRectangleShape(dimension);
 	}
 
+	@Override
 	public Dimension getCollisionShapeDimension() {
 		return dimension;
 	}
@@ -159,8 +161,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		leftLight = leftLight.translate(screenTranslation)
 		    .translate(lightTextureCenter.clone()
 		        .scale(-1));
-		renderer.drawTexture(brakeLightColorTextureId, 1f, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
-		    (float) degrees);
+		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(), (float) degrees);
 	}
 
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -174,10 +175,10 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		        .scale(-1));
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
-		extendedRenderer.drawLightTexture(brakeLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		extendedRenderer.drawLightTexture(brakeLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
 		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
+		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
+		    lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -194,10 +195,10 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
-		extendedRenderer.drawLightTexture(frontLightTextureId, (float) leftLight.getRoundX(), (float) leftLight.getRoundY(),
+		extendedRenderer.drawLightTexture(frontLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
 		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(), false, false);
+		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
+		    lightTextureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override

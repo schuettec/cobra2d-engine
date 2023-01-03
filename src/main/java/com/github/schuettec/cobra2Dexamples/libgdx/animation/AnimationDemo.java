@@ -34,11 +34,13 @@ public class AnimationDemo {
 
 		engine.initialize();
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
+		Dimension floorDimension = engine.dimensionOf("floor");
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0, false);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
 
-		AnimationEntity h = new AnimationEntity("walkcyle_harvey_static", "walkcyle_harvey", new Point(200, 200), 4, 4,
-		    0.05f, 2, false);
+		Dimension harveysDimension = engine.dimensionOf("walkcyle_harvey_static");
+		AnimationEntity h = new AnimationEntity("walkcyle_harvey_static", "walkcyle_harvey", new Point(200, 200),
+		    harveysDimension, 4, 4, 0.05f, 2, false);
 		h.setLayer(2);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);

@@ -41,14 +41,17 @@ public class BlendingDemo {
 
 		engine.initialize();
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
-		// TexturedEntity t2 = new TexturedEntity("police", new Point(300, 300), 1, true);
+		Dimension floorDimension = engine.dimensionOf("floor");
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0, false);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
+
+		Dimension policeDimension = engine.dimensionOf("police");
 		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
 		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
-		    2, true);
+		    policeDimension, 2, true);
 
-		LightEntity l = new LightEntity("light", new Point(300, 300), 0, false);
+		Dimension lightDimension = engine.dimensionOf("light");
+		LightEntity l = new LightEntity("light", new Point(300, 300), lightDimension, 0, false);
 		l.setLayer(4);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);

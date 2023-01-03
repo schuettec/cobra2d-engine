@@ -35,11 +35,13 @@ public class PersonDemo {
 
 		engine.initialize();
 
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), 0, false);
+		Dimension floorDimension = engine.dimensionOf("floor");
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), floorDimension, 0, false);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
 
-		HarveyEntity h = new HarveyEntity("head", "walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0), 4, 4, 2,
-		    false);
+		Dimension harveysDimension = engine.dimensionOf("walkcyle_harvey_static");
+		HarveyEntity h = new HarveyEntity("head", "walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0),
+		    harveysDimension, 4, 4, 2, false);
 		h.setLayer(5);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
