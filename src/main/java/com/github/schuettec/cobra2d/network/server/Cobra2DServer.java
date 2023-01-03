@@ -83,12 +83,14 @@ public class Cobra2DServer implements Renderer, WorldListener {
 			    cameraCollision.stream()
 			        .map(Collision::getOpponent)
 			        .forEach(entity -> {
-				        thisFrameIds.add(entity.getId());
-				        EntityState entityState = stateManager.readEntityState(entity);
-				        String entityClass = entity.getClass()
-				            .getName();
-				        UpdateClientCommand updateCmd = new UpdateClientCommand(entityClass, entityState);
-				        connection.sendUDP(updateCmd);
+				        if (stateManager.isStateManaged(entity)) {
+					        thisFrameIds.add(entity.getId());
+					        EntityState entityState = stateManager.readEntityState(entity);
+					        String entityClass = entity.getClass()
+					            .getName();
+					        UpdateClientCommand updateCmd = new UpdateClientCommand(entityClass, entityState);
+					        connection.sendUDP(updateCmd);
+				        }
 			        });
 			    List<String> lastFrame = player.getLastFrameIds();
 			    lastFrame.removeAll(thisFrameIds);

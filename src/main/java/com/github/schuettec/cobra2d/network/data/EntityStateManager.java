@@ -37,7 +37,9 @@ public class EntityStateManager implements WorldListener {
 		 */
 		world.getAllEntities()
 		    .stream()
-		    .forEach(e -> registerEntity(e));
+		    .forEach(e -> {
+			    registerEntity(e);
+		    });
 	}
 
 	@Override
@@ -54,6 +56,10 @@ public class EntityStateManager implements WorldListener {
 			accessorsByEntityType.put(entityType, entityStateAccessor);
 			registeredTypes.put(entityType.getName(), entityType);
 		}
+	}
+
+	public <E extends Entity> boolean isStateManaged(E entity) {
+		return registeredTypes.containsKey(entityType(entity).getName());
 	}
 
 	public <E extends Entity> EntityState readEntityState(E entity) {

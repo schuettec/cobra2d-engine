@@ -106,10 +106,8 @@ public class Cobra2DWorld {
 		this.physicBodies = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
-
-		this.worldAccess = new WorldAccess(this);
-
 		this.listeners = new LinkedList<>();
+		this.worldAccess = new WorldAccess(this);
 
 		this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
 			@Override
