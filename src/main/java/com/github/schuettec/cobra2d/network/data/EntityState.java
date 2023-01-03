@@ -8,10 +8,12 @@ import java.util.Map;
  * Serializable class that transfers the minimal state of an entity for networking.
  */
 public class EntityState {
+	private String id;
 	private Map<Integer, Serializable> attributes;
 
-	public EntityState() {
+	public EntityState(String id) {
 		super();
+		this.id = id;
 		this.attributes = new Hashtable<>();
 	}
 
@@ -21,6 +23,15 @@ public class EntityState {
 
 	public Serializable getAttributeValue(int attributeHash) {
 		return attributes.get(attributeHash);
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public String toString() {
+		return "EntityState [id=" + id + ", attributes=" + attributes + "]";
 	}
 
 }

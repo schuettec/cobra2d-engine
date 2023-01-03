@@ -20,7 +20,7 @@ public class EntityStateAccessor {
 	}
 
 	public <E extends Entity> EntityState readEntityState(E entity) {
-		EntityState state = new EntityState();
+		EntityState state = new EntityState(entity.getId());
 		for (ReflectiveField f : fields) {
 			state.addAttributeValue(f.hashCode(), f.getFieldValue(entity));
 		}

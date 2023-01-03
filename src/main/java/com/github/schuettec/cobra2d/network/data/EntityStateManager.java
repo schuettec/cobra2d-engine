@@ -21,8 +21,11 @@ public class EntityStateManager implements WorldListener {
 
 	private Map<Class<? extends Entity>, EntityStateAccessor> accessorsByEntityType;
 
+	private Map<String, Class<? extends Entity>> registeredTypes;
+
 	public EntityStateManager(Cobra2DWorld world) {
 		this.accessorsByEntityType = new Hashtable<>();
+		this.registeredTypes = new Hashtable<>();
 		registerEntities(world);
 		world.addWorldListener(this);
 	}
@@ -49,6 +52,7 @@ public class EntityStateManager implements WorldListener {
 		if (!allInheritedFields.isEmpty()) {
 			EntityStateAccessor entityStateAccessor = new EntityStateAccessor(allInheritedFields);
 			accessorsByEntityType.put(entityType, entityStateAccessor);
+			registeredTypes.put(entityType.getName(), entityType);
 		}
 	}
 
@@ -74,5 +78,13 @@ public class EntityStateManager implements WorldListener {
 
 	private <E extends Entity> Class<? extends Entity> entityType(E entity) {
 		return entity.getClass();
+	}
+
+	public boolean isRegistered(String entityClass) {
+		return registeredTypes.containsKey(entityClass);
+	}
+
+	public Class<? extends Entity> getEntityClass(String entityClass) {
+		return registeredTypes.get(entityClass);
 	}
 }

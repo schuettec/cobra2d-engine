@@ -1,5 +1,9 @@
 package com.github.schuettec.cobra2d.engine;
 
+import static com.github.schuettec.cobra2d.engine.Cobra2DConstants.DEFAULT_TCP_PORT;
+import static com.github.schuettec.cobra2d.engine.Cobra2DConstants.DEFAULT_UDP_PORT;
+import static java.lang.String.valueOf;
+
 import java.util.Properties;
 
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -59,6 +63,14 @@ public class Cobra2DProperties {
 
 	public int getResolutionX() {
 		return Integer.parseInt(properties.getProperty(RESOLUTION_X));
+	}
+
+	public int getTcpPort() {
+		return Integer.parseInt(properties.getProperty(TCP_PORT, valueOf(DEFAULT_TCP_PORT)));
+	}
+
+	public int getUdpPort() {
+		return Integer.parseInt(properties.getProperty(UDP_PORT, valueOf(DEFAULT_UDP_PORT)));
 	}
 
 	public RendererType getRendererType() {
@@ -121,6 +133,14 @@ public class Cobra2DProperties {
 	 * renderer.
 	 */
 	public static final String CREATE_CONTROLLER = "create-controller";
+	/**
+	 * TCP port for game server hosting. Only needed if the dedicated server is set as renderer.
+	 */
+	public static final String TCP_PORT = "tcp-port";
+	/**
+	 * TCP port for game server hosting. Only needed if the dedicated server is set as renderer.
+	 */
+	public static final String UDP_PORT = "udp-port";
 	/**
 	 * Property keys required for a valid engine configuration-
 	 */

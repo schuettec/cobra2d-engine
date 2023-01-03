@@ -46,10 +46,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	private RendererState state;
 
-	private int resolutionX;
-	private int resolutionY;
-	private int refreshRate;
-
 	private LibGdxRendererAccess rendererAccess;
 	private LibGdxController controller;
 
@@ -70,14 +66,10 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	@Override
-	public void initializeRenderer(Cobra2DEngine engine, int resolutionX, int resolutionY, int bitDepth, int refreshRate,
-	    boolean fullscreen) throws RendererException {
+	public void initializeRenderer(Cobra2DEngine engine) throws RendererException {
 		this.engine = engine;
 		this.world = engine.getWorld();
-		this.resolutionX = resolutionX;
-		this.resolutionY = resolutionY;
-		this.refreshRate = refreshRate;
-
+		this.textureLocations = engine.getTextures();
 		this.started = false;
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -86,13 +78,14 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		config.setInitialBackgroundColor(Color.BLACK);
 		config.setHdpiMode(HdpiMode.Pixels);
 		config.useVsync(true);
-		if (fullscreen) {
-			DisplayMode mode = getDisplayMode(resolutionX, resolutionY, bitDepth, refreshRate);
+		if (engine.isFullscreen()) {
+			DisplayMode mode = getDisplayMode(engine.getResolutionX(), engine.getResolutionY(), engine.getBitDepth(),
+			    engine.getRefreshRate());
 			config.setFullscreenMode(mode);
 		} else {
-			config.setWindowedMode(resolutionX, resolutionY);
+			config.setWindowedMode(engine.getResolutionX(), engine.getResolutionY());
 		}
-		config.setForegroundFPS(refreshRate);
+		config.setForegroundFPS(engine.getRefreshRate());
 		config.setTitle("Cobra2D Engine");
 
 		Thread initializer = new Thread(new Runnable() {
@@ -123,7 +116,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void create() {
-
 		loadTextures();
 
 		this.rendererAccess = new LibGdxRendererAccess(this);
@@ -133,6 +125,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 		spriteRenderer = new SpriteBatch();
 
+		int resolutionX = engine.getResolutionX();
+		int resolutionY = engine.getResolutionY();
 		camera = new OrthographicCamera(resolutionX, resolutionY);
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
@@ -152,6 +146,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 			if (controller.isEscapePressed()) {
 				engine.shutdownEngine();
 			} else {
+				int refreshRate = engine.getRefreshRate();
 				world.update(refreshRate, deltaTime);
 				camera.update();
 
@@ -244,30 +239,19 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	int getResolutionX() {
-		return resolutionX;
+		return engine.getResolutionX();
 	}
 
 	int getResolutionY() {
-		return resolutionY;
+		return engine.getResolutionY();
 	}
 
 	SpriteBatch getSpriteRenderer() {
 		return spriteRenderer;
 	}
 
-	@Override
 	public RendererAccess getRendererAccess() {
 		return rendererAccess;
-	}
-
-	@Override
-	public void addTexture(String textureId, URL url) {
-		// Textures cannot be loaded if the renderer is initialized.
-		if (!RendererState.CREATED.equals(state)) {
-			throw new IllegalAccessError("Cannot add texture after initializing the renderer.");
-		} else {
-			textureLocations.put(textureId, url);
-		}
 	}
 
 	private void loadTexture(String textureId, URL url) {

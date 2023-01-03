@@ -13,7 +13,7 @@ import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, StaticBody, Updatable {
 
@@ -52,7 +52,7 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		Point newPosition = new Point(body.getPosition().x, body.getPosition().y);
 		newPosition = newPosition.scale(toRenderScale);
 		this.setPosition(newPosition);

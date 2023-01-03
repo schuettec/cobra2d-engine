@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.Entity;
@@ -539,6 +540,16 @@ public abstract class Collisions {
 			@Override
 			public Shape getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
 				return shape;
+			}
+
+			@Override
+			public String getId() {
+				return UUID.randomUUID()
+				    .toString();
+			}
+
+			@Override
+			public void setId(String setId) {
 			}
 		};
 		return detectCollision(emulated, obstacles, outlineOnly, allEntityPoints, addBidirectional);

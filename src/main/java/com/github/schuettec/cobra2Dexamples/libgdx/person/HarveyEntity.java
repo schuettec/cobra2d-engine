@@ -7,7 +7,7 @@ import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class HarveyEntity extends AnimationEntity {
 
@@ -44,7 +44,7 @@ public class HarveyEntity extends AnimationEntity {
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		this.running = controller.isWKeyPressed() || controller.isSKeyPressed();
 
 		InputContext cameraRelativeInput = controller.getCameraRelativeInput();

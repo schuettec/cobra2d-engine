@@ -10,7 +10,7 @@ import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractCamera {
 
@@ -50,7 +50,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

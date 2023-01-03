@@ -11,6 +11,19 @@ import com.github.schuettec.cobra2d.math.Point;
  *
  */
 public interface Entity extends Skill {
+
+	/**
+	 * @return Returns the id of this entity.
+	 */
+	public String getId();
+
+	/**
+	 * Sets an id.
+	 * 
+	 * @param setId The id.
+	 */
+	public void setId(String setId);
+
 	/**
 	 * Returns the position of this entity.
 	 * <p>

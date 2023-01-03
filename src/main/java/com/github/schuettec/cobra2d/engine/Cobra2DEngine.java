@@ -18,6 +18,7 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.network.server.Cobra2DServer;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -28,7 +29,6 @@ import com.github.schuettec.cobra2d.resource.URLInstallDirectoryHandler;
 import com.github.schuettec.cobra2d.resource.URLResourceTypeHandler;
 import com.github.schuettec.cobra2d.resource.URLStreamHandlerRegistry;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
-import com.github.schuettec.cobra2d.world.WorldListener;
 
 public class Cobra2DEngine {
 
@@ -36,38 +36,58 @@ public class Cobra2DEngine {
 	private Renderer renderer;
 	private Cobra2DWorld world;
 	private Controller controller;
-	private boolean rendererStarted;
 
 	private Map<String, URL> textures;
+	private RendererType rendererType;
+	private int refreshRate;
+	private int resolutionX;
+	private int resolutionY;
+	private int bitDepth;
+	private boolean fullscreen;
+	private int tcpPort;
+	private int udpPort;
 
 	public Cobra2DEngine(final Properties properties) {
 		super();
 		this.cobra2DConfig = new Cobra2DProperties(properties);
-		this.rendererStarted = false;
 		ResourceLocation resourceLocation = cobra2DConfig.getResourceLocation();
 		setupEnvironment(resourceLocation);
-		RendererType rendererType = cobra2DConfig.getRendererType();
-		this.renderer = createRenderer(rendererType);
-		this.controller = renderer.getController();
+		this.rendererType = cobra2DConfig.getRendererType();
+
+		createRendererAndController();
 
 		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
 		this.world = new Cobra2DWorld(this, controller, doMapUpdate);
 		this.textures = new Hashtable<>();
 	}
 
-	public void initialize() {
-		int refreshRate = cobra2DConfig.getRefreshRate();
-		int resolutionX = cobra2DConfig.getResolutionX();
-		int resolutionY = cobra2DConfig.getResolutionY();
-		int bitDepth = cobra2DConfig.getBitDepth();
-		boolean fullscreen = cobra2DConfig.getFullscreen();
+	private void createRendererAndController() {
+		if (RendererType.LIBGDX.equals(rendererType)) {
+			this.renderer = createRenderer(rendererType);
+			this.controller = renderer.getController();
+		} else if (RendererType.DEDICATED_SERVER.equals(rendererType)) {
+			this.renderer = new Cobra2DServer();
+			this.controller = renderer.getController();
+		} else {
+			this.renderer = null;
+			this.controller = new NoInputController();
+		}
+	}
 
-		renderer.initializeRenderer(this, resolutionX, resolutionY, bitDepth, refreshRate, fullscreen);
+	public void initialize() {
+		this.refreshRate = cobra2DConfig.getRefreshRate();
+		this.resolutionX = cobra2DConfig.getResolutionX();
+		this.resolutionY = cobra2DConfig.getResolutionY();
+		this.bitDepth = cobra2DConfig.getBitDepth();
+		this.fullscreen = cobra2DConfig.getFullscreen();
+		this.tcpPort = cobra2DConfig.getTcpPort();
+		this.udpPort = cobra2DConfig.getUdpPort();
+
+		renderer.initializeRenderer(this);
 	}
 
 	public void start() {
 		this.renderer.start();
-		this.rendererStarted = true;
 	}
 
 	private Renderer createRenderer(RendererType rendererType) {
@@ -116,7 +136,6 @@ public class Cobra2DEngine {
 	}
 
 	public void addImage(String address, URL ressourceURL) {
-		renderer.addTexture(address, ressourceURL);
 		this.textures.put(address, ressourceURL);
 	}
 
@@ -151,7 +170,7 @@ public class Cobra2DEngine {
 		world.setCameraForInput(camera);
 	}
 
-	public WorldListener getRenderer() {
+	public Renderer getRenderer() {
 		return renderer;
 	}
 
@@ -182,4 +201,41 @@ public class Cobra2DEngine {
 			    "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
 		}
 	}
+
+	public RendererType getRendererType() {
+		return rendererType;
+	}
+
+	public int getRefreshRate() {
+		return refreshRate;
+	}
+
+	public int getResolutionX() {
+		return resolutionX;
+	}
+
+	public int getResolutionY() {
+		return resolutionY;
+	}
+
+	public Map<String, URL> getTextures() {
+		return textures;
+	}
+
+	public int getBitDepth() {
+		return bitDepth;
+	}
+
+	public boolean isFullscreen() {
+		return fullscreen;
+	}
+
+	public int getTcpPort() {
+		return tcpPort;
+	}
+
+	public int getUdpPort() {
+		return udpPort;
+	}
+
 }

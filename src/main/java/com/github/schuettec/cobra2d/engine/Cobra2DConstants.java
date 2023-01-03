@@ -22,4 +22,13 @@ public class Cobra2DConstants {
 	 */
 	public static final int CONNECTION_TIMEOUT = 3000;
 
+	/**
+	 * Default udp port if dedicated server is started.
+	 */
+	public static final int DEFAULT_UDP_PORT = 54777;
+	/**
+	 * Default tcp port if dedicated server is started.
+	 */
+	public static final int DEFAULT_TCP_PORT = 54555;
+
 }

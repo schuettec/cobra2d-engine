@@ -14,6 +14,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class BasicRectangleMapCamera extends BasicRectangleEntity implements AbstractCamera {
 
@@ -74,7 +75,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		this.mousePosition = controller.getMousePositionWorldCoordinates();
 
 		if (playerControlled) {
@@ -109,6 +110,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		this.translate(new Point(0, 5));
 	}
 
+	@Override
 	public void setScreenPosition(Point point) {
 		this.screenPosition = point;
 	}
@@ -145,18 +147,22 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		return drawCameraOutline;
 	}
 
+	@Override
 	public void setDrawEntityPoints(boolean drawEntityPoints) {
 		this.drawEntityPoints = drawEntityPoints;
 	}
 
+	@Override
 	public void setDrawCollisionShape(boolean drawCollisionShape) {
 		this.drawCollisionShape = drawCollisionShape;
 	}
 
+	@Override
 	public void setDrawCameraOutline(boolean drawCameraOutline) {
 		this.drawCameraOutline = drawCameraOutline;
 	}
 
+	@Override
 	public void setPlayerControlled(boolean playerControlled) {
 		this.playerControlled = playerControlled;
 	}

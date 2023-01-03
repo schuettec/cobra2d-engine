@@ -28,6 +28,7 @@ public class BasicCircleEntity extends BasicEntity implements Placeable {
 		this.circle = new Circle(new Point(0, 0), radius);
 	}
 
+	@Override
 	public Circle getCollisionShapeInWorldCoordinates() {
 		return getCollisionShape(true, true, true);
 	}

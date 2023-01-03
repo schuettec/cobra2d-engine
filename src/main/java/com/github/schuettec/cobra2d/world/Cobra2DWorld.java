@@ -58,7 +58,7 @@ public class Cobra2DWorld {
 
 	private static final int POSITION_ITERATIONS = 2;
 
-	protected Set<Entity> allEntities;
+	protected Map<String, Entity> allEntities;
 
 	protected Set<Obstacle> physicEntities;
 
@@ -90,6 +90,8 @@ public class Cobra2DWorld {
 
 	private boolean updateWorld;
 
+	private WorldAccess worldAccess;
+
 	public Cobra2DWorld(Cobra2DEngine engine, Controller controller, boolean updateWorld) {
 		this.engine = engine;
 		this.updateWorld = updateWorld;
@@ -97,13 +99,15 @@ public class Cobra2DWorld {
 		this.physicsWorld = new World(new Vector2(), true);
 
 		this.controller = controller;
-		this.allEntities = new HashSet<Entity>();
+		this.allEntities = new Hashtable<String, Entity>();
 		this.obstacles = new HashSet<>();
 		this.updateables = new HashSet<>();
 		this.renderables = new HashSet<>();
 		this.physicBodies = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
+
+		this.worldAccess = new WorldAccess(this);
 
 		this.listeners = new LinkedList<>();
 
@@ -124,7 +128,12 @@ public class Cobra2DWorld {
 			}
 
 		});
+
 		this.listenersBySkills.put(Renderable.class, engine.getRenderer());
+	}
+
+	public Optional<Entity> getEntityById(String entityId) {
+		return Optional.ofNullable(allEntities.get(entityId));
 	}
 
 	public void addWorldListener(final WorldListener listener) {
@@ -146,7 +155,7 @@ public class Cobra2DWorld {
 	}
 
 	public void addEntity(Entity entity) {
-		this.allEntities.add(entity);
+		this.allEntities.put(entity.getId(), entity);
 		addEntityBySkill(entity);
 	}
 
@@ -234,7 +243,7 @@ public class Cobra2DWorld {
 	private void updateWorld(float deltaTime) {
 		doPhysicsStep(deltaTime);
 		for (Updatable updatable : updateables) {
-			updatable.update(this, deltaTime, controller);
+			updatable.update(worldAccess, deltaTime, controller);
 		}
 	}
 
@@ -268,7 +277,7 @@ public class Cobra2DWorld {
 	}
 
 	public Set<Entity> getAllEntities() {
-		return new HashSet<>(allEntities);
+		return new HashSet<>(allEntities.values());
 	}
 
 	public Set<Obstacle> getObstacles() {
@@ -400,6 +409,11 @@ public class Cobra2DWorld {
 		return Collisions.detectCollision(s1, s2, outlineOnly, all);
 	}
 
+	public CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstaclesExcept,
+	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
+		return Collisions.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
 	/**
 	 * @param enties T The entities to remove in the result.
 	 * @return Returns the obstacles except the specified entities.
@@ -408,11 +422,6 @@ public class Cobra2DWorld {
 		Set<? extends HasCollisionShape> clone = new HashSet<>(this.obstacles);
 		clone.removeAll(Set.of(enties));
 		return clone;
-	}
-
-	public CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstaclesExcept,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return Collisions.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
 	}
 
 	public Camera getCameraForInput() {
@@ -454,6 +463,18 @@ public class Cobra2DWorld {
 	private void notifyAfterUpdate() {
 		listeners.stream()
 		    .forEach(l -> l.afterUpdate());
+	}
+
+	public void addEntities(List<Entity> toAdd) {
+		toAdd.forEach(this::addEntity);
+	}
+
+	public void removeEntities(List<Entity> toRemove) {
+		toRemove.forEach(this::removeEntity);
+	}
+
+	public WorldAccess getWorldAccess() {
+		return worldAccess;
 	}
 
 }

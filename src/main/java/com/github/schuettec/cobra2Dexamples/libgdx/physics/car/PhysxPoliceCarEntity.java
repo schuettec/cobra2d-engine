@@ -24,7 +24,7 @@ import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRenderable, DynamicBody, Updatable {
 
@@ -202,7 +202,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		long currentTimeMillis = System.currentTimeMillis();
 
 		if (lightsOn) {

@@ -20,7 +20,7 @@ import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysicsBallEntity extends BasicCircleEntity implements CircleRenderable, DynamicBody, Updatable {
 
@@ -76,7 +76,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	}
 
 	@Override
-	public void update(Cobra2DWorld map, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
 		Vector2 position = body.getPosition();
 		float radians = body.getAngle();
 		double degrees = Math.toDegrees(radians);

@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity;
 
+import java.util.UUID;
+
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Point;
@@ -25,6 +27,8 @@ public abstract class BasicEntity implements Entity {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private String id;
+
 	/**
 	 * Holds the position of this entity in world coordinates.
 	 */
@@ -45,7 +49,24 @@ public abstract class BasicEntity implements Entity {
 	}
 
 	public BasicEntity(Point worldCoordinates) {
+		this.id = UUID.randomUUID()
+		    .toString();
 		this.worldCoordinates = worldCoordinates;
+	}
+
+	public BasicEntity(String id, Point worldCoordinates) {
+		this.id = id;
+		this.worldCoordinates = worldCoordinates;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	@Override
