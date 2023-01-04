@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.math;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
  * @author Chris
  *
  */
-public interface Shape {
+public interface Shape extends Serializable {
 
 	/**
 	 * @return Returns <code>true</code> if the shape is point based, otherwise <code>false</code>

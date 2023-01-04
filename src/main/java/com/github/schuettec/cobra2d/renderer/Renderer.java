@@ -2,6 +2,7 @@ package com.github.schuettec.cobra2d.renderer;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
+import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.world.WorldListener;
 
 public interface Renderer extends WorldListener {
@@ -12,6 +13,6 @@ public interface Renderer extends WorldListener {
 
 	public void finish();
 
-	public Controller getController();
+	public Controller getControllerForEntity(Entity entity);
 
 }

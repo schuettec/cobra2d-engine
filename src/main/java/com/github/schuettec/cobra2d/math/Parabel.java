@@ -18,11 +18,6 @@ public class Parabel implements Serializable {
 	protected Point peak;
 	protected double a;
 
-	/**
-	 * @param expectedValue
-	 * @param peak
-	 * @param parabelType
-	 */
 	public Parabel(final Point expectedValue, final Point peak) {
 		super();
 

@@ -4,6 +4,7 @@ import static com.github.schuettec.cobra2d.entity.skills.Skill.asSkill;
 import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -79,8 +80,6 @@ public class Cobra2DWorld {
 
 	private boolean calculateFullCameraCollisionPoints = false;
 
-	private Controller controller;
-
 	private Camera cameraForInput;
 
 	private World physicsWorld;
@@ -92,13 +91,12 @@ public class Cobra2DWorld {
 
 	private WorldAccess worldAccess;
 
-	public Cobra2DWorld(Cobra2DEngine engine, Controller controller, boolean updateWorld) {
+	public Cobra2DWorld(Cobra2DEngine engine, boolean updateWorld) {
 		this.engine = engine;
 		this.updateWorld = updateWorld;
 		// Create a default physics world with zero gravity
 		this.physicsWorld = new World(new Vector2(), true);
 
-		this.controller = controller;
 		this.allEntities = new Hashtable<String, Entity>();
 		this.obstacles = new HashSet<>();
 		this.updateables = new HashSet<>();
@@ -222,6 +220,8 @@ public class Cobra2DWorld {
 
 	private void calculateCameraRelativeInput() {
 		Camera cameraForInput = this.getCameraForInput();
+		Controller controller = engine.getRenderer()
+		    .getControllerForEntity(cameraForInput);
 		InputContext input = getCameraRelativeInput(controller, cameraForInput);
 		controller.setCameraRelativeInput(input);
 	}
@@ -241,6 +241,8 @@ public class Cobra2DWorld {
 	private void updateWorld(float deltaTime) {
 		doPhysicsStep(deltaTime);
 		for (Updatable updatable : updateables) {
+			Controller controller = engine.getRenderer()
+			    .getControllerForEntity(updatable);
 			updatable.update(worldAccess, deltaTime, controller);
 		}
 	}
@@ -463,11 +465,11 @@ public class Cobra2DWorld {
 		    .forEach(l -> l.afterUpdate());
 	}
 
-	public void addEntities(List<Entity> toAdd) {
+	public void addEntities(Collection<Entity> toAdd) {
 		toAdd.forEach(this::addEntity);
 	}
 
-	public void removeEntities(List<Entity> toRemove) {
+	public void removeEntities(Collection<Entity> toRemove) {
 		toRemove.forEach(this::removeEntity);
 	}
 

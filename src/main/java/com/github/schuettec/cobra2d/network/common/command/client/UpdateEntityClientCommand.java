@@ -5,12 +5,16 @@ import com.github.schuettec.cobra2d.network.client.ClientAccess;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class UpdateClientCommand implements ClientCommand {
+public class UpdateEntityClientCommand implements ClientCommand {
 
 	private String entityClass;
 	private EntityState entityState;
 
-	public UpdateClientCommand(String entityClass, EntityState entityState) {
+	public UpdateEntityClientCommand() {
+		super();
+	}
+
+	public UpdateEntityClientCommand(String entityClass, EntityState entityState) {
 		super();
 		this.entityState = entityState;
 		this.entityClass = entityClass;
@@ -24,8 +28,9 @@ public class UpdateClientCommand implements ClientCommand {
 			    clientAccess.writeEntityState(entityState, e);
 		    }, () -> {
 			    Entity entity = clientAccess.createEntity(entityClass);
+			    entity.setId(entityId);
 			    clientAccess.writeEntityState(entityState, entity);
-			    worldAccess.entityAdded(entity);
+			    worldAccess.spawnEntity(entity);
 		    });
 	}
 

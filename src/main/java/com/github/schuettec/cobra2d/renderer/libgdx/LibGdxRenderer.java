@@ -233,11 +233,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		return shapeRenderer;
 	}
 
-	@Override
-	public Controller getController() {
-		return controller;
-	}
-
 	int getResolutionX() {
 		return engine.getResolutionX();
 	}
@@ -284,6 +279,11 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		} else {
 			throw new RendererException("Texture not loaded by renderer: " + imageId);
 		}
+	}
+
+	@Override
+	public Controller getControllerForEntity(Entity entity) {
+		return controller;
 	}
 
 }

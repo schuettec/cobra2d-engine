@@ -116,18 +116,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public String toString() {
-
-		String str = "BasicRectangleMapCamera [";
-		List<EntityPoint> entityPoints = getCollisionShape(true, true, true).getEntityPoints();
-		for (EntityPoint p : entityPoints) {
-			str += p.getCoordinates()
-			    .toString() + "\n";
-		}
-		return str + "]";
-	}
-
-	@Override
 	public Point getScreenPosition() {
 		return screenPosition.clone();
 	}
@@ -183,6 +171,18 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	@Override
 	public void setCenterOnScreen(boolean centerOnScreen) {
 		this.centerOnScreen = centerOnScreen;
+	}
+
+	@Override
+	public String toString() {
+
+		String str = "BasicRectangleMapCamera [";
+		List<EntityPoint> entityPoints = getCollisionShape(true, true, true).getEntityPoints();
+		for (EntityPoint p : entityPoints) {
+			str += p.getCoordinates()
+			    .toString() + "\n";
+		}
+		return str + "]";
 	}
 
 }

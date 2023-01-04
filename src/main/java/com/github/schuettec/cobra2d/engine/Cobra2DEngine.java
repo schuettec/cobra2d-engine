@@ -14,7 +14,6 @@ import java.util.Properties;
 
 import javax.imageio.ImageIO;
 
-import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
@@ -35,7 +34,6 @@ public class Cobra2DEngine {
 	private Cobra2DProperties cobra2DConfig;
 	private Renderer renderer;
 	private Cobra2DWorld world;
-	private Controller controller;
 
 	private Map<String, URL> textures;
 	private RendererType rendererType;
@@ -57,20 +55,17 @@ public class Cobra2DEngine {
 		createRendererAndController();
 
 		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
-		this.world = new Cobra2DWorld(this, controller, doMapUpdate);
+		this.world = new Cobra2DWorld(this, doMapUpdate);
 		this.textures = new Hashtable<>();
 	}
 
 	private void createRendererAndController() {
 		if (RendererType.LIBGDX.equals(rendererType)) {
 			this.renderer = createRenderer(rendererType);
-			this.controller = renderer.getController();
 		} else if (RendererType.DEDICATED_SERVER.equals(rendererType)) {
 			this.renderer = new Cobra2DServer();
-			this.controller = renderer.getController();
 		} else {
 			this.renderer = null;
-			this.controller = new NoInputController();
 		}
 	}
 
@@ -160,10 +155,6 @@ public class Cobra2DEngine {
 
 	public void removeEntity(Entity entity) {
 		world.removeEntity(entity);
-	}
-
-	public Controller getController() {
-		return controller;
 	}
 
 	public void setCameraForInput(Camera camera) {

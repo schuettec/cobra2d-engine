@@ -5,6 +5,8 @@ import static java.lang.String.valueOf;
 import java.net.URL;
 import java.util.Properties;
 
+import com.github.schuettec.cobra2Dexamples.bouncingBalls.WallEntity;
+import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
@@ -48,6 +50,12 @@ public class NetworkClientDemo {
 		engine.addEntity(camera);
 
 		Cobra2DClient client = new Cobra2DClient(engine);
+		client.addEntityCreator(WallEntity.class, () -> new WallEntity(new Point(), new Dimension()));
+		client.addEntityCreator(RotatingTextureEntity.class,
+		    () -> new RotatingTextureEntity("chair", new Point(), new Dimension(), 4, false));
+		client.addEntityCreator(TexturedEntity.class, () -> {
+			return new TexturedEntity("floor", new Point(), new Dimension(), 0, false);
+		});
 		client.connect("localhost");
 
 		engine.start();

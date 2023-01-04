@@ -6,6 +6,7 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -16,6 +17,8 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 	private static final long serialVersionUID = 1L;
 
 	protected String textureId;
+
+	@EntityStateValue
 	protected int layer;
 
 	protected boolean playerControlled;

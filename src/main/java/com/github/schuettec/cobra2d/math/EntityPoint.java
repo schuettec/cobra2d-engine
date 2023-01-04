@@ -25,6 +25,10 @@ public class EntityPoint implements Shape {
 	 */
 	private final Point coordinates;
 
+	public EntityPoint() {
+		this(0, 0);
+	}
+
 	public EntityPoint(int x, int y) {
 		coordinates = new Point(x, y);
 		setByPosition(coordinates);
@@ -72,11 +76,13 @@ public class EntityPoint implements Shape {
 		return new EntityPoint(degrees, radius);
 	}
 
+	@Override
 	public EntityPoint rotate(double degrees) {
 		setByCircle(this.degrees + degrees, this.radius);
 		return this;
 	}
 
+	@Override
 	public EntityPoint translate(Point translation) {
 		Point newPoint = new Point(coordinates);
 		newPoint.translate(translation.x, translation.y);
@@ -84,6 +90,7 @@ public class EntityPoint implements Shape {
 		return this;
 	}
 
+	@Override
 	public EntityPoint scale(double scaleFactor) {
 		setByCircle(this.degrees, this.radius * scaleFactor);
 		return this;

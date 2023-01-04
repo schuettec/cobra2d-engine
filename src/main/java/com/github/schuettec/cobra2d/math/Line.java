@@ -17,6 +17,11 @@ public class Line implements Shape, Cloneable {
 	private Point x1, x2;
 	private boolean parallelY = false;
 
+	public Line() {
+		this.setX1(new Point());
+		this.setX2(new Point());
+	}
+
 	public Line(final Point x1, final Point x2) {
 		this.setX1(new Point(x1.x, x1.y));
 		this.setX2(new Point(x2.x, x2.y));
@@ -237,6 +242,7 @@ public class Line implements Shape, Cloneable {
 		return new Line(x1.clone(), x2.clone());
 	}
 
+	@Override
 	public Line rotate(double degrees) {
 		Point center = Math2D.getMittelpunkt(x1, x2);
 		Point newX1 = Math2D.getCircle(center, Math2D.getEntfernung(x1, center), degrees);
@@ -246,12 +252,14 @@ public class Line implements Shape, Cloneable {
 		return this;
 	}
 
+	@Override
 	public Line translate(Point translation) {
 		x1.translate(translation);
 		x2.translate(translation);
 		return this;
 	}
 
+	@Override
 	public Line scale(double scaleFactor) {
 		Point center = Math2D.getMittelpunkt(x1, x2);
 		double angle = Math2D.getAngle(center, x1);

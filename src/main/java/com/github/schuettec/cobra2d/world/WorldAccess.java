@@ -1,9 +1,10 @@
 package com.github.schuettec.cobra2d.world;
 
-import java.util.LinkedList;
+import java.util.Deque;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
@@ -24,8 +25,8 @@ public class WorldAccess implements WorldListener {
 
 	private Cobra2DWorld world;
 
-	private List<Entity> toAdd = new LinkedList<>();
-	private List<Entity> toRemove = new LinkedList<>();
+	private Deque<Entity> toAdd = new ConcurrentLinkedDeque<>();
+	private Deque<Entity> toRemove = new ConcurrentLinkedDeque<>();
 
 	public WorldAccess(Cobra2DWorld world) {
 		super();

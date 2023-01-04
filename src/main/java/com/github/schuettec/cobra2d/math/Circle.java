@@ -15,6 +15,10 @@ public class Circle implements Shape, Cloneable {
 
 	protected double radius;
 
+	public Circle() {
+		this(new Point(), 0);
+	}
+
 	public Circle(Point center, double radius) {
 		super();
 		this.position = center.clone();
@@ -26,15 +30,18 @@ public class Circle implements Shape, Cloneable {
 		return new Circle(position.clone(), radius);
 	}
 
+	@Override
 	public Circle rotate(double degrees) {
 		return this;
 	}
 
+	@Override
 	public Circle translate(Point translation) {
 		position.translate(translation);
 		return this;
 	}
 
+	@Override
 	public Circle scale(double scaleFactor) {
 		this.radius *= scaleFactor;
 		return this;

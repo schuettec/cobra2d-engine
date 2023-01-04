@@ -1,9 +1,15 @@
 package com.github.schuettec.cobra2d.math;
 
-public class Rectangle {
+import java.io.Serializable;
+
+public class Rectangle implements Serializable {
 
 	private Point point;
 	private Dimension dimension;
+
+	public Rectangle() {
+		this(new Point(), new Dimension());
+	}
 
 	public Rectangle(Point point, Dimension dimension) {
 		this.point = point;

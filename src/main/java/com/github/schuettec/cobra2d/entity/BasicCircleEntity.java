@@ -1,6 +1,7 @@
 package com.github.schuettec.cobra2d.entity;
 
 import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 
@@ -20,6 +21,7 @@ public class BasicCircleEntity extends BasicEntity implements Placeable {
 	/**
 	 * Holds the collision shape of this entity.
 	 */
+	@EntityStateValue
 	protected Circle circle;
 
 	public BasicCircleEntity(Point worldCoordinates, double radius) {

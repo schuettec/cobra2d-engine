@@ -48,7 +48,8 @@ public class NetworkServerDemo {
 		server.setNetworkCameraDimension(cameraDimension);
 		server.setSpawnEntityFactory(() -> {
 			Dimension rotatingDimension = engine.dimensionOf("chair");
-			RotatingTextureEntity entity = new RotatingTextureEntity("chair", new Point(), rotatingDimension, 4, false);
+			RotatingTextureEntity entity = new RotatingTextureEntity("chair", new Point(100, 100), rotatingDimension, 4,
+			    false);
 			return entity;
 		});
 

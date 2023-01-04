@@ -42,8 +42,15 @@ public class Cobra2DClient implements ClientAccess {
 		    .getWorldAccess();
 	}
 
+	/**
+	 * Add a creation factory method to create entities, specified by the server for rendering.
+	 * 
+	 * @param entityType The entity type
+	 * @param creator The {@link Supplier} as factory method.
+	 */
 	public void addEntityCreator(Class<? extends Entity> entityType, Supplier<Entity> creator) {
 		entityCreator.put(entityType, creator);
+		stateManager.registerEntity(entityType);
 	}
 
 	public void connect(String ip) {
@@ -95,16 +102,22 @@ public class Cobra2DClient implements ClientAccess {
 
 	@Override
 	public Entity createEntity(String entityClass) {
-		if (stateManager.isRegistered(entityClass)) {
-			Class<? extends Entity> entityCls = stateManager.getEntityClass(entityClass);
-			try {
-				supplier = entityCreator.get(entityCls);
-				return supplier.get();
-			} catch (Exception e) {
-				throw new RuntimeException("Could not create entity.", e);
+		try {
+			Class<?> eClass = Class.forName(entityClass, false, Thread.currentThread()
+			    .getContextClassLoader());
+			if (stateManager.isRegistered(eClass.getName())) {
+				try {
+					supplier = entityCreator.get(eClass);
+					return supplier.get();
+				} catch (Exception e) {
+					throw new RuntimeException("Could not create entity.", e);
+				}
+			} else {
+				throw new RuntimeException(
+				    "Attempt to create object that was not registered to be remotely transferrable: " + entityClass);
 			}
-		} else {
-			throw new RuntimeException("Attempt to create object that was not registered to be remotely transferrable.");
+		} catch (Exception e) {
+			throw new RuntimeException("Attempt to create object that is not an entity: " + entityClass, e);
 		}
 	}
 

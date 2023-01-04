@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
@@ -15,6 +16,7 @@ public class BasicPolygonEntity extends BasicEntity implements Placeable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@EntityStateValue
 	protected Polygon polygon;
 
 	public BasicPolygonEntity(Point worldCoordinates, Point... localPoints) {

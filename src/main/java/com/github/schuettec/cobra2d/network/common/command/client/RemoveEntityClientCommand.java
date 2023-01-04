@@ -3,11 +3,15 @@ package com.github.schuettec.cobra2d.network.common.command.client;
 import com.github.schuettec.cobra2d.network.client.ClientAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class RemoveFromClientCommand implements ClientCommand {
+public class RemoveEntityClientCommand implements ClientCommand {
 
 	private String entityId;
 
-	public RemoveFromClientCommand(String entityId) {
+	public RemoveEntityClientCommand() {
+		super();
+	}
+
+	public RemoveEntityClientCommand(String entityId) {
 		super();
 		this.entityId = entityId;
 	}

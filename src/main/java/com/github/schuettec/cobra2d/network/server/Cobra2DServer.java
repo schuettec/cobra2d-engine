@@ -21,8 +21,11 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
-import com.github.schuettec.cobra2d.network.common.command.client.RemoveFromClientCommand;
-import com.github.schuettec.cobra2d.network.common.command.client.UpdateClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.client.UpdateEntityClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.BasicPlayerAccess;
+import com.github.schuettec.cobra2d.network.common.command.server.PlayerAccess;
+import com.github.schuettec.cobra2d.network.common.command.server.ServerCommand;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 import com.github.schuettec.cobra2d.network.data.EntityStateManager;
 import com.github.schuettec.cobra2d.renderer.Renderer;
@@ -37,6 +40,7 @@ import com.github.schuettec.cobra2d.world.WorldListener;
  */
 public class Cobra2DServer implements Renderer, WorldListener {
 
+	private static final NoInputController NO_INPUT_CONTROLLER = new NoInputController();
 	private int tcpPort;
 	private int udpPort;
 	private Server server;
@@ -46,12 +50,13 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	private ActiveWorldUpdater updater;
 
 	private EntityStateManager stateManager;
-	private Supplier<Entity> spawnEntitySupplier;
-	private Dimension cameraDimension;
-
 	private WorldAccess worldAccess;
 
 	private Map<Connection, Player> playersByConnection;
+
+	private Dimension cameraDimension;
+	private Supplier<Entity> spawnPlayerEntitySupplier;
+	private Supplier<? extends PlayerAccess> playerAccessSupplier = BasicPlayerAccess::new;
 
 	public Cobra2DServer() {
 
@@ -83,12 +88,12 @@ public class Cobra2DServer implements Renderer, WorldListener {
 			    cameraCollision.stream()
 			        .map(Collision::getOpponent)
 			        .forEach(entity -> {
-				        if (stateManager.isStateManaged(entity)) {
+				        if (stateManager.isRegistered(entity)) {
 					        thisFrameIds.add(entity.getId());
 					        EntityState entityState = stateManager.readEntityState(entity);
 					        String entityClass = entity.getClass()
 					            .getName();
-					        UpdateClientCommand updateCmd = new UpdateClientCommand(entityClass, entityState);
+					        UpdateEntityClientCommand updateCmd = new UpdateEntityClientCommand(entityClass, entityState);
 					        connection.sendUDP(updateCmd);
 				        }
 			        });
@@ -96,16 +101,17 @@ public class Cobra2DServer implements Renderer, WorldListener {
 			    lastFrame.removeAll(thisFrameIds);
 			    lastFrame.stream()
 			        .forEach(toRemoveEntityId -> {
-				        RemoveFromClientCommand removeCmd = new RemoveFromClientCommand(toRemoveEntityId);
+				        RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
 				        connection.sendUDP(removeCmd);
 			        });
 		    });
 	}
 
 	private void createPlayerAndSpawn(Connection connection) {
-		Entity playerEntity = spawnEntitySupplier.get();
+		Entity playerEntity = spawnPlayerEntitySupplier.get();
+		PlayerAccess playerAccess = playerAccessSupplier.get();
 		ServerCamera playerCamera = new ServerCamera(playerEntity, cameraDimension);
-		Player player = new Player("unknown player", connection, playerCamera, playerEntity);
+		Player player = new Player("unknown player", connection, playerCamera, playerEntity, playerAccess);
 		this.playersByConnection.put(connection, player);
 		worldAccess.spawnEntity(playerCamera);
 		worldAccess.spawnEntity(playerEntity);
@@ -119,7 +125,28 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	}
 
 	private void processPlayerCommand(Connection connection, Object object) {
+		getPlayer(connection).ifPresent(player -> {
+			if (object instanceof ServerCommand) {
+				ServerCommand serverCommand = (ServerCommand) object;
+				serverCommand.perform(worldAccess, player.getPlayerAccess());
+			}
+		});
+	}
 
+	@Override
+	public Controller getControllerForEntity(Entity entity) {
+		return getPlayerByEntity(entity).map(p -> p.getController())
+		    .orElse(NO_INPUT_CONTROLLER);
+	}
+
+	private Optional<Player> getPlayerByEntity(Entity entity) {
+		String id = entity.getId();
+		return this.playersByConnection.values()
+		    .stream()
+		    .filter(p -> p.getEntity()
+		        .getId()
+		        .equals(id))
+		    .findFirst();
 	}
 
 	private Optional<Player> getPlayer(Connection connection) {
@@ -128,7 +155,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 
 	@Override
 	public void start() {
-		if (isNull(spawnEntitySupplier)) {
+		if (isNull(spawnPlayerEntitySupplier)) {
 			throw new RuntimeException("No spawn factory set!");
 		}
 
@@ -182,13 +209,12 @@ public class Cobra2DServer implements Renderer, WorldListener {
 		}
 	}
 
-	@Override
-	public Controller getController() {
-		return new NoInputController();
+	public void setSpawnEntityFactory(Supplier<Entity> spawnEntitySupplier) {
+		this.spawnPlayerEntitySupplier = spawnEntitySupplier;
 	}
 
-	public void setSpawnEntityFactory(Supplier<Entity> spawnEntitySupplier) {
-		this.spawnEntitySupplier = spawnEntitySupplier;
+	public void setPlayerAccessFactory(Supplier<? extends PlayerAccess> playerAccessSupplier) {
+		this.playerAccessSupplier = playerAccessSupplier;
 	}
 
 	public void setNetworkCameraDimension(Dimension cameraDimension) {

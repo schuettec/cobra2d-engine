@@ -4,8 +4,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.esotericsoftware.kryonet.Connection;
+import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.network.common.command.server.PlayerAccess;
 
 public class Player {
 
@@ -19,29 +21,43 @@ public class Player {
 
 	private List<String> lastFrameIds;
 
-	public Player(String name, Connection connection, Camera playerCamera, Entity entity) {
+	private PlayerAccess playerAccess;
+
+	private NetworkController controller;
+
+	public Player(String name, Connection connection, Camera playerCamera, Entity entity, PlayerAccess playerAccess) {
 		super();
 		this.name = name;
 		this.connection = connection;
 		this.playerCamera = playerCamera;
 		this.entity = entity;
+		this.playerAccess = playerAccess;
 		this.lastFrameIds = new LinkedList<>();
+		this.controller = new NetworkController();
 	}
 
 	public String getName() {
 		return name;
 	}
 
-	Connection getConnection() {
+	public Connection getConnection() {
 		return connection;
 	}
 
-	Camera getPlayerCamera() {
+	public Camera getPlayerCamera() {
 		return playerCamera;
 	}
 
-	Entity getEntity() {
+	public Entity getEntity() {
 		return entity;
+	}
+
+	public PlayerAccess getPlayerAccess() {
+		return playerAccess;
+	}
+
+	public PlayerAccess getPlayerAccessAs(Class<? extends PlayerAccess> fragment) {
+		return playerAccess;
 	}
 
 	List<String> getLastFrameIds() {
@@ -50,6 +66,10 @@ public class Player {
 
 	void setLastFrameIds(List<String> lastFrameIds) {
 		this.lastFrameIds = lastFrameIds;
+	}
+
+	public Controller getController() {
+		return controller;
 	}
 
 }

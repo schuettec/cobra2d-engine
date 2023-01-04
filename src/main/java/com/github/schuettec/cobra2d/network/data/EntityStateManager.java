@@ -38,17 +38,16 @@ public class EntityStateManager implements WorldListener {
 		world.getAllEntities()
 		    .stream()
 		    .forEach(e -> {
-			    registerEntity(e);
+			    registerEntity(entityType(e));
 		    });
 	}
 
 	@Override
 	public void entityAdded(Entity entity) {
-		registerEntity(entity);
+		registerEntity(entityType(entity));
 	}
 
-	public <E extends Entity> void registerEntity(E entity) {
-		Class<? extends Entity> entityType = entityType(entity);
+	public <E extends Entity> void registerEntity(Class<E> entityType) {
 		List<ReflectiveField> allInheritedFields = reflectionProvider
 		    .getAllInheritedFieldsAnnotatedWith(EntityStateValue.class, entityType);
 		if (!allInheritedFields.isEmpty()) {
@@ -58,7 +57,11 @@ public class EntityStateManager implements WorldListener {
 		}
 	}
 
-	public <E extends Entity> boolean isStateManaged(E entity) {
+	public boolean isRegistered(String entityClass) {
+		return registeredTypes.containsKey(entityClass);
+	}
+
+	public <E extends Entity> boolean isRegistered(E entity) {
 		return registeredTypes.containsKey(entityType(entity).getName());
 	}
 
@@ -84,10 +87,6 @@ public class EntityStateManager implements WorldListener {
 
 	private <E extends Entity> Class<? extends Entity> entityType(E entity) {
 		return entity.getClass();
-	}
-
-	public boolean isRegistered(String entityClass) {
-		return registeredTypes.containsKey(entityClass);
 	}
 
 	public Class<? extends Entity> getEntityClass(String entityClass) {

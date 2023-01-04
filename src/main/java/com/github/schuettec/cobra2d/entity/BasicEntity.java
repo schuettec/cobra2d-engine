@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
@@ -32,16 +33,19 @@ public abstract class BasicEntity implements Entity {
 	/**
 	 * Holds the position of this entity in world coordinates.
 	 */
+	@EntityStateValue
 	protected final Point worldCoordinates;
 
 	/**
 	 * Holds the current rotation of the entity in the world.
 	 */
+	@EntityStateValue
 	protected double degrees;
 
 	/**
 	 * Holds the scaling factor of this entity.
 	 */
+	@EntityStateValue
 	protected double scaling = 1;
 
 	public BasicEntity() {

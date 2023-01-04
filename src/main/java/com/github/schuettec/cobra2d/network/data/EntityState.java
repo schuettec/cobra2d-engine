@@ -7,9 +7,13 @@ import java.util.Map;
 /**
  * Serializable class that transfers the minimal state of an entity for networking.
  */
-public class EntityState {
+public class EntityState implements Serializable {
 	private String id;
 	private Map<Integer, Serializable> attributes;
+
+	public EntityState() {
+		super();
+	}
 
 	public EntityState(String id) {
 		super();

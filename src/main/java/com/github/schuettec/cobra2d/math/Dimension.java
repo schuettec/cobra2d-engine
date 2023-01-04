@@ -2,20 +2,22 @@ package com.github.schuettec.cobra2d.math;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
-public class Dimension implements Cloneable {
+import java.io.Serializable;
+
+public class Dimension implements Cloneable, Serializable {
 
 	private double width;
 	private double height;
+
+	public Dimension() {
+		this.width = 0;
+		this.height = 0;
+	}
 
 	public Dimension(double width, double height) {
 		super();
 		this.width = width;
 		this.height = height;
-	}
-
-	public Dimension() {
-		this.width = 0;
-		this.height = 0;
 	}
 
 	public Dimension half() {

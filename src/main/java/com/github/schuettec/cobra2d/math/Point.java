@@ -11,6 +11,10 @@ public class Point implements Shape, Cloneable {
 	public double x;
 	public double y;
 
+	public Point() {
+		this(0, 0);
+	}
+
 	public Point(double x, double y) {
 		super();
 		this.x = x;
@@ -19,10 +23,6 @@ public class Point implements Shape, Cloneable {
 
 	public Point(Point p) {
 		this(p.x, p.y);
-	}
-
-	public Point() {
-		this(0, 0);
 	}
 
 	public int getRoundX() {
