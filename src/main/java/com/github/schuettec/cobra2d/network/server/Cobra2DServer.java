@@ -104,6 +104,10 @@ public class Cobra2DServer implements Renderer, WorldListener {
 				        RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
 				        connection.sendUDP(removeCmd);
 			        });
+
+			    // Clear the state of the controller.
+			    player.getNetworkController()
+			        .clearState();
 		    });
 	}
 
@@ -112,6 +116,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 		PlayerAccess playerAccess = playerAccessSupplier.get();
 		ServerCamera playerCamera = new ServerCamera(playerEntity, cameraDimension);
 		Player player = new Player("unknown player", connection, playerCamera, playerEntity, playerAccess);
+		playerAccess.setPlayer(player);
 		this.playersByConnection.put(connection, player);
 		worldAccess.spawnEntity(playerCamera);
 		worldAccess.spawnEntity(playerEntity);

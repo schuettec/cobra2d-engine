@@ -159,7 +159,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 					renderClippingMask(camera);
 
 					renderCameraView(camera, capturedEntities);
-
 				}
 			}
 		}

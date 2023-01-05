@@ -4,6 +4,7 @@ import static com.github.schuettec.cobra2d.network.common.Cobra2DNetwork.registe
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -18,8 +19,9 @@ import com.github.schuettec.cobra2d.network.data.EntityState;
 import com.github.schuettec.cobra2d.network.data.EntityStateManager;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.WorldAccess;
+import com.github.schuettec.cobra2d.world.WorldListener;
 
-public class Cobra2DClient implements ClientAccess {
+public class Cobra2DClient implements ClientAccess, WorldListener {
 
 	private Client client;
 
@@ -33,13 +35,27 @@ public class Cobra2DClient implements ClientAccess {
 
 	private Supplier<Entity> supplier;
 
+	private Cobra2DWorld world;
+
 	public Cobra2DClient(Cobra2DEngine engine) {
 		this.engine = engine;
 		this.entityCreator = new Hashtable<>();
-		Cobra2DWorld world = this.engine.getWorld();
+		this.world = this.engine.getWorld();
+		this.world.addWorldListener(this);
 		this.stateManager = new EntityStateManager(world);
 		this.worldAccess = engine.getWorld()
 		    .getWorldAccess();
+	}
+
+	@Override
+	public void afterUpdate() {
+		WorldListener.super.afterUpdate();
+		// Get all NetworkActors, get their commands and send them back.
+		world.getNetworkActors()
+		    .stream()
+		    .map(na -> na.getRemotePlayerCommands())
+		    .flatMap(List::stream)
+		    .forEach(cmd -> client.sendUDP(cmd));
 	}
 
 	/**

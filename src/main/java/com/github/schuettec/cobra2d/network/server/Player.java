@@ -72,4 +72,8 @@ public class Player {
 		return controller;
 	}
 
+	public NetworkController getNetworkController() {
+		return controller;
+	}
+
 }

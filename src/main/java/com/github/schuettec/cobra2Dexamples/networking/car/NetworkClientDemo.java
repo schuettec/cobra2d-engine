@@ -5,14 +5,15 @@ import static java.lang.String.valueOf;
 import java.net.URL;
 import java.util.Properties;
 
+import com.badlogic.gdx.Input.Keys;
 import com.github.schuettec.cobra2Dexamples.bouncingBalls.WallEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
-import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape.RectanglePoint;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.network.client.ClientCamera;
 import com.github.schuettec.cobra2d.network.client.Cobra2DClient;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
@@ -42,7 +43,11 @@ public class NetworkClientDemo {
 		engine.initialize();
 
 		Dimension cameraDimension = new Dimension(1920, 1080);
-		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
+		ClientCamera camera = new ClientCamera(new Point(0, 0), cameraDimension, false);
+		camera.addKeyCodeToListen(Keys.LEFT);
+		camera.addKeyCodeToListen(Keys.UP);
+		camera.addKeyCodeToListen(Keys.RIGHT);
+		camera.addKeyCodeToListen(Keys.DOWN);
 		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);

@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.network.common.command.server;
 
+import com.github.schuettec.cobra2d.network.server.NetworkController;
 import com.github.schuettec.cobra2d.network.server.Player;
 
 public interface PlayerAccess {
@@ -15,5 +16,12 @@ public interface PlayerAccess {
 	 * Disconnects the player from the server game.
 	 */
 	void disconnectPlayer();
+
+	/**
+	 * Updates the key stated to status 'pressed' in the {@link NetworkController}.
+	 * 
+	 * @param keyCode The keycode.
+	 */
+	void updateKeyState(int keyCode);
 
 }

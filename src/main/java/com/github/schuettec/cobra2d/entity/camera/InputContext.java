@@ -11,7 +11,7 @@ public class InputContext {
 	private Point mouseWorldCoordinates;
 
 	public InputContext() {
-		super();
+		this.mouseWorldCoordinates = new Point();
 	}
 
 	public InputContext(Point mouseWorldCoordinates) {

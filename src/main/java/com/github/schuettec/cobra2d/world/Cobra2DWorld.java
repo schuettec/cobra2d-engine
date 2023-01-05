@@ -32,6 +32,7 @@ import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
@@ -61,13 +62,13 @@ public class Cobra2DWorld {
 
 	protected Map<String, Entity> allEntities;
 
-	protected Set<Obstacle> physicEntities;
-
 	protected Set<Obstacle> obstacles;
 	protected Set<Updatable> updateables;
 	protected Set<Renderable> renderables;
 	protected Set<Camera> cameras;
 	protected Set<PhysicBody> physicBodies;
+
+	protected Set<NetworkActor> networkActors;
 
 	private transient List<WorldListener> listeners;
 
@@ -102,6 +103,7 @@ public class Cobra2DWorld {
 		this.updateables = new HashSet<>();
 		this.renderables = new HashSet<>();
 		this.physicBodies = new HashSet<>();
+		this.networkActors = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
 		this.listeners = new LinkedList<>();
@@ -161,6 +163,7 @@ public class Cobra2DWorld {
 		addOnDemand(Updatable.class, this.updateables, entity);
 		addOnDemand(Renderable.class, this.renderables, entity);
 		addOnDemand(PhysicBody.class, this.physicBodies, entity);
+		addOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
 	public void removeEntity(Entity... entities) {
@@ -180,6 +183,7 @@ public class Cobra2DWorld {
 		removeOnDemand(Renderable.class, this.renderables, entity);
 		removeOnDemand(Camera.class, this.cameras, entity);
 		removeOnDemand(PhysicBody.class, this.physicBodies, entity);
+		removeOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
 	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> obstacles, Entity entity) {
@@ -213,23 +217,30 @@ public class Cobra2DWorld {
 			updateWorld(deltaTime);
 		}
 
-		updateCameras();
+		updateCameras(deltaTime);
 
 		notifyAfterUpdate();
 	}
 
 	private void calculateCameraRelativeInput() {
 		Camera cameraForInput = this.getCameraForInput();
-		Controller controller = engine.getRenderer()
-		    .getControllerForEntity(cameraForInput);
-		InputContext input = getCameraRelativeInput(controller, cameraForInput);
-		controller.setCameraRelativeInput(input);
+		if (nonNull(cameraForInput)) {
+			Controller controller = engine.getRenderer()
+			    .getControllerForEntity(cameraForInput);
+			InputContext input = getCameraRelativeInput(controller, cameraForInput);
+			controller.setCameraRelativeInput(input);
+		}
 	}
 
-	private void updateCameras() {
+	private void updateCameras(float deltaTime) {
 		cameraCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras
 		for (Camera camera : cameras) {
+			// If the world update is disabled, perform a dedicated camera update.
+			// Otherwise the cameras will show nothing if not updated.
+			if (!isUpdateWorld()) {
+				updateEntity(deltaTime, camera);
+			}
 			Set<Camera> cameraSet = new HashSet<>();
 			cameraSet.add(camera);
 			CollisionMap map = detectCollision(cameraSet, renderables, false, calculateFullCameraCollisionPoints, false);
@@ -241,10 +252,14 @@ public class Cobra2DWorld {
 	private void updateWorld(float deltaTime) {
 		doPhysicsStep(deltaTime);
 		for (Updatable updatable : updateables) {
-			Controller controller = engine.getRenderer()
-			    .getControllerForEntity(updatable);
-			updatable.update(worldAccess, deltaTime, controller);
+			updateEntity(deltaTime, updatable);
 		}
+	}
+
+	private void updateEntity(float deltaTime, Updatable updatable) {
+		Controller controller = engine.getRenderer()
+		    .getControllerForEntity(updatable);
+		updatable.update(worldAccess, deltaTime, controller);
 	}
 
 	private void doPhysicsStep(float deltaTime) {
@@ -286,6 +301,10 @@ public class Cobra2DWorld {
 
 	public Set<Updatable> getUpdateables() {
 		return new HashSet<>(updateables);
+	}
+
+	public Set<NetworkActor> getNetworkActors() {
+		return new HashSet<>(networkActors);
 	}
 
 	public Set<Renderable> getRenderables() {

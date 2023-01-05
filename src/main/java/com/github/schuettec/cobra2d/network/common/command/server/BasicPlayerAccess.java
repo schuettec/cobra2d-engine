@@ -21,4 +21,10 @@ public class BasicPlayerAccess implements PlayerAccess {
 		this.player = player;
 	}
 
+	@Override
+	public void updateKeyState(int keyCode) {
+		player.getNetworkController()
+		    .setKeyPressed(keyCode);
+	}
+
 }
