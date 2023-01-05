@@ -61,7 +61,7 @@ public class NetworkClientDemo {
 		client.addEntityCreator(TexturedEntity.class, () -> {
 			return new TexturedEntity("floor", new Point(), new Dimension(), 0, false);
 		});
-		client.connect("localhost");
+		client.connect(args[0]);
 
 		engine.start();
 	}

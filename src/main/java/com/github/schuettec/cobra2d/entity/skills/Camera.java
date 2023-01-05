@@ -32,7 +32,6 @@ public interface Camera extends Updatable, HasCollisionShape {
 
 	public void setScreenPosition(Point screenPosition);
 
-
 	/**
 	 * Translates screen coordinates to world coordinates.
 	 * 
