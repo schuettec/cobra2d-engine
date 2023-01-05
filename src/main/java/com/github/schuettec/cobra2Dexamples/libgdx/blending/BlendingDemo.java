@@ -58,7 +58,7 @@ public class BlendingDemo {
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
-
+		engine.setCameraForInput(camera);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(800, 400));
 		// camera.scale(0.5);

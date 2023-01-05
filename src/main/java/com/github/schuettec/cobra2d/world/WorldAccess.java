@@ -50,7 +50,9 @@ public class WorldAccess implements WorldListener {
 	public void afterUpdate() {
 		WorldListener.super.afterUpdate();
 		world.removeEntities(toRemove);
+		toRemove.clear();
 		world.addEntities(toAdd);
+		toAdd.clear();
 	}
 
 	public CollisionMap detectCollision(HasCollisionShape firstEntity, Set<? extends HasCollisionShape> secondSet,

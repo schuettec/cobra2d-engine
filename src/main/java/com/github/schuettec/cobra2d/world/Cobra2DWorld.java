@@ -95,8 +95,11 @@ public class Cobra2DWorld {
 	public Cobra2DWorld(Cobra2DEngine engine, boolean updateWorld) {
 		this.engine = engine;
 		this.updateWorld = updateWorld;
-		// Create a default physics world with zero gravity
-		this.physicsWorld = new World(new Vector2(), true);
+
+		if (isUpdateWorld()) {
+			// Create a default physics world with zero gravity
+			this.physicsWorld = new World(new Vector2(), true);
+		}
 
 		this.allEntities = new Hashtable<String, Entity>();
 		this.obstacles = new HashSet<>();
@@ -109,23 +112,28 @@ public class Cobra2DWorld {
 		this.listeners = new LinkedList<>();
 		this.worldAccess = new WorldAccess(this);
 
-		this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
-			@Override
-			public void entityAdded(Entity entity) {
-				PhysicBody physicBody = (PhysicBody) entity;
-				BodyDef bodyDef = physicBody.createBodyDef();
-				Body body = physicsWorld.createBody(bodyDef);
-				physicBody.createFixture(body);
-			}
+		if (isUpdateWorld()) {
+			this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
+				@Override
+				public void entityAdded(Entity entity) {
+					PhysicBody physicBody = (PhysicBody) entity;
+					BodyDef bodyDef = physicBody.createBodyDef();
+					Body body = physicsWorld.createBody(bodyDef);
+					physicBody.createFixture(body);
 
-			@Override
-			public void entityRemoved(Entity entity) {
-				PhysicBody physicBody = (PhysicBody) entity;
-				Body body = physicBody.getBody();
-				physicsWorld.destroyBody(body);
-			}
+					System.out.println("Body count : " + physicsWorld.getBodyCount());
 
-		});
+				}
+
+				@Override
+				public void entityRemoved(Entity entity) {
+					PhysicBody physicBody = (PhysicBody) entity;
+					Body body = physicBody.getBody();
+					physicsWorld.destroyBody(body);
+				}
+
+			});
+		}
 
 		this.listenersBySkills.put(Renderable.class, engine.getRenderer());
 	}
@@ -214,6 +222,7 @@ public class Cobra2DWorld {
 		calculateCameraRelativeInput();
 
 		if (isUpdateWorld()) {
+			System.out.println("DT: " + deltaTime);
 			updateWorld(deltaTime);
 		}
 

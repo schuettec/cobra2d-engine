@@ -15,6 +15,7 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Parabel;
@@ -44,28 +45,33 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	private static Parabel alphaParabel = new Parabel(new Point(0, 0), new Point(LIGHT_SWITCH_INTERVAL / 2.0, 1));
 
 	/**
-	 * If true, the lights are rendered and switched on.
-	 */
-	private boolean lightsOn = true;
-
-	/**
 	 * Last timestamp the lights switched. In milliseconds.
 	 */
 	private long lastSwitchTimestamp = 0;
+
 	/**
-	 * If true the blue light, otherwise the red light is rendered
+	 * If true, the lights are rendered and switched on.
 	 */
-	private boolean blue = true;
+	@EntityStateValue
+	private boolean lightsOn = true;
 
 	/**
 	 * The current alpha value.
 	 */
+	@EntityStateValue
 	private float alpha;
 
 	/**
 	 * True if the car currently brakes.
 	 */
+	@EntityStateValue
 	private boolean brake;
+
+	/**
+	 * If true the blue light, otherwise the red light is rendered
+	 */
+	@EntityStateValue
+	private boolean blue = true;
 
 	private String redLightTextureId;
 	private String blueLightTextureId;
@@ -275,8 +281,9 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 
 	private void setPositionByPhysicsBody() {
 		Vector2 position = body.getPosition();
-		setPosition(saveRound(position.x / renderScaleConversionFactor),
-		    saveRound(position.y / renderScaleConversionFactor));
+		int x = saveRound(position.x / renderScaleConversionFactor);
+		int y = saveRound(position.y / renderScaleConversionFactor);
+		setPosition(x, y);
 	}
 
 	private float getSpeed() {

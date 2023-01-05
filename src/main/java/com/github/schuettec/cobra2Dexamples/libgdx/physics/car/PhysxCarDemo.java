@@ -67,6 +67,7 @@ public class PhysxCarDemo {
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
+		engine.setCameraForInput(camera);
 		engine.addEntity(camera);
 
 		Dimension floorDimension = engine.dimensionOf("floor");

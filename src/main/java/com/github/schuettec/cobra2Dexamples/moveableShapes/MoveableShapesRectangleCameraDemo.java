@@ -37,13 +37,13 @@ public class MoveableShapesRectangleCameraDemo {
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
-
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		camera.scale(0.75);
+		engine.setCameraForInput(camera);
+		engine.addEntity(camera);
 
 		engine.addEntity(c1, c2, p1, p2);
-		engine.addEntity(camera);
 		engine.start();
 	}
 }

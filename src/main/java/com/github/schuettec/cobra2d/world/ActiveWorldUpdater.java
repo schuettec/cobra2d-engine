@@ -12,10 +12,8 @@ public class ActiveWorldUpdater {
 	protected int maxFrameSkips = 10;
 
 	protected boolean doMapUpdate;
-	protected boolean doRender;
 
 	protected double updateTime;
-	protected double renderTime;
 
 	protected Cobra2DWorld world;
 
@@ -25,6 +23,7 @@ public class ActiveWorldUpdater {
 		@Override
 		public void run() {
 			// Currently the active world updater does actively compensate any delays, so the delta time should be neutral
+			long deltaStart = 0;
 			float deltaTime = 1f;
 			long startTime, stopTime, neededTime, sleepTime, oversleepTime = 0;
 			long excess = 0L;
@@ -34,21 +33,18 @@ public class ActiveWorldUpdater {
 
 			while (running) {
 
-				// some statistics in every loop
-				int mapUpdates = 0;
+				deltaStart = System.nanoTime();
 
 				// Start
 				startTime = System.nanoTime();
 				// Update world
 				if (doMapUpdate) {
 					world.update(fps, deltaTime);
-					mapUpdates++;
 				}
-				updateTime = (System.nanoTime() - startTime) / 1000000.0;
-
 				// Stop
 				stopTime = System.nanoTime();
 				neededTime = stopTime - startTime;
+
 				sleepTime = (period - neededTime) - oversleepTime;
 
 				if (sleepTime > 0) {
@@ -83,8 +79,10 @@ public class ActiveWorldUpdater {
 						}
 						// Update world, test again for loop
 						if (doMapUpdate) {
-							world.update(fps, deltaTime); // update
-							mapUpdates++;
+							// Update world
+							if (doMapUpdate) {
+								world.update(fps, deltaTime);
+							}
 						}
 						// state but don't render
 						skips++;
@@ -92,11 +90,8 @@ public class ActiveWorldUpdater {
 				}
 				stopTime = System.nanoTime();
 				neededTime = stopTime - startTime;
-				final int runningTime = (int) Math.round(neededTime / 1000000.0);
-				actualFPS = (int) Math.round(1000.0 / runningTime);
-				// Hochrechnung auf eine Sekunde
-				final double factor = 1000.0 / runningTime;
-				actualUPS = (int) Math.round(mapUpdates * factor);
+
+				deltaTime = (System.nanoTime() - deltaStart) * 1e-9f;
 			}
 		}
 	};

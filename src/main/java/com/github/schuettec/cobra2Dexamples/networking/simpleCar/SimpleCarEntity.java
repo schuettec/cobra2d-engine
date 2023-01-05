@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.networking.textureEntity;
+package com.github.schuettec.cobra2Dexamples.networking.simpleCar;
 
 import static com.github.schuettec.cobra2d.math.Math2D.getCircle;
 import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
@@ -9,11 +9,12 @@ import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class RotatingTextureEntity extends TexturedEntity {
+public class SimpleCarEntity extends TexturedEntity {
 
-	private static final int SPEED = 5;
+	private static final int TURNING_SPEED = 200;
+	private static final int SPEED = 400;
 
-	public RotatingTextureEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
+	public SimpleCarEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
 	    boolean playerControlled) {
 		super(textureId, worldCoordinates, intialDimension, layer, playerControlled);
 	}
@@ -27,9 +28,9 @@ public class RotatingTextureEntity extends TexturedEntity {
 		float turnSpeed = 0;
 
 		if (controller.isLeftKeyPressed()) {
-			turnSpeed = 10;
+			turnSpeed = TURNING_SPEED * deltaTime;
 		} else if (controller.isRightKeyPressed()) {
-			turnSpeed = -10;
+			turnSpeed = -TURNING_SPEED * deltaTime;
 		} else {
 			turnSpeed = 0;
 		}
@@ -41,11 +42,14 @@ public class RotatingTextureEntity extends TexturedEntity {
 			frameSpeed = 0;
 		}
 
+		System.out.println("turnSpeed  " + turnSpeed);
+
 		// Calculate the collision shape at next frame
-		float degreeDelta = turnSpeed * deltaTime;
-		setDegrees(normalizeAngle(getDegrees() + degreeDelta));
+		setDegrees(normalizeAngle(getDegrees() + turnSpeed));
 		Point nextPosition = getCircle(getPosition(), frameSpeed, getDegrees());
 		setPosition(nextPosition);
+
+		System.out.println(nextPosition);
 	}
 
 }

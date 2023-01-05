@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.networking.textureEntity;
+package com.github.schuettec.cobra2Dexamples.networking.carPhysics;
 
 import static java.lang.String.valueOf;
 
@@ -6,7 +6,8 @@ import java.net.URL;
 import java.util.Properties;
 
 import com.badlogic.gdx.Input.Keys;
-import com.github.schuettec.cobra2Dexamples.bouncingBalls.WallEntity;
+import com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs.PhysicsWallEntity;
+import com.github.schuettec.cobra2Dexamples.libgdx.physics.car.PhysxPoliceCarEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
@@ -17,7 +18,7 @@ import com.github.schuettec.cobra2d.network.client.ClientCamera;
 import com.github.schuettec.cobra2d.network.client.Cobra2DClient;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
-public class NetworkClientDemo {
+public class PhysicsCarClientDemo {
 
 	public static void main(String[] args) throws Exception {
 
@@ -38,7 +39,15 @@ public class NetworkClientDemo {
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.addImage("floor", new URL("resource:floor.png"));
-		engine.addImage("car", new URL("resource:cars/Audi.png"));
+		engine.addImage("police", new URL("resource:cars/police.png"));
+		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
+		engine.addImage("police-blue-alarm-light", new URL("resource:cars/police-blue-alarm-light.png"));
+		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
+		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
+		engine.addImage("front-light", new URL("resource:cars/front-light.png"));
+		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
+		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
+		engine.addImage("light", new URL("resource:light.png"));
 
 		engine.initialize();
 
@@ -49,19 +58,20 @@ public class NetworkClientDemo {
 		camera.addKeyCodeToListen(Keys.RIGHT);
 		camera.addKeyCodeToListen(Keys.DOWN);
 		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
-		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(true);
-		camera.setDrawEntityPoints(true);
 		engine.addEntity(camera);
 
 		Cobra2DClient client = new Cobra2DClient(engine);
-		client.addEntityCreator(WallEntity.class, () -> new WallEntity(new Point(), new Dimension()));
-		client.addEntityCreator(RotatingTextureEntity.class,
-		    () -> new RotatingTextureEntity("car", new Point(), new Dimension(), 4, false));
-		client.addEntityCreator(TexturedEntity.class, () -> {
-			return new TexturedEntity("floor", new Point(), new Dimension(), 0, false);
+		client.addEntityCreator(PhysicsWallEntity.class, () -> new PhysicsWallEntity(new Point(), new Dimension()));
+		client.addEntityCreator(TexturedEntity.class,
+		    () -> new TexturedEntity("floor", new Point(), new Dimension(), 4, false));
+		client.addEntityCreator(PhysxPoliceCarEntity.class, () -> {
+			Dimension policeDimension = engine.dimensionOf("police");
+			return new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light", "police-red-light",
+			    "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300), policeDimension,
+			    2, true);
 		});
-		client.connect(args[0]);
+		String ip = args.length == 1 ? args[0] : "localhost";
+		client.connect(ip);
 
 		engine.start();
 	}
