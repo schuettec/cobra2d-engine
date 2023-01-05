@@ -21,6 +21,8 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.client.CreateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.UpdateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.server.BasicPlayerAccess;
@@ -85,6 +87,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 			    Camera playerCamera = player.getPlayerCamera();
 			    List<String> thisFrameIds = new LinkedList<>();
 			    List<Collision> cameraCollision = worldAccess.getCameraCollision(playerCamera);
+			    List<String> lastFrame = player.getLastFrameIds();
 			    cameraCollision.stream()
 			        .map(Collision::getOpponent)
 			        .forEach(entity -> {
@@ -93,11 +96,15 @@ public class Cobra2DServer implements Renderer, WorldListener {
 					        EntityState entityState = stateManager.readEntityState(entity);
 					        String entityClass = entity.getClass()
 					            .getName();
-					        UpdateEntityClientCommand updateCmd = new UpdateEntityClientCommand(entityClass, entityState);
-					        connection.sendUDP(updateCmd);
+					        ClientCommand command = null;
+					        if (lastFrame.contains(entity.getId())) {
+						        command = new UpdateEntityClientCommand(entityClass, entityState);
+					        } else {
+						        command = new CreateEntityClientCommand(entityClass, entityState);
+					        }
+					        connection.sendUDP(command);
 				        }
 			        });
-			    List<String> lastFrame = player.getLastFrameIds();
 			    lastFrame.removeAll(thisFrameIds);
 			    lastFrame.stream()
 			        .forEach(toRemoveEntityId -> {
@@ -108,6 +115,9 @@ public class Cobra2DServer implements Renderer, WorldListener {
 			    // Clear the state of the controller.
 			    player.getNetworkController()
 			        .clearState();
+
+			    lastFrame.clear();
+			    lastFrame.addAll(thisFrameIds);
 		    });
 	}
 

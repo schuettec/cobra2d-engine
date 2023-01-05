@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.networking.car;
+package com.github.schuettec.cobra2Dexamples.networking.textureEntity;
 
 import static java.lang.String.valueOf;
 
@@ -38,7 +38,7 @@ public class NetworkServerDemo {
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.addImage("floor", new URL("resource:floor.png"));
-		engine.addImage("chair", new URL("resource:chair.png"));
+		engine.addImage("car", new URL("resource:cars/Audi.png"));
 
 		engine.initialize();
 
@@ -47,9 +47,8 @@ public class NetworkServerDemo {
 		Cobra2DServer server = (Cobra2DServer) engine.getRenderer();
 		server.setNetworkCameraDimension(cameraDimension);
 		server.setSpawnEntityFactory(() -> {
-			Dimension rotatingDimension = engine.dimensionOf("chair");
-			RotatingTextureEntity entity = new RotatingTextureEntity("chair", new Point(100, 100), rotatingDimension, 4,
-			    false);
+			Dimension rotatingDimension = engine.dimensionOf("car");
+			RotatingTextureEntity entity = new RotatingTextureEntity("car", new Point(100, 100), rotatingDimension, 4, false);
 			return entity;
 		});
 

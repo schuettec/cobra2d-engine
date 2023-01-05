@@ -49,6 +49,10 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 	public void render(RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
 		centerOnScreen(renderer);
 		capturedEntities = sortByLayer(capturedEntities);
+		for (Collision c : capturedEntities) {
+			System.out.println(c.getOpponent());
+		}
+		System.out.println("----------------------------------------");
 		for (Collision collision : capturedEntities) {
 			Entity entity = collision.getOpponent();
 			Point worldToScreenTranslation = getWorldToScreenTranslation();

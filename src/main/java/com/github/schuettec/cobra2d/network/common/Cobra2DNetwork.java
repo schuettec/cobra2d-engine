@@ -11,6 +11,7 @@ import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.math.Rectangle;
+import com.github.schuettec.cobra2d.network.common.command.client.CreateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.UpdateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.server.UpdateControllerCommand;
@@ -24,6 +25,7 @@ public class Cobra2DNetwork {
 	 */
 	public static void registerCommandClasses(Kryo kryo) {
 		kryo.register(UpdateEntityClientCommand.class);
+		kryo.register(CreateEntityClientCommand.class);
 		kryo.register(RemoveEntityClientCommand.class);
 		kryo.register(UpdateControllerCommand.class);
 		kryo.register(EntityState.class);

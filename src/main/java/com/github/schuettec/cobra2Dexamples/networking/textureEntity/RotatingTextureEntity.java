@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.networking.car;
+package com.github.schuettec.cobra2Dexamples.networking.textureEntity;
 
 import static com.github.schuettec.cobra2d.math.Math2D.getCircle;
 import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;

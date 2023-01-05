@@ -1,19 +1,20 @@
 package com.github.schuettec.cobra2d.network.common.command.client;
 
+import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.network.client.ClientAccess;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class UpdateEntityClientCommand implements ClientCommand {
+public class CreateEntityClientCommand implements ClientCommand {
 
 	private String entityClass;
 	private EntityState entityState;
 
-	public UpdateEntityClientCommand() {
+	public CreateEntityClientCommand() {
 		super();
 	}
 
-	public UpdateEntityClientCommand(String entityClass, EntityState entityState) {
+	public CreateEntityClientCommand(String entityClass, EntityState entityState) {
 		super();
 		this.entityState = entityState;
 		this.entityClass = entityClass;
@@ -22,10 +23,10 @@ public class UpdateEntityClientCommand implements ClientCommand {
 	@Override
 	public void perform(WorldAccess worldAccess, ClientAccess clientAccess) {
 		String entityId = entityState.getId();
-		worldAccess.getEntityById(entityId)
-		    .ifPresent(e -> {
-			    clientAccess.writeEntityState(entityState, e);
-		    });
+		Entity entity = clientAccess.createEntity(entityClass);
+		entity.setId(entityId);
+		clientAccess.writeEntityState(entityState, entity);
+		worldAccess.spawnEntity(entity);
 	}
 
 	public String getEntityClass() {
