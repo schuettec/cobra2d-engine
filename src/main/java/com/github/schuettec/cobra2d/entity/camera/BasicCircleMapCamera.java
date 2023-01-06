@@ -5,6 +5,7 @@ import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -12,7 +13,7 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractCamera {
+public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractCamera, Controllable {
 
 	private boolean drawEntityPoints;
 	private boolean drawCollisionShape;
@@ -50,7 +51,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
@@ -65,6 +66,12 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 				this.moveDown();
 			}
 		}
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+		// TODO Auto-generated method stub
+
 	}
 
 	public void moveLeft() {

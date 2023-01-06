@@ -4,15 +4,14 @@ import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
-import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class TexturedEntity extends BasicRectangleEntity implements Renderable, Updatable {
+public class TexturedEntity extends BasicRectangleEntity implements Renderable, Controllable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -48,6 +47,18 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 		    (float) getDegrees());
 	}
 
+	@Override
+	public void processControllerState(Controller controller) {
+		if (playerControlled) {
+			if (controller.isLeftKeyPressed()) {
+				this.rotateLeft();
+			}
+			if (controller.isRightKeyPressed()) {
+				this.rotateRight();
+			}
+		}
+	}
+
 	protected void createCollisionShape(RendererAccess rendererAccess) {
 		Dimension textureDimension = rendererAccess.getTextureDimension(getTextureId());
 		createRectangleShape(textureDimension);
@@ -60,18 +71,6 @@ public class TexturedEntity extends BasicRectangleEntity implements Renderable, 
 
 	public void setLayer(int layer) {
 		this.layer = layer;
-	}
-
-	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
-		if (playerControlled) {
-			if (controller.isLeftKeyPressed()) {
-				this.rotateLeft();
-			}
-			if (controller.isRightKeyPressed()) {
-				this.rotateRight();
-			}
-		}
 	}
 
 	public void rotateLeft() {

@@ -2,17 +2,16 @@ package com.github.schuettec.cobra2Dexamples.moveableShapes;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicPolygonEntity;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
-import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class MoveablePolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Updatable {
+public class MoveablePolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Controllable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -41,7 +40,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

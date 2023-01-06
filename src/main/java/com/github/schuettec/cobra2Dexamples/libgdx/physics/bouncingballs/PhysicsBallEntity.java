@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
@@ -22,7 +23,8 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsBallEntity extends BasicCircleEntity implements CircleRenderable, DynamicBody, Updatable {
+public class PhysicsBallEntity extends BasicCircleEntity
+    implements CircleRenderable, DynamicBody, Updatable, Controllable {
 
 	private Body body;
 
@@ -76,19 +78,24 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
-		Vector2 position = body.getPosition();
-		float radians = body.getAngle();
-		double degrees = Math.toDegrees(radians);
-		setDegrees(degrees);
-		setPosition(saveRound(position.x / renderScaleConversionFactor),
-		    saveRound(position.y / renderScaleConversionFactor));
+	public void processControllerState(Controller controller) {
 		Point mousePoint = controller.getMousePositionWorldCoordinates();
 		boolean inCircle = Math2D.isInCircle(mousePoint, getPosition(), getRadius());
 		if (inCircle) {
 			Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(getDegrees(), forceToApply);
 			this.body.applyForce(vForce, new Vector2(), true);
 		}
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+		Vector2 position = body.getPosition();
+		float radians = body.getAngle();
+		double degrees = Math.toDegrees(radians);
+		setDegrees(degrees);
+		setPosition(saveRound(position.x / renderScaleConversionFactor),
+		    saveRound(position.y / renderScaleConversionFactor));
+
 	}
 
 	@Override

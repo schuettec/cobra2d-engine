@@ -7,9 +7,9 @@ import java.util.Set;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
-import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
@@ -18,9 +18,8 @@ import com.github.schuettec.cobra2d.network.common.command.server.UpdateControll
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.Collision;
-import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class ClientCamera extends BasicRectangleMapCamera implements NetworkActor, Updatable {
+public class ClientCamera extends BasicRectangleMapCamera implements NetworkActor, Controllable {
 
 	public Set<Integer> keyCodesToListen = new HashSet<>();
 
@@ -62,12 +61,11 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
-		updateServerCommands(this.serverCommands, worldAccess, deltaTime, controller);
+	public void processControllerState(Controller controller) {
+		updateServerCommands(this.serverCommands, controller);
 	}
 
-	protected void updateServerCommands(List<ServerCommand> serverCommands, WorldAccess worldAccess, float deltaTime,
-	    Controller controller) {
+	protected void updateServerCommands(List<ServerCommand> serverCommands, Controller controller) {
 		serverCommands.clear();
 		keyCodesToListen.stream()
 		    .filter(controller::isKeyPressed)

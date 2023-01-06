@@ -11,6 +11,7 @@ import com.github.schuettec.cobra2Dexamples.libgdx.physics.car.PhysxPoliceCarEnt
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
+import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape.RectanglePoint;
 import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.Dimension;
@@ -61,6 +62,11 @@ public class PhysicsCarServerDemo {
 			    "police-blue-alarm-light", "police-red-light", "police-blue-light", "front-light", "brake-light",
 			    "brake-light-color", new Point(300, 300), policeDimension, 2, true);
 			return playerEntity;
+		});
+		server.setPlayerCameraFactory((playerEntity) -> {
+			BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
+			camera.follow(playerEntity);
+			return camera;
 		});
 
 		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(), new Dimension(20, yRes));

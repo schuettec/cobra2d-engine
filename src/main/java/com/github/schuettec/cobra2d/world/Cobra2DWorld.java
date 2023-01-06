@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -22,6 +23,7 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
@@ -60,6 +62,7 @@ public class Cobra2DWorld {
 	protected Map<String, Entity> allEntities;
 
 	protected Set<Obstacle> obstacles;
+	protected Set<Controllable> controllable;
 	protected Set<Updatable> updateables;
 	protected Set<Renderable> renderables;
 	protected Set<Camera> cameras;
@@ -105,6 +108,7 @@ public class Cobra2DWorld {
 		this.allEntities = new Hashtable<String, Entity>();
 		this.obstacles = new HashSet<>();
 		this.updateables = new HashSet<>();
+		this.controllable = new HashSet<>();
 		this.renderables = new HashSet<>();
 		this.physicBodies = new HashSet<>();
 		this.soundEffects = new HashSet<>();
@@ -172,6 +176,7 @@ public class Cobra2DWorld {
 	private void addEntityBySkill(Entity entity) {
 		addOnDemand(Camera.class, this.cameras, entity);
 		addOnDemand(Obstacle.class, this.obstacles, entity);
+		addOnDemand(Controllable.class, this.controllable, entity);
 		addOnDemand(Updatable.class, this.updateables, entity);
 		addOnDemand(Renderable.class, this.renderables, entity);
 		addOnDemand(PhysicBody.class, this.physicBodies, entity);
@@ -192,6 +197,7 @@ public class Cobra2DWorld {
 
 	private void removeEntityBySkill(Entity entity) {
 		removeOnDemand(Obstacle.class, this.obstacles, entity);
+		removeOnDemand(Controllable.class, this.controllable, entity);
 		removeOnDemand(Updatable.class, this.updateables, entity);
 		removeOnDemand(Renderable.class, this.renderables, entity);
 		removeOnDemand(Camera.class, this.cameras, entity);
@@ -227,6 +233,8 @@ public class Cobra2DWorld {
 
 		calculateCameraRelativeInput();
 
+		updateControllables();
+
 		if (isUpdateWorld()) {
 			updateWorld(deltaTime);
 		}
@@ -234,6 +242,14 @@ public class Cobra2DWorld {
 		updateCameras(deltaTime);
 
 		notifyAfterUpdate();
+	}
+
+	private void updateControllables() {
+		for (Controllable c : controllable) {
+			Controller controller = engine.getRenderer()
+			    .getControllerForEntity(c);
+			c.processControllerState(controller);
+		}
 	}
 
 	private void calculateCameraRelativeInput() {
@@ -251,8 +267,8 @@ public class Cobra2DWorld {
 		soundCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras
 		for (Camera camera : cameras) {
-			// If the world update is disabled, perform a dedicated camera update.
-			// Otherwise the cameras will show nothing if not updated.
+			// // If the world update is disabled, perform a dedicated camera update.
+			// // Otherwise the cameras will show nothing if not updated.
 			if (!isUpdateWorld()) {
 				updateEntity(deltaTime, camera);
 			}
@@ -287,9 +303,7 @@ public class Cobra2DWorld {
 	}
 
 	private void updateEntity(float deltaTime, Updatable updatable) {
-		Controller controller = engine.getRenderer()
-		    .getControllerForEntity(updatable);
-		updatable.update(worldAccess, deltaTime, controller);
+		updatable.update(worldAccess, deltaTime);
 	}
 
 	private void doPhysicsStep(float deltaTime) {
@@ -326,11 +340,10 @@ public class Cobra2DWorld {
 		if (isNull(result)) {
 			return Collections.emptyList();
 		} else {
-			// TODO: FIX THAT after getting rid of dependency from Collisions to HasCollisionShape
-			// return result.stream()
-			// .map(Collision::getOpponent)
-			// .collect(Collectors.toList());
-			return null;
+			return result.stream()
+			    .map(Collision::getOpponent)
+			    .map(e -> (SoundEffect) e)
+			    .collect(Collectors.toList());
 		}
 	}
 

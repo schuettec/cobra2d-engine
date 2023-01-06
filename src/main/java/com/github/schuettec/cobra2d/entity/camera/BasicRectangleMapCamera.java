@@ -6,6 +6,8 @@ import java.util.List;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
+import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.EntityPoint;
@@ -16,7 +18,7 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.Collision;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class BasicRectangleMapCamera extends BasicRectangleEntity implements AbstractCamera {
+public class BasicRectangleMapCamera extends BasicRectangleEntity implements AbstractCamera, Controllable {
 
 	private boolean drawEntityPoints;
 	private boolean drawCollisionShape;
@@ -29,6 +31,8 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	private Point screenPosition;
 	private Point mousePosition;
+
+	private Entity followEntity;
 
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
@@ -62,22 +66,8 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public void drawCameraOutline(RendererAccess renderer) {
-		// Draw camera outline.
-		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenPosition(), Color.GREEN);
-	}
-
-	protected void drawMouse(RendererAccess renderer) {
-		if (isDrawMouse() && nonNull(mousePosition)) {
-			Point toDraw = worldToScreenCoordinates(mousePosition);
-			drawPoint(renderer, toDraw, 5, Color.CORAL);
-		}
-	}
-
-	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
 		this.mousePosition = controller.getMousePositionWorldCoordinates();
-
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
@@ -91,6 +81,34 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 			if (controller.isDownKeyPressed()) {
 				this.moveDown();
 			}
+		}
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+		if (!playerControlled) {
+			followOnDemand();
+		}
+	}
+
+	@Override
+	public void drawCameraOutline(RendererAccess renderer) {
+		// Draw camera outline.
+		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenPosition(), Color.GREEN);
+	}
+
+	protected void drawMouse(RendererAccess renderer) {
+		if (isDrawMouse() && nonNull(mousePosition)) {
+			Point toDraw = worldToScreenCoordinates(mousePosition);
+			drawPoint(renderer, toDraw, 5, Color.CORAL);
+		}
+	}
+
+	private void followOnDemand() {
+		if (nonNull(followEntity)) {
+			this.setPosition(followEntity.getPosition()
+			    .clone());
+			System.out.println(getPosition());
 		}
 	}
 
@@ -183,6 +201,10 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 			    .toString() + "\n";
 		}
 		return str + "]";
+	}
+
+	public void follow(Entity followEntity) {
+		this.followEntity = followEntity;
 	}
 
 }

@@ -4,7 +4,6 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
-import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
@@ -52,7 +51,7 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime) {
 		Point newPosition = new Point(body.getPosition().x, body.getPosition().y);
 		newPosition = newPosition.scale(toRenderScale);
 		this.setPosition(newPosition);

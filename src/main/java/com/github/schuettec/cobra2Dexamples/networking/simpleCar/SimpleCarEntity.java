@@ -5,14 +5,19 @@ import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
+import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class SimpleCarEntity extends TexturedEntity {
+public class SimpleCarEntity extends TexturedEntity implements Controllable, Updatable {
 
 	private static final int TURNING_SPEED = 200;
 	private static final int SPEED = 400;
+
+	float desiredTurning = 0;
+	private int desiredSpeed;
 
 	public SimpleCarEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
 	    boolean playerControlled) {
@@ -20,27 +25,33 @@ public class SimpleCarEntity extends TexturedEntity {
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
-		super.update(worldAccess, deltaTime, controller);
+	public void processControllerState(Controller controller) {
+		if (controller.isUpKeyPressed()) {
+			this.desiredSpeed = SPEED;
+		} else if (controller.isDownKeyPressed()) {
+			this.desiredSpeed = -SPEED;
+		} else {
+			this.desiredSpeed = 0;
+		}
 
+		if (controller.isLeftKeyPressed()) {
+			desiredTurning = TURNING_SPEED;
+		} else if (controller.isRightKeyPressed()) {
+			desiredTurning = -TURNING_SPEED;
+		} else {
+			desiredTurning = 0;
+		}
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
 		float frameSpeed = 0;
 
 		float turnSpeed = 0;
 
-		if (controller.isLeftKeyPressed()) {
-			turnSpeed = TURNING_SPEED * deltaTime;
-		} else if (controller.isRightKeyPressed()) {
-			turnSpeed = -TURNING_SPEED * deltaTime;
-		} else {
-			turnSpeed = 0;
-		}
-		if (controller.isUpKeyPressed()) {
-			frameSpeed = SPEED * deltaTime;
-		} else if (controller.isDownKeyPressed()) {
-			frameSpeed = -SPEED * deltaTime;
-		} else {
-			frameSpeed = 0;
-		}
+		turnSpeed = desiredTurning * deltaTime;
+
+		frameSpeed = desiredSpeed * deltaTime;
 
 		// Calculate the collision shape at next frame
 		setDegrees(normalizeAngle(getDegrees() + turnSpeed));

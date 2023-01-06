@@ -7,6 +7,7 @@ import java.util.function.BiFunction;
 
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Line;
@@ -18,7 +19,20 @@ import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable, Updatable {
+public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable, Updatable, Controllable {
+
+	enum State {
+		FORWARDS,
+		BACKWARDS,
+		ROLLOUT,
+		BRAKE;
+	}
+
+	enum Steering {
+		LEFT,
+		RIGHT,
+		NONE;
+	}
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -84,6 +98,9 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private String brakeLightColorTextureId;
 	private String policeRedAlarmLightTextureId;
 	private String policeBlueAlarmLightTextureId;
+
+	private State desiredState;
+	private Steering desiredSteering;
 
 	public PoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId, String policeBlueAlarmLightTextureId,
 	    String redLightTextureId, String blueLightTextureId, String frontLightTextureId, String brakeLightTextureId,
@@ -186,7 +203,29 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
+		if (controller.isUpKeyPressed()) {
+			this.desiredState = State.FORWARDS;
+		} else if (controller.isDownKeyPressed()) {
+			this.desiredState = State.BACKWARDS;
+		} else if (controller.isSpaceKeyPressed()) {
+			this.desiredState = State.BRAKE;
+		} else {
+			this.desiredState = State.ROLLOUT;
+		}
+
+		if (controller.isLeftKeyPressed()) {
+			this.desiredSteering = Steering.LEFT;
+		} else if (controller.isRightKeyPressed()) {
+			this.desiredSteering = Steering.RIGHT;
+		} else {
+			this.desiredSteering = Steering.NONE;
+		}
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+
 		float acceleration = MAX_SPEED / SECONDS_TO_MAX_SPEED * deltaTime;
 		float brake = MAX_SPEED / SECONDS_TO_BRAKE * deltaTime;
 		float rollout = MAX_SPEED / SECONDS_TO_ROLL_OUT * deltaTime;
@@ -214,7 +253,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 			}
 		}
 
-		if (controller.isUpKeyPressed()) {
+		if (State.FORWARDS.equals(desiredState)) {
 			// Accelerate
 			if (this.speed < 0) {
 				this.brake = true;
@@ -223,7 +262,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 				this.brake = false;
 				this.speed = Math.min(speed + acceleration, MAX_SPEED);
 			}
-		} else if (controller.isDownKeyPressed()) {
+		} else if (State.BACKWARDS.equals(desiredState)) {
 			if (this.speed > 0) {
 				this.brake = true;
 				this.speed = Math.max(speed - brake, -MAX_SPEED);
@@ -231,7 +270,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 				this.brake = false;
 				this.speed = Math.max(speed - acceleration, -MAX_SPEED);
 			}
-		} else if (controller.isSpaceKeyPressed()) {
+		} else if (State.BRAKE.equals(desiredState)) {
 			this.brake = true;
 			float signum = Math.signum(this.speed) * -1;
 			BiFunction<Float, Float, Float> minMax = signum >= 0 ? Math::min : Math::max;
@@ -243,16 +282,15 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 			this.speed = minMax.apply(speed + signum * rollout, 0f);
 		}
 
-		if (controller.isLeftKeyPressed()) {
+		if (Steering.LEFT.equals(desiredSteering)) {
 			double newDegrees = getDegrees() + turnDegrees;
 			setDegrees(Math2D.normalizeAngle(newDegrees));
-		} else if (controller.isRightKeyPressed()) {
+		} else if (Steering.RIGHT.equals(desiredSteering)) {
 			setDegrees(Math2D.normalizeAngle(getDegrees() - turnDegrees));
 		}
 
 		Point nextPosition = Math2D.getCircle(getPosition(), speed, getDegrees());
 		this.setPosition(nextPosition);
-
 	}
 
 }

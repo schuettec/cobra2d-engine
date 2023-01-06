@@ -28,6 +28,7 @@ import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -171,9 +172,8 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 					if (camera instanceof SoundCamera) {
 						SoundCamera soundCamera = (SoundCamera) camera;
-						// TODO: Get rid of depencency of Collisions to HasCollisionShape.
-						// List<Collision> soundCollision = world.getSoundCollision(camera);
-						// soundCamera.playback(soundAccess, world, soundCollision);
+						List<SoundEffect> soundCollision = world.getSoundCollision(camera);
+						soundCamera.playback(soundAccess, world, soundCollision);
 					}
 				}
 			}

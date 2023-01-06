@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
-import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 /**
@@ -20,6 +19,6 @@ public interface Updatable extends Entity {
 	 * @param deltaTime The time between the last and the current frame in seconds.
 	 * @param controller The controller for user inputer.
 	 */
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller);
+	public void update(WorldAccess worldAccess, float deltaTime);
 
 }

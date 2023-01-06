@@ -5,15 +5,14 @@ import java.awt.event.KeyEvent;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
-import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
-import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Updatable {
+public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Controllable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -26,8 +25,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
-
+	public void processControllerState(Controller controller) {
 		if (playerControlled) {
 			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
 				this.moveLeft();

@@ -3,13 +3,14 @@ package com.github.schuettec.cobra2Dexamples.libgdx.person;
 import com.github.schuettec.cobra2Dexamples.libgdx.animation.AnimationEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
+import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class HarveyEntity extends AnimationEntity {
+public class HarveyEntity extends AnimationEntity implements Updatable {
 
 	private static final float ANIMATION_FRAME_DURATION = 0.06f;
 	private static final float DEFAULT_STEP_SPEED = 3.25f; // per second
@@ -18,8 +19,11 @@ public class HarveyEntity extends AnimationEntity {
 	private float stepSpeed;
 	private float turningSpeed;
 
+	private float desiredSpeed;
+
 	private boolean running;
 	private String headTextureId;
+	private Point desiredDiection;
 
 	public HarveyEntity(String headTextureId, String staticAnimationTextureId, String animationTextureId,
 	    Point worldCoordinates, Dimension initialDimension, int frameCols, int frameRows, int layer,
@@ -44,13 +48,10 @@ public class HarveyEntity extends AnimationEntity {
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
 		this.running = controller.isWKeyPressed() || controller.isSKeyPressed();
 
 		InputContext cameraRelativeInput = controller.getCameraRelativeInput();
-		Point mouseWorldCoordinates = cameraRelativeInput.getMouseWorldCoordinates();
-		double angle = Math2D.getAngle(getPosition(), mouseWorldCoordinates);
-		setDegrees(angle);
 
 		if (controller.isWKeyPressed()) {
 			this.stepSpeed = Math.abs(this.stepSpeed);
@@ -61,12 +62,21 @@ public class HarveyEntity extends AnimationEntity {
 		}
 
 		if (controller.isAKeyPressed()) {
-			this.setDegrees(this.getDegrees() - this.turningSpeed * deltaTime);
+			desiredSpeed = -turningSpeed;
+		} else if (controller.isDKeyPressed()) {
+			desiredSpeed = -turningSpeed;
+		} else {
+			desiredSpeed = 0;
 		}
 
-		if (controller.isDKeyPressed()) {
-			this.setDegrees(this.getDegrees() + this.turningSpeed * deltaTime);
-		}
+		this.desiredDiection = cameraRelativeInput.getMouseWorldCoordinates();
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+		double angle = Math2D.getAngle(getPosition(), desiredDiection);
+		setDegrees(angle);
+		this.setDegrees(this.getDegrees() - this.turningSpeed * deltaTime);
 
 		if (this.running) {
 			final Point newPos = Math2D.getCircle(this.getPosition(), this.stepSpeed, this.getDegrees());

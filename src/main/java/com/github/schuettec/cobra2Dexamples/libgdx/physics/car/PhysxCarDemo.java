@@ -62,14 +62,6 @@ public class PhysxCarDemo {
 		wall4.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
 		engine.addEntity(wall1, wall2, wall3, wall4);
 
-		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
-		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
-		// camera.setDrawCameraOutline(true);
-		// camera.setDrawCollisionShape(true);
-		// camera.setDrawEntityPoints(true);
-		engine.setCameraForInput(camera);
-		engine.addEntity(camera);
-
 		Dimension floorDimension = engine.dimensionOf("floor");
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0, false);
 		engine.addEntity(t1);
@@ -98,11 +90,20 @@ public class PhysxCarDemo {
 		engine.addEntity(floorEntities);
 
 		Dimension policeDimension = engine.dimensionOf("police");
-		PhysxPoliceCarEntity b1 = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
+		PhysxPoliceCarEntity car = new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",
 		    "police-red-light", "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300),
 		    policeDimension, 2, true);
 
-		engine.addEntity(b1);
+		engine.addEntity(car);
+
+		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
+		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
+		// camera.setDrawCameraOutline(true);
+		// camera.setDrawCollisionShape(true);
+		// camera.setDrawEntityPoints(true);
+		camera.follow(car);
+		engine.setCameraForInput(camera);
+		engine.addEntity(camera);
 
 		engine.start();
 	}

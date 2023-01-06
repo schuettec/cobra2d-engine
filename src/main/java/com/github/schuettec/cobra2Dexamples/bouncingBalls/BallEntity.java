@@ -4,7 +4,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
@@ -33,7 +32,7 @@ public class BallEntity extends BasicCircleEntity implements CircleRenderable, U
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void update(WorldAccess worldAccess, float deltaTime) {
 		double frameSpeed = currentSpeed * deltaTime;
 
 		// Calculate the collision shape at next frame

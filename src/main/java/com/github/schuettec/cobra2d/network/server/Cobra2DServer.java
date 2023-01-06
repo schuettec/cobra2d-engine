@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import com.esotericsoftware.kryonet.Connection;
@@ -17,9 +18,11 @@ import com.esotericsoftware.kryonet.Server;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.NoInputController;
+import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.CreateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
@@ -57,11 +60,17 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	private Map<Connection, Player> playersByConnection;
 
 	private Dimension cameraDimension;
-	private Supplier<Entity> spawnPlayerEntitySupplier;
+
 	private Supplier<? extends PlayerAccess> playerAccessSupplier = BasicPlayerAccess::new;
+	private Supplier<Entity> spawnPlayerEntitySupplier;
+	private Function<Entity, ? extends Camera> playerCameraSupplier = (playerAccess) -> createBasicCamera();
 
 	public Cobra2DServer() {
 
+	}
+
+	private Camera createBasicCamera() {
+		return new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
 	}
 
 	@Override
@@ -124,7 +133,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	private void createPlayerAndSpawn(Connection connection) {
 		Entity playerEntity = spawnPlayerEntitySupplier.get();
 		PlayerAccess playerAccess = playerAccessSupplier.get();
-		ServerCamera playerCamera = new ServerCamera(playerEntity, cameraDimension);
+		Camera playerCamera = playerCameraSupplier.apply(playerEntity);
 		Player player = new Player("unknown player", connection, playerCamera, playerEntity, playerAccess);
 		playerAccess.setPlayer(player);
 		this.playersByConnection.put(connection, player);
@@ -230,6 +239,10 @@ public class Cobra2DServer implements Renderer, WorldListener {
 
 	public void setPlayerAccessFactory(Supplier<? extends PlayerAccess> playerAccessSupplier) {
 		this.playerAccessSupplier = playerAccessSupplier;
+	}
+
+	public void setPlayerCameraFactory(Function<Entity, ? extends Camera> playerCameraSupplier) {
+		this.playerCameraSupplier = playerCameraSupplier;
 	}
 
 	public void setNetworkCameraDimension(Dimension cameraDimension) {

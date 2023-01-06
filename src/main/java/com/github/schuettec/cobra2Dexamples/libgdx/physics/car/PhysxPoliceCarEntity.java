@@ -93,6 +93,12 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	private Dimension dimension;
 	private Fixture fixture;
 
+	float desiredSpeed = 0;
+	float desiredTorque = 0;
+
+	// if true, the user does not break or accelerate
+	boolean roll = true;
+
 	public PhysxPoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId,
 	    String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
 	    String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId, Point worldCoordinates,
@@ -208,7 +214,33 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	}
 
 	@Override
-	public void update(WorldAccess worldAccess, float deltaTime, Controller controller) {
+	public void processControllerState(Controller controller) {
+		if (controller.isUpKeyPressed()) {
+			desiredSpeed = m_maxForwardSpeed;
+			roll = false;
+		} else if (controller.isDownKeyPressed()) {
+			desiredSpeed = m_maxBackwardSpeed;
+			roll = false;
+		} else if (controller.isSpaceKeyPressed()) {
+			// TODO: Handbrake!!!
+			roll = false;
+		} else {
+			roll = true;
+			desiredSpeed = 0;
+		}
+
+		if (controller.isLeftKeyPressed()) {
+			desiredTorque = torque;
+		} else if (controller.isRightKeyPressed()) {
+			desiredTorque = -torque;
+		} else {
+			desiredTorque = 0;
+		}
+
+	}
+
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
 		long currentTimeMillis = System.currentTimeMillis();
 
 		if (lightsOn) {
@@ -222,26 +254,10 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 
 		updateFriction();
 
-		float desiredSpeed = 0;
-
 		// find current speed in forward direction
 		Vector2 currentForwardNormal = body.getWorldVector(new Vector2(0, 1))
 		    .cpy();
 		float currentSpeed = getForwardVelocity().dot(currentForwardNormal);
-
-		// if true, the user does not break or accelerate
-		boolean roll = true;
-
-		if (controller.isUpKeyPressed()) {
-			desiredSpeed = m_maxForwardSpeed;
-			roll = false;
-		} else if (controller.isDownKeyPressed()) {
-			desiredSpeed = m_maxBackwardSpeed;
-			roll = false;
-		} else if (controller.isSpaceKeyPressed()) {
-			// TODO: Handbrake!!!
-			roll = false;
-		}
 
 		if (roll) {
 			brake = false;
@@ -257,14 +273,6 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 				this.brake = currentSpeed > 0;
 				body.applyForce(currentForwardNormal.scl(force), body.getWorldCenter(), true);
 			}
-		}
-
-		float desiredTorque = 0;
-
-		if (controller.isLeftKeyPressed()) {
-			desiredTorque = torque;
-		} else if (controller.isRightKeyPressed()) {
-			desiredTorque = -torque;
 		}
 
 		body.applyTorque(desiredTorque, true);
