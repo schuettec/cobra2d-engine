@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2d.entity;
 import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofLineBased;
 import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofNonLineBased;
 import static java.util.Objects.nonNull;
+import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -482,7 +483,19 @@ public abstract class Collisions {
 
 	public static CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstacles,
 	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		HasCollisionShape emulated = new HasCollisionShape() {
+		return detectCollision(asHasCollisionShape(shape), obstacles, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
+	public static CollisionMap detectCollisionByShapes(Shape shape, Set<Shape> shapes, boolean outlineOnly,
+	    boolean allEntityPoints, boolean addBidirectional) {
+		Set<? extends HasCollisionShape> list = shapes.stream()
+		    .map(Collisions::asHasCollisionShape)
+		    .collect(toSet());
+		return detectCollision(asHasCollisionShape(shape), list, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
+	private static HasCollisionShape asHasCollisionShape(Shape shape) {
+		return new HasCollisionShape() {
 
 			@Override
 			public Entity translate(Point translation) {
@@ -552,6 +565,6 @@ public abstract class Collisions {
 			public void setId(String setId) {
 			}
 		};
-		return detectCollision(emulated, obstacles, outlineOnly, allEntityPoints, addBidirectional);
 	}
+
 }

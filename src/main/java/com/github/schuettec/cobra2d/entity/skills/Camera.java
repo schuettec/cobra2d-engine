@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
-import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
@@ -28,8 +27,16 @@ public interface Camera extends Updatable, HasCollisionShape {
 	 */
 	void render(final RendererAccess renderer, final Cobra2DWorld map, final List<Collision> capturedEntities);
 
+	/**
+	 * @return Returns the screen position of this camera.
+	 */
 	public Point getScreenPosition();
 
+	/**
+	 * Sets a new screen position for this camera.
+	 * 
+	 * @param screenPosition The new position-.
+	 */
 	public void setScreenPosition(Point screenPosition);
 
 	/**
@@ -47,4 +54,5 @@ public interface Camera extends Updatable, HasCollisionShape {
 	 * @return Returns the {@link InputContext}.
 	 */
 	Point worldToScreenCoordinates(Point worldCoords);
+
 }

@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -31,9 +32,12 @@ import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
+import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
+import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
+import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Shape;
 
@@ -67,6 +71,7 @@ public class Cobra2DWorld {
 	protected Set<Renderable> renderables;
 	protected Set<Camera> cameras;
 	protected Set<PhysicBody> physicBodies;
+	protected Set<SoundEffect> soundEffects;
 
 	protected Set<NetworkActor> networkActors;
 
@@ -78,6 +83,7 @@ public class Cobra2DWorld {
 	protected Map<Class<? extends Skill>, WorldListener> listenersBySkills = new Hashtable<>();
 
 	private Map<Camera, List<Collision>> cameraCollisionMap;
+	private Map<SoundCamera, List<Collision>> soundCollisionMap;
 
 	private boolean calculateFullCameraCollisionPoints = false;
 
@@ -106,9 +112,11 @@ public class Cobra2DWorld {
 		this.updateables = new HashSet<>();
 		this.renderables = new HashSet<>();
 		this.physicBodies = new HashSet<>();
+		this.soundEffects = new HashSet<>();
 		this.networkActors = new HashSet<>();
 		this.cameras = new HashSet<>();
 		this.cameraCollisionMap = new Hashtable<>();
+		this.soundCollisionMap = new Hashtable<>();
 		this.listeners = new LinkedList<>();
 		this.worldAccess = new WorldAccess(this);
 
@@ -171,6 +179,7 @@ public class Cobra2DWorld {
 		addOnDemand(Updatable.class, this.updateables, entity);
 		addOnDemand(Renderable.class, this.renderables, entity);
 		addOnDemand(PhysicBody.class, this.physicBodies, entity);
+		addOnDemand(SoundEffect.class, this.soundEffects, entity);
 		addOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
@@ -191,6 +200,7 @@ public class Cobra2DWorld {
 		removeOnDemand(Renderable.class, this.renderables, entity);
 		removeOnDemand(Camera.class, this.cameras, entity);
 		removeOnDemand(PhysicBody.class, this.physicBodies, entity);
+		removeOnDemand(SoundEffect.class, this.soundEffects, entity);
 		removeOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
@@ -242,6 +252,7 @@ public class Cobra2DWorld {
 
 	private void updateCameras(float deltaTime) {
 		cameraCollisionMap.clear();
+		soundCollisionMap.clear();
 		// Detect all collisions in the set of renderables with cameras
 		for (Camera camera : cameras) {
 			// If the world update is disabled, perform a dedicated camera update.
@@ -249,12 +260,32 @@ public class Cobra2DWorld {
 			if (!isUpdateWorld()) {
 				updateEntity(deltaTime, camera);
 			}
-			Set<Camera> cameraSet = new HashSet<>();
-			cameraSet.add(camera);
-			CollisionMap map = detectCollision(cameraSet, renderables, false, calculateFullCameraCollisionPoints, false);
-			List<Collision> cameraCollisions = map.getCollisions();
+			List<Collision> cameraCollisions = getCameraCollisions(camera);
 			cameraCollisionMap.put(camera, cameraCollisions);
+			if (camera instanceof SoundCamera) {
+				SoundCamera soundCamera = (SoundCamera) camera;
+				List<Collision> soundCollisions = getSoundCollisions(soundCamera);
+				soundCollisionMap.put(soundCamera, soundCollisions);
+			}
 		}
+	}
+
+	private List<Collision> getSoundCollisions(SoundCamera soundCamera) {
+		Circle soundRange = soundCamera.getSoundRange();
+		Set<Shape> shapes = soundEffects.stream()
+		    .map(SoundEffect::getSoundRange)
+		    .collect(Collectors.toSet());
+		CollisionMap soundCollisions = detectCollisionByShape(soundRange, shapes, false, false, false);
+		List<Collision> cameraCollisions = soundCollisions.getCollisions();
+		return cameraCollisions;
+	}
+
+	private List<Collision> getCameraCollisions(Camera camera) {
+		Set<Camera> cameraSet = new HashSet<>();
+		cameraSet.add(camera);
+		CollisionMap map = detectCollision(cameraSet, renderables, false, calculateFullCameraCollisionPoints, false);
+		List<Collision> cameraCollisions = map.getCollisions();
+		return cameraCollisions;
 	}
 
 	private void updateWorld(float deltaTime) {
@@ -296,6 +327,19 @@ public class Cobra2DWorld {
 			return Collections.emptyList();
 		} else {
 			return result;
+		}
+	}
+
+	public List<SoundEffect> getSoundCollision(Camera camera) {
+		List<Collision> result = soundCollisionMap.get(camera);
+		if (isNull(result)) {
+			return Collections.emptyList();
+		} else {
+			// TODO: FIX THAT after getting rid of dependency from Collisions to HasCollisionShape
+			// return result.stream()
+			// .map(Collision::getOpponent)
+			// .collect(Collectors.toList());
+			return null;
 		}
 	}
 
@@ -441,6 +485,11 @@ public class Cobra2DWorld {
 		return Collisions.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
 	}
 
+	public static CollisionMap detectCollisionByShape(Shape shape, Set<Shape> shapes, boolean outlineOnly,
+	    boolean allEntityPoints, boolean addBidirectional) {
+		return Collisions.detectCollisionByShapes(shape, shapes, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
 	/**
 	 * @param enties T The entities to remove in the result.
 	 * @return Returns the obstacles except the specified entities.
@@ -502,6 +551,14 @@ public class Cobra2DWorld {
 
 	public WorldAccess getWorldAccess() {
 		return worldAccess;
+	}
+
+	public Set<PhysicBody> getPhysicBodies() {
+		return physicBodies;
+	}
+
+	public Set<SoundEffect> getSoundEffects() {
+		return soundEffects;
 	}
 
 }

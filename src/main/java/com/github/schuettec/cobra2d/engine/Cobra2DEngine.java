@@ -36,6 +36,8 @@ public class Cobra2DEngine {
 	private Cobra2DWorld world;
 
 	private Map<String, URL> textures;
+	private Map<String, URL> sounds;
+
 	private RendererType rendererType;
 	private int refreshRate;
 	private int resolutionX;
@@ -134,6 +136,10 @@ public class Cobra2DEngine {
 		this.textures.put(address, ressourceURL);
 	}
 
+	public void addSound(String address, URL ressourceURL) {
+		this.sounds.put(address, ressourceURL);
+	}
+
 	public void addEntity(List<? extends Entity> entities) {
 		entities.stream()
 		    .forEach(e -> {
@@ -211,6 +217,10 @@ public class Cobra2DEngine {
 
 	public Map<String, URL> getTextures() {
 		return textures;
+	}
+
+	public Map<String, URL> getSounds() {
+		return sounds;
 	}
 
 	public int getBitDepth() {

@@ -11,6 +11,7 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.Graphics.Monitor;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.files.FileHandle;
@@ -28,6 +29,7 @@ import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererException;
@@ -47,6 +49,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private RendererState state;
 
 	private LibGdxRendererAccess rendererAccess;
+	private LibGdxSoundAccess soundAccess;
 	private LibGdxController controller;
 
 	private SpriteBatch spriteRenderer;
@@ -55,6 +58,9 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	private Map<String, URL> textureLocations = new Hashtable<>();
 	private Map<String, Texture> textures = new Hashtable<>();
+
+	private Map<String, URL> soundLocations = new Hashtable<>();
+	private Map<String, Sound> sounds = new Hashtable<>();
 
 	private CountDownLatch waitForRenderer = new CountDownLatch(1);
 
@@ -70,6 +76,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		this.engine = engine;
 		this.world = engine.getWorld();
 		this.textureLocations = engine.getTextures();
+		this.soundLocations = engine.getSounds();
 		this.started = false;
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
@@ -117,8 +124,10 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	@Override
 	public void create() {
 		loadTextures();
+		loadSounds();
 
 		this.rendererAccess = new LibGdxRendererAccess(this);
+		this.soundAccess = new LibGdxSoundAccess(this);
 
 		shapeRenderer = new ShapeRenderer();
 		shapeRenderer.setAutoShapeType(true);
@@ -159,6 +168,13 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 					renderClippingMask(camera);
 
 					renderCameraView(camera, capturedEntities);
+
+					if (camera instanceof SoundCamera) {
+						SoundCamera soundCamera = (SoundCamera) camera;
+						// TODO: Get rid of depencency of Collisions to HasCollisionShape.
+						// List<Collision> soundCollision = world.getSoundCollision(camera);
+						// soundCamera.playback(soundAccess, world, soundCollision);
+					}
 				}
 			}
 		}
@@ -211,6 +227,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 		shapeRenderer.dispose();
 		spriteRenderer.dispose();
+		disposeSounds();
 		disposeTextures();
 		Gdx.app.exit();
 	}
@@ -255,12 +272,27 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		textures.put(textureId, texture);
 	}
 
+	private void loadSound(String soundId, URL url) {
+		String path = url.getPath();
+		Sound sound = Gdx.audio.newSound(Gdx.files.internal(path));
+		sounds.put(soundId, sound);
+	}
+
 	private void loadTextures() {
 		textureLocations.keySet()
 		    .stream()
 		    .forEach(id -> {
 			    URL url = textureLocations.get(id);
 			    loadTexture(id, url);
+		    });
+	}
+
+	private void loadSounds() {
+		soundLocations.keySet()
+		    .stream()
+		    .forEach(id -> {
+			    URL url = soundLocations.get(id);
+			    loadSound(id, url);
 		    });
 	}
 
@@ -272,11 +304,27 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		    });
 	}
 
+	private void disposeSounds() {
+		sounds.values()
+		    .stream()
+		    .forEach(s -> {
+			    s.dispose();
+		    });
+	}
+
 	Texture getTexture(String imageId) {
 		if (textures.containsKey(imageId)) {
 			return textures.get(imageId);
 		} else {
 			throw new RendererException("Texture not loaded by renderer: " + imageId);
+		}
+	}
+
+	Sound getSound(String soundId) {
+		if (sounds.containsKey(soundId)) {
+			return sounds.get(soundId);
+		} else {
+			throw new RendererException("Texture not loaded by renderer: " + soundId);
 		}
 	}
 
