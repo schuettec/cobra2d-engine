@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.entity;
+package com.github.schuettec.cobra2d.world;
 
 import static java.util.Objects.nonNull;
 

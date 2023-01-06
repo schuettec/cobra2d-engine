@@ -39,7 +39,7 @@ public class TextureRenderingDemo {
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
-
+		engine.setCameraForInput(camera);
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
 		// camera.scale(0.5);

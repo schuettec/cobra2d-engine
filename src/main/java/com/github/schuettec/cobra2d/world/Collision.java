@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.entity;
+package com.github.schuettec.cobra2d.world;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 /**
  * Instances of this class represent a collision of two {@link Obstacle}s. This

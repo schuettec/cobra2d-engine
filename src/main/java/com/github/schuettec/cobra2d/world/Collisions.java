@@ -1,7 +1,7 @@
-package com.github.schuettec.cobra2d.entity;
+package com.github.schuettec.cobra2d.world;
 
-import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofLineBased;
-import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofNonLineBased;
+import static com.github.schuettec.cobra2d.world.CollisionDetail.ofLineBased;
+import static com.github.schuettec.cobra2d.world.CollisionDetail.ofNonLineBased;
 import static java.util.Objects.nonNull;
 
 import java.util.Arrays;
@@ -30,7 +30,7 @@ import com.github.schuettec.cobra2d.math.Shape;
  * @author schuettec
  *
  */
-public abstract class Collisions {
+public class Collisions {
 	/**
 	 * Performs a collision detection.
 	 * 
@@ -42,9 +42,9 @@ public abstract class Collisions {
 	 *        <code>false</code> only the collider of the first set is added.
 	 * @return
 	 */
-	public static <E extends Entity> CollisionMap detectCollision(E firstEntity, Function<E, Shape> shapeExtractor1,
-	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
-	    boolean addBidirectional) {
+	public <E1 extends Entity, E2 extends Entity> CollisionMap detectCollision(E1 firstEntity,
+	    Function<E1, Shape> shapeExtractor1, Set<E2> secondSet, Function<E2, Shape> shapeExtractor2, boolean outlineOnly,
+	    boolean allEntityPoints, boolean addBidirectional) {
 		return detectCollision(Set.of(firstEntity), shapeExtractor1, secondSet, shapeExtractor2, outlineOnly,
 		    allEntityPoints, addBidirectional);
 	}
@@ -60,19 +60,19 @@ public abstract class Collisions {
 	 *        <code>false</code> only the collider of the first set is added.
 	 * @return
 	 */
-	public static <E extends Entity> CollisionMap detectCollision(Set<E> firstSet, Function<E, Shape> shapeExtractor1,
-	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
-	    boolean addBidirectional) {
+	public <E1 extends Entity, E2 extends Entity> CollisionMap detectCollision(Set<E1> firstSet,
+	    Function<E1, Shape> shapeExtractor1, Set<E2> secondSet, Function<E2, Shape> shapeExtractor2, boolean outlineOnly,
+	    boolean allEntityPoints, boolean addBidirectional) {
 		CollisionMap collisionMap = new CollisionMap();
 
-		for (E c1 : firstSet) {
-			for (E c2 : secondSet) {
+		for (E1 c1 : firstSet) {
+			for (E2 c2 : secondSet) {
 				if (c1 == c2) {
 					continue;
 				} else {
 					Collision collision = detectCollision(c1, shapeExtractor1, c2, shapeExtractor2, outlineOnly, allEntityPoints);
 					if (addBidirectional) {
-						Collision reverse = detectCollision(c2, shapeExtractor1, c1, shapeExtractor2, outlineOnly, allEntityPoints);
+						Collision reverse = detectCollision(c2, shapeExtractor2, c1, shapeExtractor1, outlineOnly, allEntityPoints);
 						collisionMap.addCollisionsBidirectional(collision, reverse);
 					} else {
 						collisionMap.addCollisionsUnidirectional(collision);
@@ -101,11 +101,11 @@ public abstract class Collisions {
 	 *        c2~c1 will also be calculated.
 	 * @return
 	 */
-	public static <E extends Entity> CollisionMap detectCollision(Set<E> map, Function<E, Shape> shapeExtractor,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
+	public <E1 extends Entity, E2 extends Entity> CollisionMap detectCollision(Set<E1> map,
+	    Function<E1, Shape> shapeExtractor, boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
 		// TODO: We can optimize this call: If c1~c2 was checked, then c2~c1 can
 		// be skipped. We can achieve this if we separate the map in two disjunct sets.
-		return detectCollision(new HashSet<E>(map), shapeExtractor, new HashSet<E>(map), shapeExtractor, outlineOnly,
+		return detectCollision(new HashSet<E1>(map), shapeExtractor, new HashSet<E1>(map), shapeExtractor, outlineOnly,
 		    allEntityPoints, addBidirectional);
 	}
 
@@ -121,9 +121,9 @@ public abstract class Collisions {
 	 *        calculated.
 	 * @return Returns the collision points on the shape as a list.
 	 */
-	public static <E extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E> map,
-	    Function<E, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
-		for (E c1 : new HashSet<>(map)) {
+	public <E1 extends Entity, E2 extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E1> map,
+	    Function<E1, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
+		for (E1 c1 : new HashSet<>(map)) {
 			Shape opponent = shapeExtrator.apply(c1);
 			List<CollisionDetail> collision = detectCollision(shape, opponent, outlineOnly, all);
 			// Collision may be null if there is none
@@ -150,10 +150,11 @@ public abstract class Collisions {
 	 * @return Returns a {@link Collision} object that manages the list of collision
 	 *         points or <code>null</code> if no collision was detected.
 	 */
-	public static <E extends Entity> Collision detectCollision(E e1, Function<E, Shape> firstShapeExtractor, E e2,
-	    Function<E, Shape> secondShapeExtractor, boolean outlineOnly, boolean all) {
+	public <E1 extends Entity, E2 extends Entity> Collision detectCollision(E1 e1,
+	    Function<E1, Shape> firstShapeExtractor, E2 e2, Function<E2, Shape> secondShapeExtractor, boolean outlineOnly,
+	    boolean all) {
 		Shape s1 = firstShapeExtractor.apply(e1);
-		Shape s2 = firstShapeExtractor.apply(e2);
+		Shape s2 = secondShapeExtractor.apply(e2);
 		List<CollisionDetail> collisions = detectCollision(s1, s2, outlineOnly, all);
 		if (collisions.isEmpty()) {
 			return null;
@@ -172,7 +173,7 @@ public abstract class Collisions {
 	 * 
 	 * @return Returns the list of collision points or an empty list if there is no collision.
 	 */
-	public static List<CollisionDetail> detectCollision(Shape s1, Shape s2, boolean outlineOnly, boolean all) {
+	public List<CollisionDetail> detectCollision(Shape s1, Shape s2, boolean outlineOnly, boolean all) {
 		List<CollisionDetail> collisions = null;
 		if (s1 instanceof Polygon && s2 instanceof Polygon) {
 			collisions = _detectCollision((Polygon) s1, (Polygon) s2, outlineOnly, all);
@@ -187,7 +188,7 @@ public abstract class Collisions {
 		return collisions;
 	}
 
-	private static List<CollisionDetail> _detectCollision(Circle c1, Circle c2, boolean outlineOnly, boolean all) {
+	private List<CollisionDetail> _detectCollision(Circle c1, Circle c2, boolean outlineOnly, boolean all) {
 		/*
 		 * The following collision detection only checks the collision with the outline of the
 		 * given shapes.
@@ -245,7 +246,7 @@ public abstract class Collisions {
 	 * @return Returns the center point of circle 2 if the circle c2 is inside c2. If there is no collision, an empty list
 	 *         is returned.
 	 */
-	private static List<CollisionDetail> _detectInnerCollision(Circle c1, Circle c2) {
+	private List<CollisionDetail> _detectInnerCollision(Circle c1, Circle c2) {
 		Point m1 = c1.getPosition();
 		Point m2 = c2.getPosition();
 		double distance = Math2D.getEntfernung(m1, m2);
@@ -259,7 +260,7 @@ public abstract class Collisions {
 		}
 	}
 
-	private static List<CollisionDetail> _detectCollision(Circle p1, Polygon p2, boolean outlineOnly, boolean all) {
+	private List<CollisionDetail> _detectCollision(Circle p1, Polygon p2, boolean outlineOnly, boolean all) {
 		/*
 		 * The following collision detection only checks the collision with the outline of the
 		 * given shapes.
@@ -350,7 +351,7 @@ public abstract class Collisions {
 	 * @return Returns the points of the polygon that are contained within the circle. If there is no collision, an empty
 	 *         list is returned.
 	 */
-	private static List<CollisionDetail> _detectInnerCollision(Circle p1, Polygon p2, boolean allPoints) {
+	private List<CollisionDetail> _detectInnerCollision(Circle p1, Polygon p2, boolean allPoints) {
 		List<CollisionDetail> points = new LinkedList<>();
 		Point c = p1.getPosition();
 		double radius = p1.getRadius();
@@ -390,7 +391,7 @@ public abstract class Collisions {
 	 * @return Returns the list of collision points. How much collision points will
 	 *         be calculated is specified with the <code>all</code> parameter.
 	 */
-	private static List<CollisionDetail> _detectCollision(Polygon p1, Polygon p2, boolean outlineOnly, boolean all) {
+	private List<CollisionDetail> _detectCollision(Polygon p1, Polygon p2, boolean outlineOnly, boolean all) {
 		List<CollisionDetail> collisions = new LinkedList<>();
 		List<Line> h1 = p1.getLines();
 		List<Line> h2 = p2.getLines();
@@ -431,7 +432,7 @@ public abstract class Collisions {
 		}
 	}
 
-	private static List<CollisionDetail> _detectInnerCollision(Polygon p1, Polygon p2, boolean all) {
+	private List<CollisionDetail> _detectInnerCollision(Polygon p1, Polygon p2, boolean all) {
 		List<Point> points = p1.getEntityPoints()
 		    .stream()
 		    .map(p -> p.getCoordinates())
@@ -446,7 +447,7 @@ public abstract class Collisions {
 		}
 	}
 
-	private static boolean isPointInPolygon(Point point, Polygon polygon) {
+	private boolean isPointInPolygon(Point point, Polygon polygon) {
 		List<Point> points = polygon.getEntityPoints()
 		    .stream()
 		    .map(p -> p.getCoordinates())

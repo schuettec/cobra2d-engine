@@ -6,8 +6,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.github.schuettec.cobra2d.entity.Collision;
-import com.github.schuettec.cobra2d.entity.CollisionMap;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
@@ -18,6 +16,8 @@ import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.Collision;
+import com.github.schuettec.cobra2d.world.CollisionMap;
 
 public interface AbstractCamera extends Camera {
 	public boolean isCenterOnScreen();
@@ -58,6 +58,7 @@ public interface AbstractCamera extends Camera {
 		return sorted;
 	}
 
+	@Override
 	default void render(final RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
 		centerOnScreen(renderer);
 
@@ -116,11 +117,13 @@ public interface AbstractCamera extends Camera {
 		return new Point(cameraDimension.getWidth() / 2.0, cameraDimension.getHeight() / 2.0);
 	}
 
+	@Override
 	default Point screenToWorldCoordinates(Point screenCoordinates) {
 		return screenCoordinates.clone()
 		    .translate(getScreenToWorldTranslation());
 	}
 
+	@Override
 	default Point worldToScreenCoordinates(Point worldCoordinates) {
 		return worldCoordinates.clone()
 		    .translate(getWorldToScreenTranslation());
@@ -134,7 +137,9 @@ public interface AbstractCamera extends Camera {
 			Shape entityShape = hasCollisionShape.getCollisionShape(true, true, true)
 			    .translate(cameraTranslation);
 			drawCollisionShape(renderer, entityShape);
-			CollisionMap collisionMap = map.detectCollision(map.getObstacles(), false, true, true);
+			CollisionMap collisionMap = map.getCollisions()
+			    .detectCollision(map.getObstacles(), HasCollisionShape::getCollisionShapeInWorldCoordinates, false, true,
+			        true);
 			if (collisionMap.hasCollision(entity)) {
 				List<Collision> collisions = collisionMap.getCollision(entity);
 				collisions.stream()

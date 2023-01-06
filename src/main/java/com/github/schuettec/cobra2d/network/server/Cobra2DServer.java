@@ -17,7 +17,6 @@ import com.esotericsoftware.kryonet.Server;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.NoInputController;
-import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
@@ -34,6 +33,7 @@ import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererException;
 import com.github.schuettec.cobra2d.world.ActiveWorldUpdater;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.Collision;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 import com.github.schuettec.cobra2d.world.WorldListener;
 

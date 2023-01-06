@@ -2,6 +2,7 @@ package com.github.schuettec.cobra2d.entity.skills.sound;
 
 import java.util.List;
 
+import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.SoundAccess;
@@ -10,7 +11,7 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 /**
  * Ability of a camera to playback sounds.
  */
-public interface SoundCamera {
+public interface SoundCamera extends Camera {
 
 	Shape getSoundRange();
 

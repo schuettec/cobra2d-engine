@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Set;
 
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
@@ -18,6 +17,7 @@ import com.github.schuettec.cobra2d.network.common.command.server.ServerCommand;
 import com.github.schuettec.cobra2d.network.common.command.server.UpdateControllerCommand;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.Collision;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class ClientCamera extends BasicRectangleMapCamera implements NetworkActor, Updatable {

@@ -59,6 +59,7 @@ public class Cobra2DEngine {
 		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
 		this.world = new Cobra2DWorld(this, doMapUpdate);
 		this.textures = new Hashtable<>();
+		this.sounds = new Hashtable<>();
 	}
 
 	private void createRendererAndController() {

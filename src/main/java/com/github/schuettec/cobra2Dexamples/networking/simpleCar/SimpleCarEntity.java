@@ -42,14 +42,10 @@ public class SimpleCarEntity extends TexturedEntity {
 			frameSpeed = 0;
 		}
 
-		System.out.println("turnSpeed  " + turnSpeed);
-
 		// Calculate the collision shape at next frame
 		setDegrees(normalizeAngle(getDegrees() + turnSpeed));
 		Point nextPosition = getCircle(getPosition(), frameSpeed, getDegrees());
 		setPosition(nextPosition);
-
-		System.out.println(nextPosition);
 	}
 
 }

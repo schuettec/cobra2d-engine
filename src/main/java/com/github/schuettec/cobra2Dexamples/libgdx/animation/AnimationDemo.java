@@ -47,6 +47,7 @@ public class AnimationDemo {
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
+		engine.setCameraForInput(camera);
 
 		engine.addEntity(t1, t2, h, camera);
 

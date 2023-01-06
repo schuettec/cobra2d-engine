@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2d.entity;
+package com.github.schuettec.cobra2d.world;
 
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;

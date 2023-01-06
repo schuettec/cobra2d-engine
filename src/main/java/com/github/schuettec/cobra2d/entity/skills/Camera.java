@@ -2,11 +2,11 @@ package com.github.schuettec.cobra2d.entity.skills;
 
 import java.util.List;
 
-import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
+import com.github.schuettec.cobra2d.world.Collision;
 
 public interface Camera extends Updatable, HasCollisionShape {
 

@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -21,10 +20,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
-import com.github.schuettec.cobra2d.entity.Collision;
-import com.github.schuettec.cobra2d.entity.CollisionDetail;
-import com.github.schuettec.cobra2d.entity.CollisionMap;
-import com.github.schuettec.cobra2d.entity.Collisions;
 import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
@@ -38,7 +33,6 @@ import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 import com.github.schuettec.cobra2d.math.Point;
-import com.github.schuettec.cobra2d.math.Shape;
 
 /**
  * This is the map data structure. This class makes all {@link Entity} objects
@@ -95,6 +89,8 @@ public class Cobra2DWorld {
 
 	private boolean updateWorld;
 
+	private Collisions collisions;
+
 	private WorldAccess worldAccess;
 
 	public Cobra2DWorld(Cobra2DEngine engine, boolean updateWorld) {
@@ -118,6 +114,7 @@ public class Cobra2DWorld {
 		this.soundCollisionMap = new Hashtable<>();
 		this.listeners = new LinkedList<>();
 		this.worldAccess = new WorldAccess(this);
+		this.collisions = new Collisions();
 
 		if (isUpdateWorld()) {
 			this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
@@ -269,16 +266,14 @@ public class Cobra2DWorld {
 	}
 
 	private List<Collision> getSoundCollisions(Camera soundCamera) {
-		CollisionMap soundCollisions = detectCollision(soundCamera, SoundCamera::getSoundRange, soundEffects,
-		    SoundEffect::getSoundRange, false, false, false);
+		CollisionMap soundCollisions = getCollisions().detectCollision((SoundCamera) soundCamera,
+		    SoundCamera::getSoundRange, soundEffects, SoundEffect::getSoundRange, false, false, false);
 		List<Collision> cameraCollisions = soundCollisions.getCollisions();
 		return cameraCollisions;
 	}
 
 	private List<Collision> getCameraCollisions(Camera camera) {
-		Set<Camera> cameraSet = new HashSet<>();
-		cameraSet.add(camera);
-		CollisionMap map = detectCollision(cameraSet, Camera::getCollisionShapeInWorldCoordinates, renderables,
+		CollisionMap map = getCollisions().detectCollision(camera, Camera::getCollisionShapeInWorldCoordinates, renderables,
 		    Renderable::getCollisionShapeInWorldCoordinates, false, calculateFullCameraCollisionPoints, false);
 		List<Collision> cameraCollisions = map.getCollisions();
 		return cameraCollisions;
@@ -442,112 +437,8 @@ public class Cobra2DWorld {
 		return soundEffects;
 	}
 
-	/**
-	 * Performs a collision detection.
-	 * 
-	 * @param firstSet The first set of entities
-	 * @param secondSet The second set of entities.
-	 * @param allEntityPoints If <code>true</code> all entity points are resolved in case entities collide. If
-	 *        <code>false</code> the first entity point of a collision is used.
-	 * @param addBidirectional If <code>true</code> the collision is added bidirectionally to the collision map. If
-	 *        <code>false</code> only the collider of the first set is added.
-	 * @return
-	 */
-	public static <E extends Entity> CollisionMap detectCollision(E firstEntity, Function<E, Shape> shapeExtractor1,
-	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
-	    boolean addBidirectional) {
-		return Collisions.detectCollision(Set.of(firstEntity), shapeExtractor1, secondSet, shapeExtractor2, outlineOnly,
-		    allEntityPoints, addBidirectional);
-	}
-
-	/**
-	 * Performs a collision detection.
-	 * 
-	 * @param firstSet The first set of entities
-	 * @param secondSet The second set of entities.
-	 * @param allEntityPoints If <code>true</code> all entity points are resolved in case entities collide. If
-	 *        <code>false</code> the first entity point of a collision is used.
-	 * @param addBidirectional If <code>true</code> the collision is added bidirectionally to the collision map. If
-	 *        <code>false</code> only the collider of the first set is added.
-	 * @return
-	 */
-	public <E extends Entity> CollisionMap detectCollision(Set<E> firstSet, Function<E, Shape> shapeExtractor1,
-	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
-	    boolean addBidirectional) {
-		return Collisions.detectCollision(firstSet, shapeExtractor1, secondSet, shapeExtractor2, outlineOnly,
-		    allEntityPoints, addBidirectional);
-	}
-
-	/**
-	 * Calculates the collision of all entities in the specified set.
-	 *
-	 * @param collisionMap A collision map to store the detected
-	 *        collisions.
-	 * @param map The set of entities to detect collisions for.
-	 * @param allEntityPoints Specified if all collision points should be
-	 *        calculated. If <code>false</code> only the
-	 *        first collision point will be calculated. If
-	 *        <code>true</code> all the other points will be
-	 *        calculated.
-	 *
-	 * @param bidirectionalCollisions If <code>true</code> and if a collision c1~c2
-	 *        was detected, the {@link Collision} object for
-	 *        c2~c1 will also be calculated.
-	 * @return
-	 */
-	public <E extends Entity> CollisionMap detectCollision(Set<E> map, Function<E, Shape> shapeExtractor,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return Collisions.detectCollision(new HashSet<E>(map), shapeExtractor, new HashSet<E>(map), shapeExtractor,
-		    outlineOnly, allEntityPoints, addBidirectional);
-	}
-
-	/**
-	 * Calculates the first collision of the specified shape with all entities in
-	 * the specified set.
-	 *
-	 * @param shape The shape used to check collisions.
-	 * @param map The set of entities to detect collisions with the shape.
-	 * @param all Specified if all collision points should be calculated. If
-	 *        <code>false</code> only the first collision point will be
-	 *        calculated. If <code>true</code> all the other points will be
-	 *        calculated.
-	 * @return Returns the collision points on the shape as a list.
-	 */
-	public <E extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E> map,
-	    Function<E, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
-		return Collisions.detectFirstCollision(shape, map, shapeExtrator, outlineOnly, all);
-	}
-
-	/**
-	 * Detects collisions for two {@link Obstacle}s.
-	 *
-	 * @param e1 The obstacle.
-	 * @param e2 the other obstacle. The set of entities to detect collisions with
-	 *        the shape.
-	 * @param all Specified if all collision points should be calculated. If
-	 *        <code>false</code> only the first collision point will be
-	 *        calculated. If <code>true</code> all the other points will be
-	 *        calculated.
-	 * @return Returns a {@link Collision} object that manages the list of collision
-	 *         points or <code>null</code> if no collision was detected.
-	 */
-	public <E extends Entity> Collision detectCollision(E e1, Function<E, Shape> firstShapeExtractor, E e2,
-	    Function<E, Shape> secondShapeExtractor, boolean outlineOnly, boolean all) {
-		return Collisions.detectCollision(e1, firstShapeExtractor, e2, secondShapeExtractor, outlineOnly, all);
-	}
-
-	/**
-	 * Detects a collision between to shapes.
-	 * 
-	 * @param s1 Shape
-	 * @param s2 Another shape
-	 * @param all If <code>true</code> all collision points are calculates, otherwise the first collision point is
-	 *        returned. <b>Note: Do not calculate all collision points if you do not really need them.</b>
-	 * 
-	 * @return Returns the list of collision points or an empty list if there is no collision.
-	 */
-	public List<CollisionDetail> detectCollision(Shape s1, Shape s2, boolean outlineOnly, boolean all) {
-		return Collisions.detectCollision(s1, s2, outlineOnly, all);
+	public Collisions getCollisions() {
+		return collisions;
 	}
 
 }

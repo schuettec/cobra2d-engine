@@ -64,9 +64,9 @@ public class PhysxCarDemo {
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
 		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
-		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(true);
-		camera.setDrawEntityPoints(true);
+		// camera.setDrawCameraOutline(true);
+		// camera.setDrawCollisionShape(true);
+		// camera.setDrawEntityPoints(true);
 		engine.setCameraForInput(camera);
 		engine.addEntity(camera);
 
