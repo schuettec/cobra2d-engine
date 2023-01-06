@@ -8,6 +8,7 @@ import java.util.Properties;
 import com.badlogic.gdx.Input.Keys;
 import com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs.PhysicsWallEntity;
 import com.github.schuettec.cobra2Dexamples.libgdx.physics.car.PhysxPoliceCarEntity;
+import com.github.schuettec.cobra2Dexamples.libgdx.sound.RadioEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
@@ -48,7 +49,9 @@ public class PhysicsCarClientDemo {
 		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
 		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
 		engine.addImage("light", new URL("resource:light.png"));
+		engine.addImage("radio", new URL("resource:radio.png"));
 
+		engine.addSound("sound", new URL("resource:sounds/sound.ogg"));
 		engine.initialize();
 
 		Dimension cameraDimension = new Dimension(1920, 1080);
@@ -69,6 +72,10 @@ public class PhysicsCarClientDemo {
 			return new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light", "police-red-light",
 			    "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300), policeDimension,
 			    2, true);
+		});
+		client.addEntityCreator(RadioEntity.class, () -> {
+			Dimension radioDimension = engine.dimensionOf("radio");
+			return new RadioEntity("sound", 500, "radio", new Point(200, 200), radioDimension, 4, false);
 		});
 		client.setPlayerCamera(camera);
 
