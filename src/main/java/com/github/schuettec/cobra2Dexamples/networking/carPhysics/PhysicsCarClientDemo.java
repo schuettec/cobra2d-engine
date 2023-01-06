@@ -70,6 +70,8 @@ public class PhysicsCarClientDemo {
 			    "police-blue-light", "front-light", "brake-light", "brake-light-color", new Point(300, 300), policeDimension,
 			    2, true);
 		});
+		client.setPlayerCamera(camera);
+
 		String ip = args.length == 1 ? args[0] : "localhost";
 		client.connect(ip);
 

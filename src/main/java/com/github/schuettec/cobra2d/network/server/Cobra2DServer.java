@@ -26,6 +26,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.CreateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.client.UpdateClientCameraCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.UpdateEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.server.BasicPlayerAccess;
 import com.github.schuettec.cobra2d.network.common.command.server.PlayerAccess;
@@ -112,6 +113,12 @@ public class Cobra2DServer implements Renderer, WorldListener {
 						        command = new CreateEntityClientCommand(entityClass, entityState);
 					        }
 					        connection.sendUDP(command);
+
+					        // Update player camera
+					        Point position = player.getPlayerCamera()
+					            .getPosition();
+					        UpdateClientCameraCommand updateCamera = new UpdateClientCameraCommand(position);
+					        connection.sendUDP(updateCamera);
 				        }
 			        });
 			    lastFrame.removeAll(thisFrameIds);

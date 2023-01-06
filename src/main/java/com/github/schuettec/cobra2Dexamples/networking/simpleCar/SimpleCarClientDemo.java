@@ -61,6 +61,7 @@ public class SimpleCarClientDemo {
 		client.addEntityCreator(TexturedEntity.class, () -> {
 			return new TexturedEntity("floor", new Point(), new Dimension(), 0, false);
 		});
+		client.setPlayerCamera(camera);
 
 		String ip = args.length == 1 ? args[0] : "localhost";
 		client.connect(ip);

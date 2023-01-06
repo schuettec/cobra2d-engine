@@ -13,6 +13,7 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.github.schuettec.cobra2d.engine.Cobra2DConstants;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
+import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
 import com.github.schuettec.cobra2d.network.data.EntityState;
@@ -36,6 +37,8 @@ public class Cobra2DClient implements ClientAccess, WorldListener {
 	private Supplier<Entity> supplier;
 
 	private Cobra2DWorld world;
+
+	private ClientCamera playerCamera;
 
 	public Cobra2DClient(Cobra2DEngine engine) {
 		this.engine = engine;
@@ -135,6 +138,15 @@ public class Cobra2DClient implements ClientAccess, WorldListener {
 		} catch (Exception e) {
 			throw new RuntimeException("Attempt to create object that is not an entity: " + entityClass, e);
 		}
+	}
+
+	public void setPlayerCamera(ClientCamera camera) {
+		this.playerCamera = camera;
+	}
+
+	@Override
+	public Camera getClientCamera() {
+		return playerCamera;
 	}
 
 }
