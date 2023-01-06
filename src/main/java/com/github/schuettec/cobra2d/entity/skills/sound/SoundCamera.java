@@ -3,7 +3,7 @@ package com.github.schuettec.cobra2d.entity.skills.sound;
 import java.util.List;
 
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
-import com.github.schuettec.cobra2d.math.Circle;
+import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.SoundAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
@@ -12,7 +12,7 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
  */
 public interface SoundCamera {
 
-	Circle getSoundRange();
+	Shape getSoundRange();
 
 	/**
 	 * Signals {@link SoundEffect} entities to update sound parameters and playback.

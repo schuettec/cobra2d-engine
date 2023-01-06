@@ -3,7 +3,6 @@ package com.github.schuettec.cobra2d.entity;
 import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofLineBased;
 import static com.github.schuettec.cobra2d.entity.CollisionDetail.ofNonLineBased;
 import static java.util.Objects.nonNull;
-import static java.util.stream.Collectors.toSet;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,11 +10,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.schuettec.cobra2d.entity.skills.Entity;
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.EntityPoint;
@@ -44,9 +42,11 @@ public abstract class Collisions {
 	 *        <code>false</code> only the collider of the first set is added.
 	 * @return
 	 */
-	public static CollisionMap detectCollision(HasCollisionShape firstEntity, Set<? extends HasCollisionShape> secondSet,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return detectCollision(Set.of(firstEntity), secondSet, outlineOnly, allEntityPoints, addBidirectional);
+	public static <E extends Entity> CollisionMap detectCollision(E firstEntity, Function<E, Shape> shapeExtractor1,
+	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
+	    boolean addBidirectional) {
+		return detectCollision(Set.of(firstEntity), shapeExtractor1, secondSet, shapeExtractor2, outlineOnly,
+		    allEntityPoints, addBidirectional);
 	}
 
 	/**
@@ -60,22 +60,19 @@ public abstract class Collisions {
 	 *        <code>false</code> only the collider of the first set is added.
 	 * @return
 	 */
-	public static CollisionMap detectCollision(Set<? extends HasCollisionShape> firstSet,
-	    Set<? extends HasCollisionShape> secondSet, boolean outlineOnly, boolean allEntityPoints,
+	public static <E extends Entity> CollisionMap detectCollision(Set<E> firstSet, Function<E, Shape> shapeExtractor1,
+	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
 	    boolean addBidirectional) {
 		CollisionMap collisionMap = new CollisionMap();
 
-		for (Entity c1 : firstSet) {
-			for (Entity c2 : secondSet) {
-				if (c1 == c2)
+		for (E c1 : firstSet) {
+			for (E c2 : secondSet) {
+				if (c1 == c2) {
 					continue;
-
-				HasCollisionShape o1 = (HasCollisionShape) c1;
-				HasCollisionShape o2 = (HasCollisionShape) c2;
-				{
-					Collision collision = detectCollision(o1, o2, outlineOnly, allEntityPoints);
+				} else {
+					Collision collision = detectCollision(c1, shapeExtractor1, c2, shapeExtractor2, outlineOnly, allEntityPoints);
 					if (addBidirectional) {
-						Collision reverse = detectCollision(o2, o1, outlineOnly, allEntityPoints);
+						Collision reverse = detectCollision(c2, shapeExtractor1, c1, shapeExtractor2, outlineOnly, allEntityPoints);
 						collisionMap.addCollisionsBidirectional(collision, reverse);
 					} else {
 						collisionMap.addCollisionsUnidirectional(collision);
@@ -104,11 +101,12 @@ public abstract class Collisions {
 	 *        c2~c1 will also be calculated.
 	 * @return
 	 */
-	public static CollisionMap detectCollision(Set<? extends HasCollisionShape> map, boolean outlineOnly,
-	    boolean allEntityPoints, boolean addBidirectional) {
+	public static <E extends Entity> CollisionMap detectCollision(Set<E> map, Function<E, Shape> shapeExtractor,
+	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
 		// TODO: We can optimize this call: If c1~c2 was checked, then c2~c1 can
 		// be skipped. We can achieve this if we separate the map in two disjunct sets.
-		return detectCollision(new HashSet<>(map), new HashSet<>(map), outlineOnly, allEntityPoints, addBidirectional);
+		return detectCollision(new HashSet<E>(map), shapeExtractor, new HashSet<E>(map), shapeExtractor, outlineOnly,
+		    allEntityPoints, addBidirectional);
 	}
 
 	/**
@@ -123,16 +121,14 @@ public abstract class Collisions {
 	 *        calculated.
 	 * @return Returns the collision points on the shape as a list.
 	 */
-	public static List<CollisionDetail> detectFirstCollision(Shape shape, Set<? extends HasCollisionShape> map,
-	    boolean outlineOnly, boolean all) {
-
-		for (Entity c1 : new HashSet<>(map)) {
-			HasCollisionShape o1 = (HasCollisionShape) c1;
-			List<CollisionDetail> collision = detectCollision(shape, o1.getCollisionShapeInWorldCoordinates(), outlineOnly,
-			    all);
+	public static <E extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E> map,
+	    Function<E, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
+		for (E c1 : new HashSet<>(map)) {
+			Shape opponent = shapeExtrator.apply(c1);
+			List<CollisionDetail> collision = detectCollision(shape, opponent, outlineOnly, all);
 			// Collision may be null if there is none
 			if (collision != null) {
-				collision = detectCollision(o1.getCollisionShapeInWorldCoordinates(), shape, outlineOnly, all);
+				collision = detectCollision(opponent, shape, outlineOnly, all);
 			}
 			if (!collision.isEmpty()) {
 				return collision;
@@ -154,10 +150,10 @@ public abstract class Collisions {
 	 * @return Returns a {@link Collision} object that manages the list of collision
 	 *         points or <code>null</code> if no collision was detected.
 	 */
-	public static Collision detectCollision(HasCollisionShape e1, HasCollisionShape e2, boolean outlineOnly,
-	    boolean all) {
-		Shape s1 = e1.getCollisionShapeInWorldCoordinates();
-		Shape s2 = e2.getCollisionShapeInWorldCoordinates();
+	public static <E extends Entity> Collision detectCollision(E e1, Function<E, Shape> firstShapeExtractor, E e2,
+	    Function<E, Shape> secondShapeExtractor, boolean outlineOnly, boolean all) {
+		Shape s1 = firstShapeExtractor.apply(e1);
+		Shape s2 = firstShapeExtractor.apply(e2);
 		List<CollisionDetail> collisions = detectCollision(s1, s2, outlineOnly, all);
 		if (collisions.isEmpty()) {
 			return null;
@@ -479,92 +475,6 @@ public abstract class Collisions {
 		}
 		// if the number of collision points is odd the point is inside the polygon.
 		return (collisionPoint.size() % 2 != 0);
-	}
-
-	public static CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstacles,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return detectCollision(asHasCollisionShape(shape), obstacles, outlineOnly, allEntityPoints, addBidirectional);
-	}
-
-	public static CollisionMap detectCollisionByShapes(Shape shape, Set<Shape> shapes, boolean outlineOnly,
-	    boolean allEntityPoints, boolean addBidirectional) {
-		Set<? extends HasCollisionShape> list = shapes.stream()
-		    .map(Collisions::asHasCollisionShape)
-		    .collect(toSet());
-		return detectCollision(asHasCollisionShape(shape), list, outlineOnly, allEntityPoints, addBidirectional);
-	}
-
-	private static HasCollisionShape asHasCollisionShape(Shape shape) {
-		return new HasCollisionShape() {
-
-			@Override
-			public Entity translate(Point translation) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public void setScale(double scale) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public void setPosition(Point worldCoordinates) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public void setDegrees(double degrees) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public Entity scale(double scaleFactor) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public Entity rotate(double degrees) {
-				throw new IllegalAccessError("This method should not be called here!");
-			}
-
-			@Override
-			public double getScale() {
-				throw new IllegalAccessError("This method should not be called here!");
-
-			}
-
-			@Override
-			public Point getPosition() {
-				throw new IllegalAccessError("This method should not be called here!");
-
-			}
-
-			@Override
-			public double getDegrees() {
-				throw new IllegalAccessError("This method should not be called here!");
-
-			}
-
-			@Override
-			public Shape getCollisionShapeInWorldCoordinates() {
-				return shape;
-			}
-
-			@Override
-			public Shape getCollisionShape(boolean applyScaling, boolean applyRotation, boolean applyWorldCoordinates) {
-				return shape;
-			}
-
-			@Override
-			public String getId() {
-				return UUID.randomUUID()
-				    .toString();
-			}
-
-			@Override
-			public void setId(String setId) {
-			}
-		};
 	}
 
 }

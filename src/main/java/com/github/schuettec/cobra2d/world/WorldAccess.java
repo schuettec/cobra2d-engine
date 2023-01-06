@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.function.Function;
 
 import com.github.schuettec.cobra2d.entity.Collision;
 import com.github.schuettec.cobra2d.entity.CollisionDetail;
@@ -55,46 +56,12 @@ public class WorldAccess implements WorldListener {
 		toAdd.clear();
 	}
 
-	public CollisionMap detectCollision(HasCollisionShape firstEntity, Set<? extends HasCollisionShape> secondSet,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return world.detectCollision(firstEntity, secondSet, outlineOnly, allEntityPoints, addBidirectional);
-	}
-
 	public Set<Obstacle> getObstacles() {
 		return world.getObstacles();
 	}
 
 	public Set<? extends HasCollisionShape> getObstaclesExcept(Entity... enties) {
 		return world.getObstaclesExcept(enties);
-	}
-
-	public CollisionMap detectCollision(Set<? extends HasCollisionShape> firstSet,
-	    Set<? extends HasCollisionShape> secondSet, boolean outlineOnly, boolean allEntityPoints,
-	    boolean addBidirectional) {
-		return world.detectCollision(firstSet, secondSet, outlineOnly, allEntityPoints, addBidirectional);
-	}
-
-	public CollisionMap detectCollision(Set<? extends HasCollisionShape> map, boolean outlineOnly,
-	    boolean allEntityPoints, boolean addBidirectional) {
-		return world.detectCollision(map, outlineOnly, allEntityPoints, addBidirectional);
-	}
-
-	public List<CollisionDetail> detectFirstCollision(Shape shape, Set<? extends HasCollisionShape> map,
-	    boolean outlineOnly, boolean all) {
-		return world.detectFirstCollision(shape, map, outlineOnly, all);
-	}
-
-	public Collision detectCollision(HasCollisionShape e1, HasCollisionShape e2, boolean outlineOnly, boolean all) {
-		return world.detectCollision(e1, e2, outlineOnly, all);
-	}
-
-	public List<CollisionDetail> detectCollision(Shape s1, Shape s2, boolean outlineOnly, boolean all) {
-		return world.detectCollision(s1, s2, outlineOnly, all);
-	}
-
-	public CollisionMap detectCollision(Shape shape, Set<? extends HasCollisionShape> obstaclesExcept,
-	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
-		return world.detectCollision(shape, obstaclesExcept, outlineOnly, allEntityPoints, addBidirectional);
 	}
 
 	public List<Collision> getCameraCollision(Camera camera) {
@@ -127,6 +94,32 @@ public class WorldAccess implements WorldListener {
 
 	public WorldAccess getWorldAccess() {
 		return world.getWorldAccess();
+	}
+
+	public <E extends Entity> CollisionMap detectCollision(Set<E> firstSet, Function<E, Shape> shapeExtractor1,
+	    Set<E> secondSet, Function<E, Shape> shapeExtractor2, boolean outlineOnly, boolean allEntityPoints,
+	    boolean addBidirectional) {
+		return world.detectCollision(firstSet, shapeExtractor1, secondSet, shapeExtractor2, outlineOnly, allEntityPoints,
+		    addBidirectional);
+	}
+
+	public <E extends Entity> CollisionMap detectCollision(Set<E> map, Function<E, Shape> shapeExtractor,
+	    boolean outlineOnly, boolean allEntityPoints, boolean addBidirectional) {
+		return world.detectCollision(map, shapeExtractor, outlineOnly, allEntityPoints, addBidirectional);
+	}
+
+	public <E extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E> map,
+	    Function<E, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
+		return world.detectFirstCollision(shape, map, shapeExtrator, outlineOnly, all);
+	}
+
+	public <E extends Entity> Collision detectCollision(E e1, Function<E, Shape> firstShapeExtractor, E e2,
+	    Function<E, Shape> secondShapeExtractor, boolean outlineOnly, boolean all) {
+		return world.detectCollision(e1, firstShapeExtractor, e2, secondShapeExtractor, outlineOnly, all);
+	}
+
+	public List<CollisionDetail> detectCollision(Shape s1, Shape s2, boolean outlineOnly, boolean all) {
+		return world.detectCollision(s1, s2, outlineOnly, all);
 	}
 
 }

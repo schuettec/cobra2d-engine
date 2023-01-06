@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
@@ -21,11 +21,11 @@ public class Collision {
 	/**
 	 * This is the entity this object uses for its hash code.
 	 */
-	protected HasCollisionShape entity;
+	protected Entity entity;
 	/**
 	 * This is the collision opponent.
 	 */
-	protected HasCollisionShape opponent;
+	protected Entity opponent;
 	/**
 	 * This is the list of collision points.
 	 */
@@ -37,8 +37,7 @@ public class Collision {
 	 */
 	private boolean allCollisionPointsResolved;
 
-	protected Collision(HasCollisionShape entity, HasCollisionShape opponent, List<CollisionDetail> collisionDetails,
-	    boolean all) {
+	protected Collision(Entity entity, Entity opponent, List<CollisionDetail> collisionDetails, boolean all) {
 		super();
 		this.allCollisionPointsResolved = all;
 		this.entity = entity;
@@ -77,11 +76,11 @@ public class Collision {
 		}
 	}
 
-	public HasCollisionShape getEntity() {
+	public Entity getEntity() {
 		return entity;
 	}
 
-	public HasCollisionShape getOpponent() {
+	public Entity getOpponent() {
 		return opponent;
 	}
 
