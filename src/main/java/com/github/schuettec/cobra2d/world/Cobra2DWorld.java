@@ -222,7 +222,6 @@ public class Cobra2DWorld {
 		calculateCameraRelativeInput();
 
 		if (isUpdateWorld()) {
-			System.out.println("DT: " + deltaTime);
 			updateWorld(deltaTime);
 		}
 
