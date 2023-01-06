@@ -128,9 +128,6 @@ public class Cobra2DWorld {
 					BodyDef bodyDef = physicBody.createBodyDef();
 					Body body = physicsWorld.createBody(bodyDef);
 					physicBody.createFixture(body);
-
-					System.out.println("Body count : " + physicsWorld.getBodyCount());
-
 				}
 
 				@Override
@@ -283,7 +280,8 @@ public class Cobra2DWorld {
 
 	private List<Collision> getSoundCollisions(Camera soundCamera) {
 		CollisionMap soundCollisions = getCollisions().detectCollision((SoundCamera) soundCamera,
-		    SoundCamera::getSoundRange, soundEffects, SoundEffect::getSoundRange, false, false, false);
+		    SoundCamera::getSoundRangeInWorlCoordinates, soundEffects, SoundEffect::getSoundRangeInWorldCoordinates, false,
+		    false, false);
 		List<Collision> cameraCollisions = soundCollisions.getCollisions();
 		return cameraCollisions;
 	}

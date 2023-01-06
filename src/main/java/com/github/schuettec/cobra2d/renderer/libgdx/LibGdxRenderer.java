@@ -324,7 +324,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		if (sounds.containsKey(soundId)) {
 			return sounds.get(soundId);
 		} else {
-			throw new RendererException("Texture not loaded by renderer: " + soundId);
+			throw new RendererException("Sound not loaded by renderer: " + soundId);
 		}
 	}
 

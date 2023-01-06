@@ -13,7 +13,7 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
  */
 public interface SoundCamera extends Camera {
 
-	Shape getSoundRange();
+	Shape getSoundRangeInWorlCoordinates();
 
 	/**
 	 * Signals {@link SoundEffect} entities to update sound parameters and playback.

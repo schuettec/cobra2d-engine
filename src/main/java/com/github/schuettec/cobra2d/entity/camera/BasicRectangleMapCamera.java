@@ -9,16 +9,20 @@ import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
+import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
+import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Shape;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.renderer.SoundAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.Collision;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class BasicRectangleMapCamera extends BasicRectangleEntity implements AbstractCamera, Controllable {
+public class BasicRectangleMapCamera extends BasicRectangleEntity implements AbstractCamera, Controllable, SoundCamera {
 
 	private boolean drawEntityPoints;
 	private boolean drawCollisionShape;
@@ -108,7 +112,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		if (nonNull(followEntity)) {
 			this.setPosition(followEntity.getPosition()
 			    .clone());
-			System.out.println(getPosition());
 		}
 	}
 
@@ -205,6 +208,23 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 
 	public void follow(Entity followEntity) {
 		this.followEntity = followEntity;
+	}
+
+	@Override
+	public Shape getSoundRangeInWorlCoordinates() {
+		return getCollisionShape(true, true, true);
+	}
+
+	@Override
+	public void playback(SoundAccess soundAccess, Cobra2DWorld map, List<SoundEffect> capturedSoundEffects) {
+		Entity relativeTo = this;
+		if (nonNull(followEntity)) {
+			relativeTo = followEntity;
+		}
+
+		for (SoundEffect se : capturedSoundEffects) {
+			se.updateSound(soundAccess, relativeTo);
+		}
 	}
 
 }
