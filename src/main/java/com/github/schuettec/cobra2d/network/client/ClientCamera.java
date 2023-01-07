@@ -14,7 +14,8 @@ import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.common.command.server.ServerCommand;
-import com.github.schuettec.cobra2d.network.common.command.server.UpdateControllerCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.UpdateKeysControllerCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.UpdateMouseControllerCommand;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.Collision;
@@ -69,9 +70,10 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 		serverCommands.clear();
 		keyCodesToListen.stream()
 		    .filter(controller::isKeyPressed)
-		    .map(UpdateControllerCommand::ofKeyCode)
+		    .map(UpdateKeysControllerCommand::ofKeyCode)
 		    .forEach(serverCommands::add);
 
+		serverCommands.add(new UpdateMouseControllerCommand(controller.getMousePositionOnScreen()));
 	}
 
 }

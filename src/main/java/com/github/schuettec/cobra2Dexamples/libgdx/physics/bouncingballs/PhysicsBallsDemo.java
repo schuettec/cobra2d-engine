@@ -46,8 +46,8 @@ public class PhysicsBallsDemo {
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
 		camera.setDrawMouse(true);
-
 		camera.setScreenPosition(new Point(400, 400));
+		engine.setCameraForInput(camera);
 
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));

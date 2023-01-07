@@ -2,15 +2,16 @@ package com.github.schuettec.cobra2Dexamples.libgdx.person;
 
 import com.github.schuettec.cobra2Dexamples.libgdx.animation.AnimationEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.camera.InputContext;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
+import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class HarveyEntity extends AnimationEntity implements Updatable {
+public class HarveyEntity extends AnimationEntity implements Updatable, Controllable {
 
 	private static final float ANIMATION_FRAME_DURATION = 0.06f;
 	private static final float DEFAULT_STEP_SPEED = 3.25f; // per second
@@ -19,8 +20,7 @@ public class HarveyEntity extends AnimationEntity implements Updatable {
 	private float stepSpeed;
 	private float turningSpeed;
 
-	private float desiredSpeed;
-
+	@EntityStateValue
 	private boolean running;
 	private String headTextureId;
 	private Point desiredDiection;
@@ -37,6 +37,10 @@ public class HarveyEntity extends AnimationEntity implements Updatable {
 
 	@Override
 	public void render(RendererAccess renderer, Point screenTranslation) {
+		if (!running) {
+			setStateTime(0);
+			System.out.println("State time reset");
+		}
 		super.render(renderer, screenTranslation);
 		renderHead(renderer, screenTranslation);
 	}
@@ -51,25 +55,15 @@ public class HarveyEntity extends AnimationEntity implements Updatable {
 	public void processControllerState(Controller controller) {
 		this.running = controller.isWKeyPressed() || controller.isSKeyPressed();
 
-		InputContext cameraRelativeInput = controller.getCameraRelativeInput();
-
 		if (controller.isWKeyPressed()) {
-			this.stepSpeed = Math.abs(this.stepSpeed);
-		}
-
-		if (controller.isSKeyPressed()) {
-			this.stepSpeed = -Math.abs(this.stepSpeed);
-		}
-
-		if (controller.isAKeyPressed()) {
-			desiredSpeed = -turningSpeed;
-		} else if (controller.isDKeyPressed()) {
-			desiredSpeed = -turningSpeed;
+			this.stepSpeed = DEFAULT_STEP_SPEED;
+		} else if (controller.isSKeyPressed()) {
+			this.stepSpeed = -DEFAULT_STEP_SPEED;
 		} else {
-			desiredSpeed = 0;
+			this.stepSpeed = 0;
 		}
 
-		this.desiredDiection = cameraRelativeInput.getMouseWorldCoordinates();
+		this.desiredDiection = controller.getMousePositionWorldCoordinates();
 	}
 
 	@Override
@@ -81,8 +75,6 @@ public class HarveyEntity extends AnimationEntity implements Updatable {
 		if (this.running) {
 			final Point newPos = Math2D.getCircle(this.getPosition(), this.stepSpeed, this.getDegrees());
 			this.setPosition(newPos);
-		} else {
-			stateTime = 0;
 		}
 	}
 

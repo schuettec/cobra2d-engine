@@ -1,7 +1,6 @@
 package com.github.schuettec.cobra2d.engine;
 
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.math.Point;
 
 public class NoInputController implements Controller {
@@ -97,12 +96,8 @@ public class NoInputController implements Controller {
 	}
 
 	@Override
-	public InputContext getCameraRelativeInput() {
-		return new InputContext(new Point());
-	}
-
-	@Override
-	public void setCameraRelativeInput(InputContext input) {
+	public Point getMousePositionWorldCoordinates() {
+		return new Point();
 	}
 
 }

@@ -13,6 +13,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
 import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
@@ -27,7 +28,8 @@ import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxExtendedAccess;
 import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRenderable, DynamicBody, Updatable {
+public class PhysxPoliceCarEntity extends TexturedEntity
+    implements LibGdxRenderable, DynamicBody, Updatable, Controllable {
 
 	int torque = 200;
 	float m_maxForwardSpeed = 100;
@@ -103,7 +105,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity implements LibGdxRender
 	    String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
 	    String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId, Point worldCoordinates,
 	    Dimension dimension, int layer, boolean playerControlled) {
-		super(carTextureId, worldCoordinates, dimension, layer, playerControlled);
+		super(carTextureId, worldCoordinates, dimension, layer);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
 		this.redLightTextureId = redLightTextureId;

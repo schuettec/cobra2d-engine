@@ -106,7 +106,7 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	    String redLightTextureId, String blueLightTextureId, String frontLightTextureId, String brakeLightTextureId,
 	    String brakeLightColorTextureId, Point worldCoordinates, Dimension initialDimension, int layer,
 	    boolean playerControlled) {
-		super(carTextureId, worldCoordinates, initialDimension, layer, playerControlled);
+		super(carTextureId, worldCoordinates, initialDimension, layer);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
 		this.redLightTextureId = redLightTextureId;

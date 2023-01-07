@@ -19,9 +19,8 @@ public class SimpleCarEntity extends TexturedEntity implements Controllable, Upd
 	float desiredTurning = 0;
 	private int desiredSpeed;
 
-	public SimpleCarEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
-	    boolean playerControlled) {
-		super(textureId, worldCoordinates, intialDimension, layer, playerControlled);
+	public SimpleCarEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer) {
+		super(textureId, worldCoordinates, intialDimension, layer);
 	}
 
 	@Override

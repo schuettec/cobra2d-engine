@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.engine;
 
+import static java.util.Objects.nonNull;
+
 import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -34,6 +36,7 @@ public class Cobra2DEngine {
 	private Cobra2DProperties cobra2DConfig;
 	private Renderer renderer;
 	private Cobra2DWorld world;
+	private Camera cameraForInput;
 
 	private Map<String, URL> textures;
 	private Map<String, URL> sounds;
@@ -164,10 +167,6 @@ public class Cobra2DEngine {
 		world.removeEntity(entity);
 	}
 
-	public void setCameraForInput(Camera camera) {
-		world.setCameraForInput(camera);
-	}
-
 	public Renderer getRenderer() {
 		return renderer;
 	}
@@ -238,6 +237,32 @@ public class Cobra2DEngine {
 
 	public int getUdpPort() {
 		return udpPort;
+	}
+
+	/**
+	 * Sets a single camera for input. Only used in a single player environment. In a multiplayer environment
+	 * {@link Cobra2DServer} manages the controller for each player.
+	 * 
+	 * @param camera The camera that is used to translate screen input coordinates to world coordinates.
+	 */
+	public void setCameraForInput(Camera camera) {
+		this.cameraForInput = camera;
+	}
+
+	/**
+	 * @return Returns the camera specified for input.
+	 */
+	public Camera getCameraForInput() {
+		return this.cameraForInput;
+	}
+
+	/**
+	 * @return Returns <code>true</code> if there is a single camera translating the input coordinates to world
+	 *         coordinates. Otherwise <code>false</code>
+	 *         is returned.
+	 */
+	public boolean hasCameraForInput() {
+		return nonNull(this.cameraForInput);
 	}
 
 }

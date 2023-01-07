@@ -61,12 +61,12 @@ public class PhysicsCarClientDemo {
 		camera.addKeyCodeToListen(Keys.RIGHT);
 		camera.addKeyCodeToListen(Keys.DOWN);
 		camera.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
+		engine.setCameraForInput(camera);
 		engine.addEntity(camera);
 
 		Cobra2DClient client = new Cobra2DClient(engine);
 		client.addEntityCreator(PhysicsWallEntity.class, () -> new PhysicsWallEntity(new Point(), new Dimension()));
-		client.addEntityCreator(TexturedEntity.class,
-		    () -> new TexturedEntity("floor", new Point(), new Dimension(), 4, false));
+		client.addEntityCreator(TexturedEntity.class, () -> new TexturedEntity("floor", new Point(), new Dimension(), 4));
 		client.addEntityCreator(PhysxPoliceCarEntity.class, () -> {
 			Dimension policeDimension = engine.dimensionOf("police");
 			return new PhysxPoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light", "police-red-light",

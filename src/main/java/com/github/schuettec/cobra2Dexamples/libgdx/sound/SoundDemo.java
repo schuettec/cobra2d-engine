@@ -40,8 +40,8 @@ public class SoundDemo {
 		engine.initialize();
 
 		Dimension floorDimension = engine.dimensionOf("floor");
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), floorDimension, 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(0, 0), floorDimension, 0);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0);
 
 		Dimension harveysDimension = engine.dimensionOf("walkcyle_harvey_static");
 		HarveyEntity player = new HarveyEntity("head", "walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0),
@@ -57,7 +57,6 @@ public class SoundDemo {
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
 		camera.follow(player);
-
 		engine.setCameraForInput(camera);
 
 		engine.addEntity(t1, t2, player, camera);

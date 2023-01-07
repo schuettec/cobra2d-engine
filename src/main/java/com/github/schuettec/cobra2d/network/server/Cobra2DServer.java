@@ -4,11 +4,11 @@ import static com.github.schuettec.cobra2d.network.common.Cobra2DNetwork.registe
 import static java.util.Objects.isNull;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -60,8 +60,6 @@ public class Cobra2DServer implements Renderer, WorldListener {
 
 	private Map<Connection, Player> playersByConnection;
 
-	private Dimension cameraDimension;
-
 	private Supplier<? extends PlayerAccess> playerAccessSupplier = BasicPlayerAccess::new;
 	private Supplier<Entity> spawnPlayerEntitySupplier;
 	private Function<Entity, ? extends Camera> playerCameraSupplier = (playerAccess) -> createBasicCamera();
@@ -71,7 +69,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	}
 
 	private Camera createBasicCamera() {
-		return new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
+		return new BasicRectangleMapCamera(new Point(0, 0), new Dimension(1920, 1080), false);
 	}
 
 	@Override
@@ -85,7 +83,7 @@ public class Cobra2DServer implements Renderer, WorldListener {
 		this.worldAccess = world.getWorldAccess();
 		this.stateManager = new EntityStateManager(world);
 		this.updater = new ActiveWorldUpdater(engine.getRefreshRate(), true, world);
-		this.playersByConnection = new Hashtable<>();
+		this.playersByConnection = new ConcurrentHashMap<>();
 	}
 
 	@Override
@@ -167,16 +165,23 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	@Override
 	public Controller getControllerForEntity(Entity entity) {
 		return getPlayerByEntity(entity).map(p -> p.getController())
-		    .orElse(NO_INPUT_CONTROLLER);
+		    .orElseGet(() -> {
+			    return NO_INPUT_CONTROLLER;
+		    });
 	}
 
 	private Optional<Player> getPlayerByEntity(Entity entity) {
 		String id = entity.getId();
 		return this.playersByConnection.values()
 		    .stream()
+		    // Either the entity can be controllable in a network game
+		    // or the camera of the player
 		    .filter(p -> p.getEntity()
 		        .getId()
-		        .equals(id))
+		        .equals(id)
+		        || p.getPlayerCamera()
+		            .getId()
+		            .equals(id))
 		    .findFirst();
 	}
 
@@ -250,10 +255,6 @@ public class Cobra2DServer implements Renderer, WorldListener {
 
 	public void setPlayerCameraFactory(Function<Entity, ? extends Camera> playerCameraSupplier) {
 		this.playerCameraSupplier = playerCameraSupplier;
-	}
-
-	public void setNetworkCameraDimension(Dimension cameraDimension) {
-		this.cameraDimension = cameraDimension;
 	}
 
 }

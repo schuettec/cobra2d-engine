@@ -11,6 +11,8 @@ public interface LibGdxAnimation extends LibGdxRenderable {
 
 	float getStateTime();
 
+	void setStateTime(float stateTime);
+
 	float getFrameDuration();
 
 	int getFrameCols();

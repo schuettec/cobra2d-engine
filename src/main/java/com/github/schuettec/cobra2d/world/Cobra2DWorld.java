@@ -2,7 +2,6 @@ package com.github.schuettec.cobra2d.world;
 
 import static com.github.schuettec.cobra2d.entity.skills.Skill.asSkill;
 import static java.util.Objects.isNull;
-import static java.util.Objects.nonNull;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -21,7 +20,6 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
-import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
@@ -34,7 +32,6 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
-import com.github.schuettec.cobra2d.math.Point;
 
 /**
  * This is the map data structure. This class makes all {@link Entity} objects
@@ -82,8 +79,6 @@ public class Cobra2DWorld {
 	private Map<SoundCamera, List<Collision>> soundCollisionMap;
 
 	private boolean calculateFullCameraCollisionPoints = false;
-
-	private Camera cameraForInput;
 
 	private World physicsWorld;
 	private float accumulator = 0;
@@ -228,8 +223,6 @@ public class Cobra2DWorld {
 	public void update(float requestedFps, float deltaTime) {
 		notifyBeforeUpdate();
 
-		calculateCameraRelativeInput();
-
 		updateControllables();
 
 		if (isUpdateWorld()) {
@@ -246,16 +239,6 @@ public class Cobra2DWorld {
 			Controller controller = engine.getRenderer()
 			    .getControllerForEntity(c);
 			c.processControllerState(controller);
-		}
-	}
-
-	private void calculateCameraRelativeInput() {
-		Camera cameraForInput = this.getCameraForInput();
-		if (nonNull(cameraForInput)) {
-			Controller controller = engine.getRenderer()
-			    .getControllerForEntity(cameraForInput);
-			InputContext input = getCameraRelativeInput(controller, cameraForInput);
-			controller.setCameraRelativeInput(input);
 		}
 	}
 
@@ -312,15 +295,6 @@ public class Cobra2DWorld {
 		while (accumulator >= TIME_STEP) {
 			physicsWorld.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
 			accumulator -= TIME_STEP;
-		}
-	}
-
-	private InputContext getCameraRelativeInput(Controller controller, Camera cameraForInput) {
-		Point mousePositionOnScreen = controller.getMousePositionOnScreen();
-		if (nonNull(cameraForInput)) {
-			return new InputContext(cameraForInput.screenToWorldCoordinates(mousePositionOnScreen));
-		} else {
-			return new InputContext(mousePositionOnScreen);
 		}
 	}
 
@@ -385,14 +359,6 @@ public class Cobra2DWorld {
 		Set<? extends HasCollisionShape> clone = new HashSet<>(this.obstacles);
 		clone.removeAll(Set.of(enties));
 		return clone;
-	}
-
-	public Camera getCameraForInput() {
-		return this.cameraForInput;
-	}
-
-	public void setCameraForInput(Camera camera) {
-		this.cameraForInput = camera;
 	}
 
 	public boolean isUpdateWorld() {

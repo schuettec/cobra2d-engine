@@ -1,4 +1,4 @@
-package com.github.schuettec.cobra2Dexamples.networking.carPhysics;
+package com.github.schuettec.cobra2Dexamples.networking.person;
 
 import static java.lang.String.valueOf;
 
@@ -6,8 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
-import com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs.PhysicsWallEntity;
-import com.github.schuettec.cobra2Dexamples.libgdx.physics.car.PhysxPoliceCarEntity;
+import com.github.schuettec.cobra2Dexamples.libgdx.person.HarveyEntity;
 import com.github.schuettec.cobra2Dexamples.libgdx.sound.RadioEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
@@ -20,7 +19,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.server.Cobra2DServer;
 import com.github.schuettec.cobra2d.renderer.RendererType;
 
-public class PhysicsCarServerDemo {
+public class PersonServerDemo {
 
 	public static void main(String[] args) throws Exception {
 
@@ -41,46 +40,29 @@ public class PhysicsCarServerDemo {
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
 		engine.addImage("floor", new URL("resource:floor.png"));
-		engine.addImage("police", new URL("resource:cars/police.png"));
-		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
-		engine.addImage("police-blue-alarm-light", new URL("resource:cars/police-blue-alarm-light.png"));
-		engine.addImage("police-red-light", new URL("resource:cars/police-red-light.png"));
-		engine.addImage("police-blue-light", new URL("resource:cars/police-blue-light.png"));
-		engine.addImage("front-light", new URL("resource:cars/front-light.png"));
-		engine.addImage("brake-light", new URL("resource:cars/brake-light.png"));
-		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
-		engine.addImage("light", new URL("resource:light.png"));
+		engine.addImage("walkcyle_harvey", new URL("resource:walkcyle_harvey.png"));
+		engine.addImage("walkcyle_harvey_static", new URL("resource:walkcyle_harvey_static.png"));
+		engine.addImage("head", new URL("resource:head.png"));
 		engine.addImage("radio", new URL("resource:radio.png"));
 
 		engine.addSound("sound", new URL("resource:sounds/sound.ogg"));
 
 		engine.initialize();
 
-		Dimension cameraDimension = new Dimension(1920, 1080);
-
 		Cobra2DServer server = (Cobra2DServer) engine.getRenderer();
 		server.setSpawnEntityFactory(() -> {
-			Dimension policeDimension = engine.dimensionOf("police");
-			PhysxPoliceCarEntity playerEntity = new PhysxPoliceCarEntity("police", "police-red-alarm-light",
-			    "police-blue-alarm-light", "police-red-light", "police-blue-light", "front-light", "brake-light",
-			    "brake-light-color", new Point(300, 300), policeDimension, 2, true);
-			return playerEntity;
+			Dimension harveysDimension = engine.dimensionOf("walkcyle_harvey_static");
+			HarveyEntity h = new HarveyEntity("head", "walkcyle_harvey_static", "walkcyle_harvey", new Point(0, 0),
+			    harveysDimension, 4, 4, 2, false);
+			h.setLayer(5);
+			return h;
 		});
 		server.setPlayerCameraFactory((playerEntity) -> {
+			Dimension cameraDimension = new Dimension(1920, 1080);
 			BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
 			camera.follow(playerEntity);
 			return camera;
 		});
-
-		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(), new Dimension(20, yRes));
-		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(), new Dimension(20, yRes));
-		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(), new Dimension(xRes, 20));
-		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(), new Dimension(xRes, 20));
-		wall1.setPositionByPoint(new Point());
-		wall2.setPositionByPoint(RectanglePoint.TR, new Point(xRes, yRes));
-		wall3.setPositionByPoint(RectanglePoint.TL, new Point(0, yRes));
-		wall4.setPositionByPoint(RectanglePoint.BL, new Point(0, 0));
-		engine.addEntity(wall1, wall2, wall3, wall4);
 
 		Dimension floorDimension = engine.dimensionOf("floor");
 		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0);

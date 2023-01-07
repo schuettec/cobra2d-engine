@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2d.controller;
 
-import com.github.schuettec.cobra2d.entity.camera.InputContext;
 import com.github.schuettec.cobra2d.math.Point;
 
 public interface Controller {
@@ -44,16 +43,10 @@ public interface Controller {
 
 	public boolean isMinusKeyPressed();
 
-	public abstract Point getMousePositionOnScreen();
+	public Point getMousePositionOnScreen();
 
-	public abstract double getMouseDegreesRelativeToScreenCenter();
+	public double getMouseDegreesRelativeToScreenCenter();
 
-	public abstract InputContext getCameraRelativeInput();
-
-	public abstract void setCameraRelativeInput(InputContext input);
-
-	default Point getMousePositionWorldCoordinates() {
-		return getCameraRelativeInput().getMouseWorldCoordinates();
-	}
+	public Point getMousePositionWorldCoordinates();
 
 }

@@ -12,7 +12,7 @@ public class LightEntity extends TexturedEntity {
 
 	public LightEntity(String textureId, Point worldCoordinates, Dimension initialDimension, int layer,
 	    boolean playerControlled) {
-		super(textureId, worldCoordinates, initialDimension, layer, playerControlled);
+		super(textureId, worldCoordinates, initialDimension, layer);
 	}
 
 	@Override

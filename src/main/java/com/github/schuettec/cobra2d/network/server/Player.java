@@ -33,7 +33,7 @@ public class Player {
 		this.entity = entity;
 		this.playerAccess = playerAccess;
 		this.lastFrameIds = new LinkedList<>();
-		this.controller = new NetworkController();
+		this.controller = new NetworkController(playerCamera);
 	}
 
 	public String getName() {

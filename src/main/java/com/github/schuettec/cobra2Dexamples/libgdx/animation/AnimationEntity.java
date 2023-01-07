@@ -15,14 +15,15 @@ public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 	private float frameDuration;
 
 	private Animation<TextureRegion> animation;
-	protected float stateTime;
+
+	private float stateTime;
 
 	private String animationTextureId;
 
 	public AnimationEntity(String textureId, String animationTextureId, Point worldCoordinates,
 	    Dimension initialDimension, int frameCols, int frameRows, float frameDuration, int layer,
 	    boolean playerControlled) {
-		super(textureId, worldCoordinates, initialDimension, layer, playerControlled);
+		super(textureId, worldCoordinates, initialDimension, layer);
 		this.animationTextureId = animationTextureId;
 		this.frameCols = frameCols;
 		this.frameRows = frameRows;
@@ -38,7 +39,8 @@ public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 	@Override
 	public void render(RendererAccess renderer, Point screenTranslation) {
 		createCollisionShape(renderer);
-		this.stateTime = renderAnimationFrame(renderer, screenTranslation);
+		float newStateTime = renderAnimationFrame(renderer, screenTranslation);
+		setStateTime(newStateTime);
 	}
 
 	@Override
@@ -59,6 +61,11 @@ public class AnimationEntity extends TexturedEntity implements LibGdxAnimation {
 	@Override
 	public float getStateTime() {
 		return stateTime;
+	}
+
+	@Override
+	public void setStateTime(float stateTime) {
+		this.stateTime = stateTime;
 	}
 
 	@Override

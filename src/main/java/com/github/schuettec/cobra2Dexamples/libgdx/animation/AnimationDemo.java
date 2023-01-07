@@ -35,8 +35,8 @@ public class AnimationDemo {
 		engine.initialize();
 
 		Dimension floorDimension = engine.dimensionOf("floor");
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0);
 
 		Dimension harveysDimension = engine.dimensionOf("walkcyle_harvey_static");
 		AnimationEntity h = new AnimationEntity("walkcyle_harvey_static", "walkcyle_harvey", new Point(200, 200),

@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.network.common.command.server;
 
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.server.Player;
 
 public class BasicPlayerAccess implements PlayerAccess {
@@ -25,6 +26,12 @@ public class BasicPlayerAccess implements PlayerAccess {
 	public void updateKeyState(int keyCode) {
 		player.getNetworkController()
 		    .setKeyPressed(keyCode);
+	}
+
+	@Override
+	public void setMousePositionOnScreen(Point mousePositionOnScreen) {
+		player.getNetworkController()
+		    .setMousePositionOnScreen(mousePositionOnScreen);
 	}
 
 }

@@ -23,7 +23,7 @@ public class RadioEntity extends TexturedEntity implements SoundEffect {
 
 	public RadioEntity(String soundRessourceId, int soundRadius, String textureId, Point worldCoordinates,
 	    Dimension intialDimension, int layer, boolean playerControlled) {
-		super(textureId, worldCoordinates, intialDimension, layer, playerControlled);
+		super(textureId, worldCoordinates, intialDimension, layer);
 		this.soundRessourceId = soundRessourceId;
 		this.soundRadius = soundRadius;
 		this.soundShape = new Circle(new Point(), soundRadius);

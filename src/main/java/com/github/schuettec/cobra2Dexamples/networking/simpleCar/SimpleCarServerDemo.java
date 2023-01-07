@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.List;
 import java.util.Properties;
 
-import com.github.schuettec.cobra2Dexamples.bouncingBalls.WallEntity;
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
+import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape.RectanglePoint;
 import com.github.schuettec.cobra2d.entity.skills.placement.Placeable;
 import com.github.schuettec.cobra2d.math.Dimension;
@@ -42,14 +42,17 @@ public class SimpleCarServerDemo {
 
 		engine.initialize();
 
-		Dimension cameraDimension = new Dimension(1920, 1080);
-
 		Cobra2DServer server = (Cobra2DServer) engine.getRenderer();
-		server.setNetworkCameraDimension(cameraDimension);
 		server.setSpawnEntityFactory(() -> {
 			Dimension rotatingDimension = engine.dimensionOf("car");
-			SimpleCarEntity entity = new SimpleCarEntity("car", new Point(100, 100), rotatingDimension, 4, false);
+			SimpleCarEntity entity = new SimpleCarEntity("car", new Point(100, 100), rotatingDimension, 4);
 			return entity;
+		});
+		server.setPlayerCameraFactory((playerEntity) -> {
+			Dimension cameraDimension = new Dimension(1920, 1080);
+			BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
+			camera.follow(playerEntity);
+			return camera;
 		});
 
 		WallEntity wall1 = new WallEntity(new Point(), new Dimension(20, yRes));
@@ -63,12 +66,12 @@ public class SimpleCarServerDemo {
 		engine.addEntity(wall1, wall2, wall3, wall4);
 
 		Dimension floorDimension = engine.dimensionOf("floor");
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0);
 		engine.addEntity(t1);
 		t1.setPositionByPoint(RectanglePoint.BL, new Point(20, 20));
 
 		List<Placeable> floorEntities = t1
-		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), floorDimension, 0, false))
+		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), floorDimension, 0))
 		    .placeEastOf()
 		    .placeEastOf()
 		    .placeNorthOf()

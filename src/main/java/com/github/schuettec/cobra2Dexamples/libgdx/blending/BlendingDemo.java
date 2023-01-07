@@ -42,8 +42,8 @@ public class BlendingDemo {
 		engine.initialize();
 
 		Dimension floorDimension = engine.dimensionOf("floor");
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0, false);
-		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(300, 300), floorDimension, 0);
+		TexturedEntity t2 = new TexturedEntity("floor", new Point(612, 300), floorDimension, 0);
 
 		Dimension policeDimension = engine.dimensionOf("police");
 		PoliceCarEntity b1 = new PoliceCarEntity("police", "police-red-alarm-light", "police-blue-alarm-light",

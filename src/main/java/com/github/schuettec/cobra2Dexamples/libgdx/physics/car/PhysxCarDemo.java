@@ -63,12 +63,12 @@ public class PhysxCarDemo {
 		engine.addEntity(wall1, wall2, wall3, wall4);
 
 		Dimension floorDimension = engine.dimensionOf("floor");
-		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0, false);
+		TexturedEntity t1 = new TexturedEntity("floor", new Point(), floorDimension, 0);
 		engine.addEntity(t1);
 		t1.setPositionByPoint(RectanglePoint.BL, new Point(20, 20));
 
 		List<Placeable> floorEntities = t1
-		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), floorDimension, 0, false))
+		    .placeWithCreator(engine, () -> new TexturedEntity("floor", new Point(), floorDimension, 0))
 		    .placeEastOf()
 		    .placeEastOf()
 		    .placeEastOf()

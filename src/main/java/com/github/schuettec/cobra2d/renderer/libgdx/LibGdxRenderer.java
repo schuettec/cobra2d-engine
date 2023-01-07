@@ -68,7 +68,6 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private boolean started;
 
 	public LibGdxRenderer() {
-		this.controller = new LibGdxController();
 		this.state = RendererState.CREATED;
 	}
 
@@ -182,6 +181,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	@Override
 	public void start() {
+		this.controller = new LibGdxController(engine.getCameraForInput());
 		this.started = true;
 	}
 

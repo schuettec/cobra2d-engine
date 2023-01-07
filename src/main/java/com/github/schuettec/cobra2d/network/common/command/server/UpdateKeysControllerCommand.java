@@ -3,19 +3,19 @@ package com.github.schuettec.cobra2d.network.common.command.server;
 
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class UpdateControllerCommand implements ServerCommand<PlayerAccess> {
+public class UpdateKeysControllerCommand implements ServerCommand<PlayerAccess> {
 
 	private int keyCode;
 
-	public UpdateControllerCommand() {
+	public UpdateKeysControllerCommand() {
 	}
 
-	public UpdateControllerCommand(int keyCode) {
+	public UpdateKeysControllerCommand(int keyCode) {
 		this.keyCode = keyCode;
 	}
 
-	public static UpdateControllerCommand ofKeyCode(int keyCode) {
-		return new UpdateControllerCommand(keyCode);
+	public static UpdateKeysControllerCommand ofKeyCode(int keyCode) {
+		return new UpdateKeysControllerCommand(keyCode);
 	}
 
 	@Override

@@ -13,6 +13,14 @@ public interface Renderer extends WorldListener {
 
 	public void finish();
 
+	/**
+	 * Returns the controller for a specific entity. In a single player environment most of the time there is one
+	 * controller only.
+	 * 
+	 * @param entity The controlled entity
+	 * @return The controller controlling this entity. In a multiplayer environment this is the controller of the specific
+	 *         client controlling this entity.
+	 */
 	public Controller getControllerForEntity(Entity entity);
 
 }

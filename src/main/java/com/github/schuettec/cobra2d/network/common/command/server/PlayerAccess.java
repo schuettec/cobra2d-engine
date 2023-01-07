@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.network.common.command.server;
 
+import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.server.NetworkController;
 import com.github.schuettec.cobra2d.network.server.Player;
 
@@ -23,5 +24,12 @@ public interface PlayerAccess {
 	 * @param keyCode The keycode.
 	 */
 	void updateKeyState(int keyCode);
+
+	/**
+	 * Sets the mouse position on screen for this player.
+	 * 
+	 * @param mousePositionOnScreen The mouse position on screen.
+	 */
+	void setMousePositionOnScreen(Point mousePositionOnScreen);
 
 }

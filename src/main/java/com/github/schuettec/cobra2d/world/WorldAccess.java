@@ -79,10 +79,6 @@ public class WorldAccess implements WorldListener {
 		return world.getCameras();
 	}
 
-	public Camera getCameraForInput() {
-		return world.getCameraForInput();
-	}
-
 	public boolean isUpdateWorld() {
 		return world.isUpdateWorld();
 	}

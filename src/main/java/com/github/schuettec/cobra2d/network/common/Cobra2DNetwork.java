@@ -15,7 +15,8 @@ import com.github.schuettec.cobra2d.network.common.command.client.CreateEntityCl
 import com.github.schuettec.cobra2d.network.common.command.client.RemoveEntityClientCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.UpdateClientCameraCommand;
 import com.github.schuettec.cobra2d.network.common.command.client.UpdateEntityClientCommand;
-import com.github.schuettec.cobra2d.network.common.command.server.UpdateControllerCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.UpdateKeysControllerCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.UpdateMouseControllerCommand;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 
 public class Cobra2DNetwork {
@@ -25,11 +26,12 @@ public class Cobra2DNetwork {
 	 * @param kryo The kryo instance of the server/client.
 	 */
 	public static void registerCommandClasses(Kryo kryo) {
+		kryo.register(UpdateMouseControllerCommand.class);
 		kryo.register(UpdateClientCameraCommand.class);
 		kryo.register(UpdateEntityClientCommand.class);
 		kryo.register(CreateEntityClientCommand.class);
 		kryo.register(RemoveEntityClientCommand.class);
-		kryo.register(UpdateControllerCommand.class);
+		kryo.register(UpdateKeysControllerCommand.class);
 		kryo.register(EntityState.class);
 		kryo.register(Point.class);
 		kryo.register(Polygon.class);
