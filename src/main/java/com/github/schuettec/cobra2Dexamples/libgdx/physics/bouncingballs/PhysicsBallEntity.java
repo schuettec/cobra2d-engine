@@ -95,7 +95,6 @@ public class PhysicsBallEntity extends BasicCircleEntity
 		setDegrees(degrees);
 		setPosition(saveRound(position.x / renderScaleConversionFactor),
 		    saveRound(position.y / renderScaleConversionFactor));
-
 	}
 
 	@Override
