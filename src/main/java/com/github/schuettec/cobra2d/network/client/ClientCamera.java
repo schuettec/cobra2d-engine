@@ -75,7 +75,7 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 		    })
 		    .forEach(serverCommands::add);
 
-		serverCommands.add(new UpdateMouseControllerCommand(controller.getMousePositionOnScreen()));
+		serverCommands.add(new UpdateMouseControllerCommand(controller.getMousePositionWorldCoordinates()));
 	}
 
 }

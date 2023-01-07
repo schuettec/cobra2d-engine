@@ -54,7 +54,6 @@ public class HarveyEntity extends AnimationEntity implements Updatable, Controll
 	@Override
 	public void processControllerState(Controller controller) {
 		this.running = controller.isWKeyPressed() || controller.isSKeyPressed();
-
 		if (controller.isWKeyPressed()) {
 			this.stepSpeed = DEFAULT_STEP_SPEED;
 		} else if (controller.isSKeyPressed()) {

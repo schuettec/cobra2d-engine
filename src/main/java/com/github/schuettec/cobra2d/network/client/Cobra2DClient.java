@@ -16,6 +16,7 @@ import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
+import com.github.schuettec.cobra2d.network.common.command.server.ServerCommand;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 import com.github.schuettec.cobra2d.network.data.EntityStateManager;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
@@ -58,7 +59,15 @@ public class Cobra2DClient implements ClientAccess, WorldListener {
 		    .stream()
 		    .map(na -> na.getRemotePlayerCommands())
 		    .flatMap(List::stream)
-		    .forEach(cmd -> client.sendUDP(cmd));
+		    .forEach(cmd -> sendCommand(cmd));
+	}
+
+	private void sendCommand(ServerCommand command) {
+		if (command.isTCP()) {
+			client.sendTCP(command);
+		} else {
+			client.sendUDP(command);
+		}
 	}
 
 	/**

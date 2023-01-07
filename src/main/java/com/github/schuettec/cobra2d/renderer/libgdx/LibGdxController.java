@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
-import static com.github.schuettec.cobra2d.math.Math2D.getAngle;
 import static java.util.Objects.requireNonNull;
 
 import com.badlogic.gdx.Gdx;
@@ -107,15 +106,9 @@ public class LibGdxController implements Controller {
 	}
 
 	@Override
-	public double getMouseDegreesRelativeToScreenCenter() {
-		int width = Gdx.graphics.getWidth();
-		int height = Gdx.graphics.getHeight();
-		return getAngle(new Point(width / 2.0, height / 2.0), getMousePositionOnScreen());
-	}
-
-	@Override
 	public Point getMousePositionWorldCoordinates() {
-		return cameraForInput.screenToWorldCoordinates(getMousePositionOnScreen());
+		Point worldCoordinates = cameraForInput.screenToWorldCoordinates(getMousePositionOnScreen());
+		return worldCoordinates;
 	}
 
 }

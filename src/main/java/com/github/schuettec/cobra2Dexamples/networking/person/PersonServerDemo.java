@@ -60,6 +60,7 @@ public class PersonServerDemo {
 		server.setPlayerCameraFactory((playerEntity) -> {
 			Dimension cameraDimension = new Dimension(1920, 1080);
 			BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), cameraDimension, false);
+			camera.setCenterOnScreen(false);
 			camera.follow(playerEntity);
 			return camera;
 		});

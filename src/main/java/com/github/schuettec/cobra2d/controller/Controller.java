@@ -45,8 +45,6 @@ public interface Controller {
 
 	public Point getMousePositionOnScreen();
 
-	public double getMouseDegreesRelativeToScreenCenter();
-
 	public Point getMousePositionWorldCoordinates();
 
 }

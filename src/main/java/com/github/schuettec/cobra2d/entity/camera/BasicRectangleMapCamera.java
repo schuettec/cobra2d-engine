@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2d.entity.camera;
 import static java.util.Objects.nonNull;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
@@ -37,6 +38,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	private Point mousePosition;
 
 	private Entity followEntity;
+	private String followEntityId;
 
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, dimension);
@@ -49,24 +51,6 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
 		this.screenPosition = new Point(0, 0);
-	}
-
-	@Override
-	public void render(RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
-		AbstractCamera.super.render(renderer, map, capturedEntities);
-		drawMouse(renderer);
-	}
-
-	@Override
-	public void renderClippingMask(RendererAccess renderer) {
-		Point screenTranslation = getScreenPosition();
-		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
-		Point rectangleCorrection = new Point(-(getCollisionShapeDimension().getWidth() / 2.0),
-		    -(getCollisionShapeDimension().getHeight() / 2.0));
-		screenTranslation.translate(rectangleCorrection);
-		Dimension dimension = getCollisionShapeDimension();
-		renderer.fillRectangle((float) screenTranslation.getRoundX() - 1, (float) screenTranslation.getRoundY() - 1,
-		    (float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
 	}
 
 	@Override
@@ -91,8 +75,34 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
 		if (!playerControlled) {
-			followOnDemand();
+			followOnDemand(worldAccess);
 		}
+	}
+
+	@Override
+	public void playback(SoundAccess soundAccess, Cobra2DWorld map, List<SoundEffect> capturedSoundEffects) {
+		Optional<Entity> relativeTo = getFollowEntity(map.getWorldAccess());
+		for (SoundEffect se : capturedSoundEffects) {
+			se.updateSound(soundAccess, relativeTo);
+		}
+	}
+
+	@Override
+	public void renderClippingMask(RendererAccess renderer) {
+		Point screenTranslation = getScreenPosition();
+		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
+		Point rectangleCorrection = new Point(-(getCollisionShapeDimension().getWidth() / 2.0),
+		    -(getCollisionShapeDimension().getHeight() / 2.0));
+		screenTranslation.translate(rectangleCorrection);
+		Dimension dimension = getCollisionShapeDimension();
+		renderer.fillRectangle((float) screenTranslation.getRoundX() - 1, (float) screenTranslation.getRoundY() - 1,
+		    (float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
+	}
+
+	@Override
+	public void render(RendererAccess renderer, Cobra2DWorld map, List<Collision> capturedEntities) {
+		AbstractCamera.super.render(renderer, map, capturedEntities);
+		drawMouse(renderer);
 	}
 
 	@Override
@@ -108,11 +118,9 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		}
 	}
 
-	private void followOnDemand() {
-		if (nonNull(followEntity)) {
-			this.setPosition(followEntity.getPosition()
-			    .clone());
-		}
+	private void followOnDemand(WorldAccess worldAccess) {
+		getFollowEntity(worldAccess).ifPresent(follow -> this.setPosition(follow.getPosition()
+		    .clone()));
 	}
 
 	public void moveLeft() {
@@ -206,6 +214,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		return str + "]";
 	}
 
+	@Override
 	public void follow(Entity followEntity) {
 		this.followEntity = followEntity;
 	}
@@ -216,15 +225,32 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	@Override
-	public void playback(SoundAccess soundAccess, Cobra2DWorld map, List<SoundEffect> capturedSoundEffects) {
-		Entity relativeTo = this;
-		if (nonNull(followEntity)) {
-			relativeTo = followEntity;
-		}
+	public void follow(String entityId) {
+		this.followEntityId = entityId;
+	}
 
-		for (SoundEffect se : capturedSoundEffects) {
-			se.updateSound(soundAccess, relativeTo);
+	@Override
+	public Entity getFollowEntity() {
+		return followEntity;
+	}
+
+	@Override
+	public String getFollowEntityId() {
+		if (nonNull(followEntity)) {
+			return followEntity.getId();
+		} else {
+			return followEntityId;
 		}
+	}
+
+	@Override
+	public void setFollowEntityId(String followEntityId) {
+		this.followEntityId = followEntityId;
+	}
+
+	@Override
+	public void setFollowEntity(Entity entity) {
+		this.followEntity = entity;
 	}
 
 }

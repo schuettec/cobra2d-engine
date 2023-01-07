@@ -2,6 +2,8 @@ package com.github.schuettec.cobra2Dexamples.libgdx.sound;
 
 import static java.util.Objects.isNull;
 
+import java.util.Optional;
+
 import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
@@ -38,13 +40,15 @@ public class RadioEntity extends TexturedEntity implements SoundEffect {
 	}
 
 	@Override
-	public void updateSound(SoundAccess soundAccess, Entity relativeTo) {
+	public void updateSound(SoundAccess soundAccess, Optional<Entity> relativeTo) {
 		if (isNull(sound)) {
 			this.sound = soundAccess.getSound(soundRessourceId);
 			this.currentSoundId = this.sound.play();
 			this.sound.setLooping(currentSoundId, true);
 		}
-		setPanAndVolume(this.getPosition(), relativeTo);
+		relativeTo.ifPresentOrElse(e -> setPanAndVolume(this.getPosition(), e),
+		    () -> this.sound.setVolume(currentSoundId, 1f));
+		;
 	}
 
 	private void setPanAndVolume(Point soundPoint, Entity relativeTo) {

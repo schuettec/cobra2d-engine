@@ -6,28 +6,28 @@ import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class UpdateMouseControllerCommand implements ServerCommand<PlayerAccess> {
 
-	private Point mousePositionOnScreen;
+	private Point mouseWorldCoordinates;
 
 	public UpdateMouseControllerCommand() {
 		super();
 	}
 
-	public UpdateMouseControllerCommand(Point mousePositionOnScreen) {
+	public UpdateMouseControllerCommand(Point mouseWorldCoordinates) {
 		super();
-		this.mousePositionOnScreen = mousePositionOnScreen;
+		this.mouseWorldCoordinates = mouseWorldCoordinates;
 	}
 
-	public static UpdateMouseControllerCommand ofMousePosition(Point mousePositionOnScreen) {
-		return new UpdateMouseControllerCommand(mousePositionOnScreen);
+	public static UpdateMouseControllerCommand ofMousePosition(Point mouseWorldCoordinates) {
+		return new UpdateMouseControllerCommand(mouseWorldCoordinates);
 	}
 
 	@Override
 	public void perform(WorldAccess worldAccess, PlayerAccess playerAccess) {
-		playerAccess.setMousePositionOnScreen(mousePositionOnScreen);
+		playerAccess.setMousePositionWorldCoordinates(mouseWorldCoordinates);
 	}
 
-	public Point getMousePositionOnScreen() {
-		return mousePositionOnScreen;
+	public Point getMouseWorldCoordinates() {
+		return mouseWorldCoordinates;
 	}
 
 }

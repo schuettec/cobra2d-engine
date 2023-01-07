@@ -29,9 +29,9 @@ public class BasicPlayerAccess implements PlayerAccess {
 	}
 
 	@Override
-	public void setMousePositionOnScreen(Point mousePositionOnScreen) {
+	public void setMousePositionWorldCoordinates(Point mouseWorldCoordinates) {
 		player.getNetworkController()
-		    .setMousePositionOnScreen(mousePositionOnScreen);
+		    .setMousePositionWorldCoordinates(mouseWorldCoordinates);
 	}
 
 }

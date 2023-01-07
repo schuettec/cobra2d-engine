@@ -119,8 +119,9 @@ public interface AbstractCamera extends Camera {
 
 	@Override
 	default Point screenToWorldCoordinates(Point screenCoordinates) {
+		Point screenToWorldTranslation = getScreenToWorldTranslation();
 		return screenCoordinates.clone()
-		    .translate(getScreenToWorldTranslation());
+		    .translate(screenToWorldTranslation);
 	}
 
 	@Override

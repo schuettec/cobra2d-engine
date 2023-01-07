@@ -1,11 +1,13 @@
 package com.github.schuettec.cobra2d.entity.camera;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
+import static java.util.Objects.nonNull;
 
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
+import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -24,6 +26,9 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	private boolean playerControlled;
 
 	private Point screenPosition;
+
+	private Entity followEntity;
+	private String followEntityId;
 
 	public BasicCircleMapCamera(Point worldCoordinates, double radius, boolean playerControlled) {
 		super(worldCoordinates, radius);
@@ -154,6 +159,40 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public void setCenterOnScreen(boolean centerOnScreen) {
 		this.centerOnScreen = centerOnScreen;
+	}
+
+	@Override
+	public void follow(Entity followEntity) {
+		this.followEntity = followEntity;
+	}
+
+	@Override
+	public void follow(String entityId) {
+		this.followEntityId = entityId;
+	}
+
+	@Override
+	public Entity getFollowEntity() {
+		return followEntity;
+	}
+
+	@Override
+	public String getFollowEntityId() {
+		if (nonNull(followEntity)) {
+			return followEntity.getId();
+		} else {
+			return followEntityId;
+		}
+	}
+
+	@Override
+	public void setFollowEntityId(String followEntityId) {
+		this.followEntityId = followEntityId;
+	}
+
+	@Override
+	public void setFollowEntity(Entity entity) {
+		this.followEntity = entity;
 	}
 
 }

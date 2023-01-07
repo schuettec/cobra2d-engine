@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.entity.skills;
 
+import java.util.Optional;
+
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.renderer.SoundAccess;
 
@@ -19,8 +21,8 @@ public interface SoundEffect extends Entity {
 	 * on the position of the listener.
 	 * 
 	 * @param soundAccess
-	 * @param relativeTo The listener entity.
+	 * @param relativeTo The listener entity (optional)
 	 */
-	public void updateSound(SoundAccess soundAccess, Entity relativeTo);
+	public void updateSound(SoundAccess soundAccess, Optional<Entity> relativeTo);
 
 }

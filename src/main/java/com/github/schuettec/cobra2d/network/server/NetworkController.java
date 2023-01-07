@@ -10,7 +10,7 @@ import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxController;
 public class NetworkController extends LibGdxController {
 	private Set<Integer> keysPressed = ConcurrentHashMap.newKeySet();
 
-	private Point mousePositionOnScreen;
+	private Point mouseWorldCoordinates = new Point();
 
 	public NetworkController(Camera cameraForInput) {
 		super(cameraForInput);
@@ -18,11 +18,16 @@ public class NetworkController extends LibGdxController {
 
 	@Override
 	public Point getMousePositionOnScreen() {
-		return mousePositionOnScreen;
+		throw new UnsupportedOperationException("Screen coordinates are not supported by the network controller.");
 	}
 
-	public void setMousePositionOnScreen(Point mousePositionOnScreen) {
-		this.mousePositionOnScreen = mousePositionOnScreen;
+	@Override
+	public Point getMousePositionWorldCoordinates() {
+		return mouseWorldCoordinates;
+	}
+
+	public void setMousePositionWorldCoordinates(Point mouseWorldCoordinates) {
+		this.mouseWorldCoordinates = mouseWorldCoordinates;
 	}
 
 	public void setKeyPressed(int keyCode) {

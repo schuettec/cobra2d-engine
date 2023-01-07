@@ -27,10 +27,10 @@ public interface PlayerAccess {
 	void updateKeyState(int keyCode, boolean pressed);
 
 	/**
-	 * Sets the mouse position on screen for this player.
+	 * Sets the mouse position in world coordinates for this player.
 	 * 
-	 * @param mousePositionOnScreen The mouse position on screen.
+	 * @param mouseWorldCoordinates The mouse position in world coordinates.
 	 */
-	void setMousePositionOnScreen(Point mousePositionOnScreen);
+	void setMousePositionWorldCoordinates(Point mouseWorldCoordinates);
 
 }

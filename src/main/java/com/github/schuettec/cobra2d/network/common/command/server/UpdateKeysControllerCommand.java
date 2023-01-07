@@ -16,6 +16,12 @@ public class UpdateKeysControllerCommand implements ServerCommand<PlayerAccess> 
 		this.pressed = pressed;
 	}
 
+	@Override
+	public boolean isTCP() {
+		// Send key updates per tcp to ensure that a button does not stay pressen on UDP packet errors.
+		return true;
+	}
+
 	public static UpdateKeysControllerCommand ofKeyCode(int keyCode, boolean pressed) {
 		return new UpdateKeysControllerCommand(keyCode, pressed);
 	}

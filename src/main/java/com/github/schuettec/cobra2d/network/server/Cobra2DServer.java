@@ -110,24 +110,32 @@ public class Cobra2DServer implements Renderer, WorldListener {
 					        } else {
 						        command = new CreateEntityClientCommand(entityClass, entityState);
 					        }
-					        connection.sendUDP(command);
+					        sendCommand(connection, command);
 
 					        // Update player camera
-					        Point position = player.getPlayerCamera()
-					            .getPosition();
-					        UpdateClientCameraCommand updateCamera = new UpdateClientCameraCommand(position);
-					        connection.sendUDP(updateCamera);
+					        String followEntityId = playerCamera.getFollowEntityId();
+					        Point position = playerCamera.getPosition();
+					        UpdateClientCameraCommand updateCamera = new UpdateClientCameraCommand(position, followEntityId);
+					        sendCommand(connection, updateCamera);
 				        }
 			        });
 			    lastFrame.removeAll(thisFrameIds);
 			    lastFrame.stream()
 			        .forEach(toRemoveEntityId -> {
 				        RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
-				        connection.sendUDP(removeCmd);
+				        sendCommand(connection, removeCmd);
 			        });
 			    lastFrame.clear();
 			    lastFrame.addAll(thisFrameIds);
 		    });
+	}
+
+	private void sendCommand(Connection connection, ClientCommand command) {
+		if (command.isTCP()) {
+			connection.sendTCP(command);
+		} else {
+			connection.sendUDP(command);
+		}
 	}
 
 	private void createPlayerAndSpawn(Connection connection) {

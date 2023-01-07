@@ -91,11 +91,6 @@ public class NoInputController implements Controller {
 	}
 
 	@Override
-	public double getMouseDegreesRelativeToScreenCenter() {
-		return 0;
-	}
-
-	@Override
 	public Point getMousePositionWorldCoordinates() {
 		return new Point();
 	}
