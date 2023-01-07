@@ -22,6 +22,7 @@ public class HarveyEntity extends AnimationEntity implements Updatable, Controll
 
 	@EntityStateValue
 	private boolean running;
+
 	private String headTextureId;
 	private Point desiredDiection;
 
@@ -39,7 +40,6 @@ public class HarveyEntity extends AnimationEntity implements Updatable, Controll
 	public void render(RendererAccess renderer, Point screenTranslation) {
 		if (!running) {
 			setStateTime(0);
-			System.out.println("State time reset");
 		}
 		super.render(renderer, screenTranslation);
 		renderHead(renderer, screenTranslation);

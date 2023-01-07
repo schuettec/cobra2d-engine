@@ -41,4 +41,12 @@ public class NetworkController extends LibGdxController {
 		keysPressed.clear();
 	}
 
+	public void setKeyPressed(int keyCode, boolean pressed) {
+		if (pressed) {
+			keysPressed.add(keyCode);
+		} else {
+			keysPressed.remove(keyCode);
+		}
+	}
+
 }

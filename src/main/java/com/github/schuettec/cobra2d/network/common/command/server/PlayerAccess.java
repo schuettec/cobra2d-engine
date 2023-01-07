@@ -22,8 +22,9 @@ public interface PlayerAccess {
 	 * Updates the key stated to status 'pressed' in the {@link NetworkController}.
 	 * 
 	 * @param keyCode The keycode.
+	 * @param pressed
 	 */
-	void updateKeyState(int keyCode);
+	void updateKeyState(int keyCode, boolean pressed);
 
 	/**
 	 * Sets the mouse position on screen for this player.

@@ -69,8 +69,10 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 	protected void updateServerCommands(List<ServerCommand> serverCommands, Controller controller) {
 		serverCommands.clear();
 		keyCodesToListen.stream()
-		    .filter(controller::isKeyPressed)
-		    .map(UpdateKeysControllerCommand::ofKeyCode)
+		    .map(keyCode -> {
+			    boolean keyPressed = controller.isKeyPressed(keyCode);
+			    return UpdateKeysControllerCommand.ofKeyCode(keyCode, keyPressed);
+		    })
 		    .forEach(serverCommands::add);
 
 		serverCommands.add(new UpdateMouseControllerCommand(controller.getMousePositionOnScreen()));

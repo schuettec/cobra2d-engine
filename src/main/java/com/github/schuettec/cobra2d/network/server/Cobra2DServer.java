@@ -125,11 +125,6 @@ public class Cobra2DServer implements Renderer, WorldListener {
 				        RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
 				        connection.sendUDP(removeCmd);
 			        });
-
-			    // Clear the state of the controller.
-			    player.getNetworkController()
-			        .clearState();
-
 			    lastFrame.clear();
 			    lastFrame.addAll(thisFrameIds);
 		    });
