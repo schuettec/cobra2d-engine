@@ -24,8 +24,8 @@ public class LibGdxRendererAccess implements RendererAccess {
 		Point textureCenter = getTextureCenter(textureId);
 		Dimension textureDimension = getTextureDimension(textureId);
 		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
+				(float) textureDimension.getWidth(), (float) textureDimension.getHeight(), 1, 1, degrees, 0, 0,
+				textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override
@@ -33,22 +33,29 @@ public class LibGdxRendererAccess implements RendererAccess {
 		Point textureCenter = getTextureCenter(textureId);
 		Dimension textureDimension = getTextureDimension(textureId);
 		drawTexture(textureId, alpha, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) scale, scale,
-		    (float) degrees, 0, 0, textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
+				(float) textureDimension.getWidth(), (float) textureDimension.getHeight(), scale, scale, degrees, 0, 0,
+				textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	@Override
 	public void drawTexture(String textureId, float alpha, float x, float y, float originX, float originY, float width,
-	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
-	    boolean flipX, boolean flipY) {
+			float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
+			boolean flipX, boolean flipY) {
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
 		Texture texture = renderer.getTexture(textureId);
+
+		if (extendedRenderer.hasShader()) {
+			spriteRenderer.setShader(extendedRenderer.getShaderProgram());
+		}
+
 		spriteRenderer.begin();
 		com.badlogic.gdx.graphics.Color color = spriteRenderer.getColor();
 		spriteRenderer.setColor(color.r, color.g, color.b, alpha);
-		spriteRenderer.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY, srcWidth,
-		    srcHeight, flipX, flipY);
+		spriteRenderer.draw(texture, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY,
+				srcWidth, srcHeight, flipX, flipY);
 		spriteRenderer.end();
+
+		spriteRenderer.setShader(null);
 	}
 
 	@Override

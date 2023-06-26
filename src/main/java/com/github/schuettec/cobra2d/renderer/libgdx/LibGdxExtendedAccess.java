@@ -1,51 +1,53 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import static java.util.Objects.nonNull;
+
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 
 /**
  * Class providing libGDX specific rendering functions.
  */
+/**
+ * 
+ */
 public class LibGdxExtendedAccess {
 
 	private LibGdxRenderer renderer;
+	private ShaderProgram shaderProgram;
 
 	public LibGdxExtendedAccess(LibGdxRenderer renderer) {
 		this.renderer = renderer;
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float degrees) {
-		Point textureCenter = renderer.getRendererAccess()
-		    .getTextureCenter(textureId);
-		Dimension textureDimension = renderer.getRendererAccess()
-		    .getTextureDimension(textureId);
+		Point textureCenter = renderer.getRendererAccess().getTextureCenter(textureId);
+		Dimension textureDimension = renderer.getRendererAccess().getTextureDimension(textureId);
 		drawLightTexture(textureId, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), (float) 1, 1, (float) degrees, 0, 0,
-		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
+				(float) textureDimension.getWidth(), (float) textureDimension.getHeight(), 1, 1, degrees, 0, 0,
+				textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float degrees, float scale) {
-		Point textureCenter = renderer.getRendererAccess()
-		    .getTextureCenter(textureId);
-		Dimension textureDimension = renderer.getRendererAccess()
-		    .getTextureDimension(textureId);
+		Point textureCenter = renderer.getRendererAccess().getTextureCenter(textureId);
+		Dimension textureDimension = renderer.getRendererAccess().getTextureDimension(textureId);
 		drawLightTexture(textureId, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
-		    (float) textureDimension.getWidth(), (float) textureDimension.getHeight(), scale, scale, (float) degrees, 0, 0,
-		    textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
+				(float) textureDimension.getWidth(), (float) textureDimension.getHeight(), scale, scale, degrees, 0, 0,
+				textureDimension.getRoundWidth(), textureDimension.getRoundHeight(), false, false);
 	}
 
 	public void drawLightTexture(String textureId, float x, float y, float originX, float originY, float width,
-	    float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
-	    boolean flipX, boolean flipY) {
+			float height, float scaleX, float scaleY, float rotation, int srcX, int srcY, int srcWidth, int srcHeight,
+			boolean flipX, boolean flipY) {
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
 		spriteRenderer.setBlendFunction(GL20.GL_DST_COLOR, GL20.GL_SRC_ALPHA);
-		renderer.getRendererAccess()
-		    .drawTexture(textureId, 1f, x, y, originX, originY, width, height, scaleX, scaleY, rotation, srcX, srcY,
-		        srcWidth, srcHeight, flipX, flipY);
+		renderer.getRendererAccess().drawTexture(textureId, 1f, x, y, originX, originY, width, height, scaleX, scaleY,
+				rotation, srcX, srcY, srcWidth, srcHeight, flipX, flipY);
 		spriteRenderer.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
@@ -57,12 +59,35 @@ public class LibGdxExtendedAccess {
 		Point textureCenter = new Point(textureRegion.getRegionWidth() / 2.0, textureRegion.getRegionHeight() / 2.0);
 
 		SpriteBatch spriteRenderer = renderer.getSpriteRenderer();
+
+		if (hasShader()) {
+			spriteRenderer.setShader(getShaderProgram());
+		}
+
 		spriteRenderer.begin();
 		com.badlogic.gdx.graphics.Color color = spriteRenderer.getColor();
 		spriteRenderer.setColor(color.r, color.g, color.b, alpha);
-		spriteRenderer.draw(textureRegion, x, y, (float) textureCenter.getRoundX(), (float) textureCenter.getRoundY(),
-		    (float) textureRegion.getRegionWidth(), (float) textureRegion.getRegionHeight(), 1f, 1f, (float) degrees);
+		spriteRenderer.draw(textureRegion, x, y, textureCenter.getRoundX(), textureCenter.getRoundY(),
+				textureRegion.getRegionWidth(), textureRegion.getRegionHeight(), 1f, 1f, degrees);
 		spriteRenderer.end();
+
+		spriteRenderer.setShader(null);
+	}
+
+	public void setShaderProgramm(ShaderProgram shaderProgram) {
+		this.shaderProgram = shaderProgram;
+	}
+
+	public ShaderProgram getShaderProgram() {
+		return shaderProgram;
+	}
+
+	public boolean hasShader() {
+		return nonNull(shaderProgram);
+	}
+
+	public void resetShader() {
+		this.shaderProgram = null;
 	}
 
 }
