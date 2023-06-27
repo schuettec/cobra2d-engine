@@ -118,8 +118,8 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 						uniform sampler2D u_texture;
 
 						const float freq = 2;
-						const float amp = 1.25;
-						const float offY = 0.75;
+						const float amp = 0.6;
+						const float offY = 0;
 
 						void main()
 						{
@@ -133,12 +133,17 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 
 
 						    float offX = time;
-							float s = sin((v_texCoords.x + offX) * freq ) * (amp-0.5) + (offY + 0.5);
+
+							float sinX = sin((v_texCoords.x + offX) * freq ) * (amp-0.5) + (offY + 0.5);
+							float sinY = sin((v_texCoords.y + offX) * freq ) * (amp-0.5) + (offY + 0.5);
 
 
-							vec4 color = vec4(s,s,s,1);
+							vec4 color1 = vec4(sinX,sinX,sinX,1);
+							vec4 color2 = vec4(sinY,sinY,sinY,1);
 
-							gl_FragColor  =texture2D(u_texture, v_texCoords ) * color;
+							vec2 position = v_texCoords - vec2(sinX,0);
+
+							gl_FragColor  = texture2D(u_texture, position ) ;
 						}
 
 											""";
