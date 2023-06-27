@@ -82,8 +82,8 @@ public class ShaderDemo {
 		// camera.setScreenPosition(new Point(800, 400));
 		// camera.scale(0.5);
 
-		Dimension skyDimension = engine.dimensionOf("sky");
-		ShaderEntity shaderEntity = new ShaderEntity("sky", new Point(), skyDimension, 1);
+		Dimension skyDimension = engine.dimensionOf("floor");
+		ShaderEntity shaderEntity = new ShaderEntity("floor", new Point(), skyDimension, 1);
 
 		engine.addEntity(floorEntity, l, car, camera, shaderEntity);
 

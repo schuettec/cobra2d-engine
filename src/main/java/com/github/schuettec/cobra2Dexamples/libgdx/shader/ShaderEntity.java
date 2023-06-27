@@ -64,9 +64,29 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 					}
 					""";
 
+			String default2FragmentShader = """
+										#ifdef GL_ES
+					#define LOWP lowp
+					    precision mediump float;
+					#else
+					    #define LOWP
+					#endif
+
+					varying LOWP vec4 v_color;
+					varying vec2 v_texCoords;
+
+					uniform sampler2D u_texture;
+
+					void main()
+					{
+					    gl_FragColor = 0.5 * texture2D(u_texture, v_texCoords);
+					}
+										""";
+
 			String fragmentShader = """
 					// shader playback time (in seconds)
 					uniform float     time;
+					uniform float     pos;
 					uniform vec2      size;
 
 					varying vec2 v_texCoords;
@@ -75,39 +95,66 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 
 					void main()
 					{
-					            vec2 p = v_texCoords; // gl_FragCoord.xy/size.xy;
+						vec2 p = v_texCoords;
+						p.x += sin(p.y * 5. + time * 2.) / 800.;
+						p.y += cos(p.x * 2. + time * 4.) / 900.;
 
-					            p.x += sin(p.y * 15. + time * 2.) / 800.;
-					            p.y += cos(p.x * 10. + time * 2.) / 900.;
+						p.x += sin((p.y+p.x) * 15. + time * 2.) / (180. + (2. * sin(time)));
+						p.y += cos((p.y+p.x) * 15. + time * 2.) / (200. + (2. * sin(time)));
 
-					            p.x += sin((p.y+p.x) * 15. + time * 2.) / (180. + (2. * sin(time)));
-					            p.y += cos((p.y+p.x) * 15. + time * 2.) / (200. + (2. * sin(time)));
 
-					            gl_FragColor  =  texture2D(u_texture, p);
+						gl_FragColor  =  texture2D(u_texture, p);
 					}
 							""";
 
-			String blackWhiteFragmentShader = """
-					#ifdef GL_ES
-					#define LOWP lowp
-					precision mediump float;
-					#else
-					#define LOWP
-					#endif
+			String waterFragmentShader = """
+					// shader playback time (in seconds)
+						uniform float     time;
+						uniform float     pos;
+						uniform vec2      size;
 
-					void main()
-					{
-					  gl_FragColor = vec4(1,0,0,1);
-					}
-					""";
+						varying vec2 v_texCoords;
 
-			this.shaderProgram = new ShaderProgram(defaultVertextShader, fragmentShader);
+						uniform sampler2D u_texture;
+
+						const float freq = 2;
+						const float amp = 1.25;
+						const float offY = 0.75;
+
+						void main()
+						{
+							vec2 p = v_texCoords;
+
+							p.x += sin(p.y * 5. + time * 2.) / 800.;
+							p.y += cos(p.x * 2. + time * 4.) / 900.;
+
+							p.x += sin((p.y+p.x) * 5. + time * 2.) / (180. + (2. * sin(time)));
+							p.y += cos((p.y+p.x) * 15. + time * 2.) / (200. + (2. * sin(time)));
+
+
+						    float offX = time;
+							float s = sin((v_texCoords.x + offX) * freq ) * (amp-0.5) + (offY + 0.5);
+
+
+							vec4 color = vec4(s,s,s,1);
+
+							gl_FragColor  =texture2D(u_texture, v_texCoords ) * color;
+						}
+
+											""";
+
+			this.shaderProgram = new ShaderProgram(defaultVertextShader, waterFragmentShader);
 		}
 
 		LibGdxExtendedAccess extendedRenderer = renderer.extendedRenderer(LibGdxExtendedAccess.class);
+		shaderProgram.bind();
 		shaderProgram.setUniformf("time", time);
 		System.out.println("time: " + time);
 		shaderProgram.setUniformf("size", (float) dimension.getWidth(), (float) dimension.getHeight());
+
+		float pos = (float) (((time) % dimension.getWidth()) % 1f);
+		System.out.println("pos:" + pos);
+		shaderProgram.setUniformf("pos", pos);
 
 		extendedRenderer.setShaderProgramm(shaderProgram);
 		super.render(renderer, screenTranslation);
