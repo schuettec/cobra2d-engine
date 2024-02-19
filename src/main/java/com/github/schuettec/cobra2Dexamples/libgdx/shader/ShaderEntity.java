@@ -125,11 +125,11 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 						{
 							vec2 p = v_texCoords;
 
-							p.x += sin(p.y * 5. + time * 2.) / 800.;
-							p.y += cos(p.x * 2. + time * 4.) / 900.;
+							//p.x += sin(p.y * 5. + time * 2.) / 800.;
+							//p.y += cos(p.x * 2. + time * 4.) / 900.;
 
-							p.x += sin((p.y+p.x) * 5. + time * 2.) / (180. + (2. * sin(time)));
-							p.y += cos((p.y+p.x) * 15. + time * 2.) / (200. + (2. * sin(time)));
+							//p.x += sin((p.y+p.x) * 5. + time * 2.) / (180. + (2. * sin(time)));
+							//p.y += cos((p.y+p.x) * 15. + time * 2.) / (200. + (2. * sin(time)));
 
 
 						    float offX = time;
@@ -141,7 +141,7 @@ public class ShaderEntity extends TexturedEntity implements Updatable {
 							vec4 color1 = vec4(sinX,sinX,sinX,1);
 							vec4 color2 = vec4(sinY,sinY,sinY,1);
 
-							vec2 position = v_texCoords - vec2(sinX,0);
+							vec2 position = v_texCoords - vec2(p.x-sinX,p.y-sinY);
 
 							gl_FragColor  = texture2D(u_texture, position ) ;
 						}
