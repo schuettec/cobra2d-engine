@@ -5,6 +5,7 @@ import java.util.Properties;
 import com.github.schuettec.cobra2Dexamples.DemoUtils;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.engine.Cobra2DProperties;
+import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape.RectanglePoint;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
@@ -26,14 +27,22 @@ public class FlipperDemo {
 		Cobra2DWorld world = engine.getWorld();
 		world.setGravity(0, -10.0f);
 
-		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(20, 400), new Dimension(20, 789));
-		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(779, 400), new Dimension(20, 789));
-		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(400, 779), new Dimension(789, 20));
-		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(400, 19), new Dimension(789, 20));
+		// Pinball playfield ratio w/h: 0.4822
+		// height: 800 => width: 385.76
 
-		FlipperEntity flipperLeft = new FlipperEntity(new Point(240, 200), new Dimension(200, 100));
+		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(0, 0), new Dimension(10, 789));
+		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(0, 0), new Dimension(10, 789));
+		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(0, 0), new Dimension(789, 10));
+		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(0, 0), new Dimension(789, 10));
 
-		PinballCamera camera = new PinballCamera(new Point(400, 400), new Dimension(799, 799), false);
+		wall1.setPositionByPoint(RectanglePoint.TR, new Point(0, 0));
+		wall2.setPositionByPoint(RectanglePoint.TL, new Point(386, 0));
+		wall2.setPositionByPoint(RectanglePoint.TL, new Point(386, 0));
+
+		FlipperEntity flipperLeft = new FlipperEntity(new Point(240, 200), new Dimension(200, 20));
+
+		PinballCamera camera = new PinballCamera(new Point(0, 0), new Dimension(799, 799), true);
+		camera.setPositionByPoint(RectanglePoint.TL, new Point(-10, 20));
 		camera.setDrawCameraOutline(true);
 		camera.setDrawCollisionShape(true);
 		camera.setDrawEntityPoints(true);
@@ -43,8 +52,11 @@ public class FlipperDemo {
 
 		// Set screen position or the camera is centered automatically
 		// camera.setScreenPosition(new Point(0, 0));
-
-		engine.addEntity(wall1, wall2, wall3, wall4, flipperLeft);
+		engine.addEntity(wall1);
+		engine.addEntity(wall2);
+//		engine.addEntity(wall3);
+//		engine.addEntity(wall4);
+		engine.addEntity(flipperLeft);
 		// wall4,
 		engine.addEntity(camera);
 		engine.setCameraForInput(camera);
