@@ -27,10 +27,10 @@ public class HarveyEntity extends AnimationEntity implements Updatable, Controll
 	private Point desiredDiection;
 
 	public HarveyEntity(String headTextureId, String staticAnimationTextureId, String animationTextureId,
-	    Point worldCoordinates, Dimension initialDimension, int frameCols, int frameRows, int layer,
-	    boolean playerControlled) {
+			Point worldCoordinates, Dimension initialDimension, int frameCols, int frameRows, int layer,
+			boolean playerControlled) {
 		super(staticAnimationTextureId, animationTextureId, worldCoordinates, initialDimension, frameCols, frameRows,
-		    ANIMATION_FRAME_DURATION, layer, playerControlled);
+				ANIMATION_FRAME_DURATION, layer, playerControlled);
 		this.headTextureId = headTextureId;
 		this.stepSpeed = DEFAULT_STEP_SPEED;
 		this.turningSpeed = DEFAULT_TURNING_SPEED;
@@ -48,11 +48,11 @@ public class HarveyEntity extends AnimationEntity implements Updatable, Controll
 	private void renderHead(RendererAccess renderer, Point screenTranslation) {
 		Point texturePosition = renderer.getTexturePosition(headTextureId, getPosition(), screenTranslation);
 		renderer.drawTexture(headTextureId, 1f, texturePosition.getRoundX(), texturePosition.getRoundY(),
-		    (float) getDegrees());
+				(float) getDegrees());
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		this.running = controller.isWKeyPressed() || controller.isSKeyPressed();
 		if (controller.isWKeyPressed()) {
 			this.stepSpeed = DEFAULT_STEP_SPEED;

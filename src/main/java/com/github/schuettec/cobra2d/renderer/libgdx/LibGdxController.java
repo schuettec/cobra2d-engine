@@ -14,13 +14,18 @@ public class LibGdxController implements Controller {
 
 	public LibGdxController(Camera cameraForInput) {
 		requireNonNull(cameraForInput,
-		    "If using a local renderer the camera must be set to translate input coordinates to world coordinates.");
+				"If using a local renderer the camera must be set to translate input coordinates to world coordinates.");
 		this.cameraForInput = cameraForInput;
 	}
 
 	@Override
 	public boolean isKeyPressed(int keyCode) {
 		return Gdx.input.isKeyPressed(keyCode);
+	}
+
+	@Override
+	public boolean isJustTouched() {
+		return Gdx.input.justTouched();
 	}
 
 	@Override

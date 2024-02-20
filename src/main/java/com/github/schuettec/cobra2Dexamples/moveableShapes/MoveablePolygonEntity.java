@@ -10,6 +10,7 @@ import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class MoveablePolygonEntity extends BasicPolygonEntity implements PolygonRenderable, Obstacle, Controllable {
 
@@ -19,7 +20,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 
 	public MoveablePolygonEntity(Point worldCoordinates, Dimension dimension, boolean playerControlled) {
 		super(worldCoordinates, new Point(0, 0), new Point(dimension.getWidth(), 0),
-		    new Point(dimension.getWidth(), dimension.getHeight()), new Point(0, dimension.getHeight()));
+				new Point(dimension.getWidth(), dimension.getHeight()), new Point(0, dimension.getHeight()));
 		this.playerControlled = playerControlled;
 	}
 
@@ -40,7 +41,7 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();
@@ -58,23 +59,19 @@ public class MoveablePolygonEntity extends BasicPolygonEntity implements Polygon
 	}
 
 	public void moveLeft() {
-		this.getPosition()
-		    .translate(-5, 0);
+		this.getPosition().translate(-5, 0);
 	}
 
 	public void moveRight() {
-		this.getPosition()
-		    .translate(5, 0);
+		this.getPosition().translate(5, 0);
 	}
 
 	public void moveDown() {
-		this.getPosition()
-		    .translate(0, -5);
+		this.getPosition().translate(0, -5);
 	}
 
 	public void moveUp() {
-		this.getPosition()
-		    .translate(0, 5);
+		this.getPosition().translate(0, 5);
 	}
 
 }

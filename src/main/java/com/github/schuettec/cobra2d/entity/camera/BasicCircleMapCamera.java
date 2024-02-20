@@ -45,8 +45,8 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenPosition();
-		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(), Math2D.saveRound(getRadius() + 1),
-		    Color.BLACK);
+		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(),
+				Math2D.saveRound(getRadius() + 1), Color.BLACK);
 	}
 
 	@Override
@@ -56,7 +56,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.moveLeft();

@@ -29,7 +29,7 @@ import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysxPoliceCarEntity extends TexturedEntity
-    implements LibGdxRenderable, DynamicBody, Updatable, Controllable {
+		implements LibGdxRenderable, DynamicBody, Updatable, Controllable {
 
 	int torque = 200;
 	float m_maxForwardSpeed = 100;
@@ -84,8 +84,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	private String policeBlueAlarmLightTextureId;
 
 	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a 3cm radius ball on the screen that has
-	 * 30 Pixels radius.
+	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
+	 * 3cm radius ball on the screen that has 30 Pixels radius.
 	 */
 	private float renderScaleConversionFactor = 1 / 100f;
 
@@ -102,9 +102,9 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	boolean roll = true;
 
 	public PhysxPoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId,
-	    String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
-	    String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId, Point worldCoordinates,
-	    Dimension dimension, int layer, boolean playerControlled) {
+			String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
+			String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId,
+			Point worldCoordinates, Dimension dimension, int layer, boolean playerControlled) {
 		super(carTextureId, worldCoordinates, dimension, layer);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
@@ -144,19 +144,19 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 			int correction = 17;
 			if (blue) {
 				renderer.drawTexture(blueLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
-				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
+						(float) texturePosition.getRoundY() - 78, (float) getDegrees());
 
 				extendedRenderer.drawLightTexture(policeBlueAlarmLightTextureId,
-				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees(), 1f);
+						(float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
+						(float) getDegrees(), 1f);
 
 			} else {
 				renderer.drawTexture(redLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
-				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
+						(float) texturePosition.getRoundY() - 78, (float) getDegrees());
 
 				extendedRenderer.drawLightTexture(policeRedAlarmLightTextureId,
-				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees(), 1f);
+						(float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
+						(float) getDegrees(), 1f);
 			}
 		}
 
@@ -171,11 +171,11 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	private void renderBrakeLightColor(RendererAccess renderer, Point screenTranslation) {
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
-		Point leftLight = getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8, normalizeAngle(getDegrees()));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
-		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(), (float) degrees);
+		Point leftLight = getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8,
+				normalizeAngle(getDegrees()));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
+		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(),
+				(float) degrees);
 	}
 
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -183,16 +183,15 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8,
-		    Math2D.normalizeAngle(getDegrees() + currentDegrees));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
+				Math2D.normalizeAngle(getDegrees() + currentDegrees));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
 		extendedRenderer.drawLightTexture(brakeLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
-		    lightTextureDimension.getRoundHeight(), false, false);
+				lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
+				(float) lightTextureDimension.getWidth(), (float) lightTextureDimension.getHeight(), 1, 1,
+				(float) degrees, 0, 0, lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(),
+				false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -201,22 +200,22 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 
 		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = getCircle(getPosition(), textureDimension.getWidth(),
-		    normalizeAngle(getDegrees() + currentDegrees));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
+				normalizeAngle(getDegrees() + currentDegrees));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
 
-		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
+		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5,
+		// Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
 		extendedRenderer.drawLightTexture(frontLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
-		    lightTextureDimension.getRoundHeight(), false, false);
+				lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
+				(float) lightTextureDimension.getWidth(), (float) lightTextureDimension.getHeight(), 1, 1,
+				(float) degrees, 0, 0, lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(),
+				false, false);
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (controller.isUpKeyPressed()) {
 			desiredSpeed = m_maxForwardSpeed;
 			roll = false;
@@ -257,8 +256,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		updateFriction();
 
 		// find current speed in forward direction
-		Vector2 currentForwardNormal = body.getWorldVector(new Vector2(0, 1))
-		    .cpy();
+		Vector2 currentForwardNormal = body.getWorldVector(new Vector2(0, 1)).cpy();
 		float currentSpeed = getForwardVelocity().dot(currentForwardNormal);
 
 		if (roll) {
@@ -297,8 +295,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	}
 
 	private float getSpeed() {
-		return body.getLinearVelocity()
-		    .len();
+		return body.getLinearVelocity().len();
 	}
 
 	Vector2 getLateralVelocity() {
@@ -329,7 +326,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		float currentForwardSpeed = currentForwardNormal.len();
 		currentForwardNormal.nor();
 
-		// Chris: Evtl. manipulate this for drifting with handbrake. Lower value causes the car to slide with less friction.
+		// Chris: Evtl. manipulate this for drifting with handbrake. Lower value causes
+		// the car to slide with less friction.
 		float dragForceFactore = 10;
 
 		float dragForceMagnitude = -dragForceFactore * currentForwardSpeed;
@@ -343,7 +341,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		this.bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
-		    getPosition().getRoundY() * renderScaleConversionFactor);
+				getPosition().getRoundY() * renderScaleConversionFactor);
 		bodyDef.angle = (float) Math.toRadians(270);
 		bodyDef.allowSleep = true;
 		return bodyDef;
@@ -353,8 +351,10 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	public void createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
 
-		// Be very careful here: The angle in the physics world is different to renderer/cobra2D-world angle.
-		// An angle of 0° in physics engine is "north", in cobra2d/libgdx the angle of 0° is "east".
+		// Be very careful here: The angle in the physics world is different to
+		// renderer/cobra2D-world angle.
+		// An angle of 0° in physics engine is "north", in cobra2d/libgdx the angle of
+		// 0° is "east".
 		// Rotate to match physics angle;
 		Polygon collisionShape = getCollisionShape(true, false, false).rotate(90);
 		Rectangle huellRect = Math2D.getHuellRect(collisionShape.getPoints());

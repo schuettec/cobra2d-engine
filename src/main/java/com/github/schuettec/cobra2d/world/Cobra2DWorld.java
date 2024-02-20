@@ -35,14 +35,14 @@ import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 
 /**
  * This is the map data structure. This class makes all {@link Entity} objects
- * accessible that are currently existing in the world. The {@link Cobra2DWorld} also
- * manages all the collisions for the current frame.
+ * accessible that are currently existing in the world. The {@link Cobra2DWorld}
+ * also manages all the collisions for the current frame.
  *
  *
  * <p>
  * <b>Note: The map is intended to be used in the rendering thread or at least
- * in one thread managing all the entities calls. Therefore this {@link Cobra2DWorld} is
- * not thread safe.</b>
+ * in one thread managing all the entities calls. Therefore this
+ * {@link Cobra2DWorld} is not thread safe.</b>
  * </p>
  *
  * @author Chris
@@ -71,7 +71,8 @@ public class Cobra2DWorld {
 	private transient List<WorldListener> listeners;
 
 	/**
-	 * Holds the listeners that are notified if an entity with the specified skill was added/removed.
+	 * Holds the listeners that are notified if an entity with the specified skill
+	 * was added/removed.
 	 */
 	protected Map<Class<? extends Skill>, WorldListener> listenersBySkills = new Hashtable<>();
 
@@ -236,9 +237,8 @@ public class Cobra2DWorld {
 
 	private void updateControllables() {
 		for (Controllable c : controllable) {
-			Controller controller = engine.getRenderer()
-			    .getControllerForEntity(c);
-			c.processControllerState(controller);
+			Controller controller = engine.getRenderer().getControllerForEntity(c);
+			c.processControllerState(worldAccess, controller);
 		}
 	}
 
@@ -263,15 +263,16 @@ public class Cobra2DWorld {
 
 	private List<Collision> getSoundCollisions(Camera soundCamera) {
 		CollisionMap soundCollisions = getCollisions().detectCollision((SoundCamera) soundCamera,
-		    SoundCamera::getSoundRangeInWorlCoordinates, soundEffects, SoundEffect::getSoundRangeInWorldCoordinates, false,
-		    false, false);
+				SoundCamera::getSoundRangeInWorlCoordinates, soundEffects, SoundEffect::getSoundRangeInWorldCoordinates,
+				false, false, false);
 		List<Collision> cameraCollisions = soundCollisions.getCollisions();
 		return cameraCollisions;
 	}
 
 	private List<Collision> getCameraCollisions(Camera camera) {
-		CollisionMap map = getCollisions().detectCollision(camera, Camera::getCollisionShapeInWorldCoordinates, renderables,
-		    Renderable::getCollisionShapeInWorldCoordinates, false, calculateFullCameraCollisionPoints, false);
+		CollisionMap map = getCollisions().detectCollision(camera, Camera::getCollisionShapeInWorldCoordinates,
+				renderables, Renderable::getCollisionShapeInWorldCoordinates, false, calculateFullCameraCollisionPoints,
+				false);
 		List<Collision> cameraCollisions = map.getCollisions();
 		return cameraCollisions;
 	}
@@ -312,10 +313,7 @@ public class Cobra2DWorld {
 		if (isNull(result)) {
 			return Collections.emptyList();
 		} else {
-			return result.stream()
-			    .map(Collision::getOpponent)
-			    .map(e -> (SoundEffect) e)
-			    .collect(Collectors.toList());
+			return result.stream().map(Collision::getOpponent).map(e -> (SoundEffect) e).collect(Collectors.toList());
 		}
 	}
 
@@ -371,8 +369,7 @@ public class Cobra2DWorld {
 	}
 
 	private void notifyAdded(Entity entity) {
-		listeners.stream()
-		    .forEach(l -> l.entityAdded(entity));
+		listeners.stream().forEach(l -> l.entityAdded(entity));
 	}
 
 	private <S extends Skill> void notifyRemovedBySkill(Class<S> skillType, Entity entity) {
@@ -380,18 +377,15 @@ public class Cobra2DWorld {
 	}
 
 	private void notifyRemoved(Entity entity) {
-		listeners.stream()
-		    .forEach(l -> l.entityRemoved(entity));
+		listeners.stream().forEach(l -> l.entityRemoved(entity));
 	}
 
 	private void notifyBeforeUpdate() {
-		listeners.stream()
-		    .forEach(l -> l.beforeUpdate());
+		listeners.stream().forEach(l -> l.beforeUpdate());
 	}
 
 	private void notifyAfterUpdate() {
-		listeners.stream()
-		    .forEach(l -> l.afterUpdate());
+		listeners.stream().forEach(l -> l.afterUpdate());
 	}
 
 	public void addEntities(Collection<Entity> toAdd) {

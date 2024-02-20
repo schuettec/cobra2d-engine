@@ -11,6 +11,7 @@ import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class MoveableCircleEntity extends BasicCircleEntity implements CircleRenderable, Obstacle, Controllable {
 
@@ -25,7 +26,7 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (playerControlled) {
 			if (controller.isKeyPressed(KeyEvent.VK_LEFT)) {
 				this.moveLeft();
@@ -56,23 +57,19 @@ public class MoveableCircleEntity extends BasicCircleEntity implements CircleRen
 	}
 
 	public void moveLeft() {
-		this.getPosition()
-		    .translate(-5, 0);
+		this.getPosition().translate(-5, 0);
 	}
 
 	public void moveRight() {
-		this.getPosition()
-		    .translate(5, 0);
+		this.getPosition().translate(5, 0);
 	}
 
 	public void moveDown() {
-		this.getPosition()
-		    .translate(0, -5);
+		this.getPosition().translate(0, -5);
 	}
 
 	public void moveUp() {
-		this.getPosition()
-		    .translate(0, 5);
+		this.getPosition().translate(0, 5);
 	}
 
 }

@@ -22,16 +22,11 @@ import com.github.schuettec.cobra2d.world.WorldAccess;
 public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable, Updatable, Controllable {
 
 	enum State {
-		FORWARDS,
-		BACKWARDS,
-		ROLLOUT,
-		BRAKE;
+		FORWARDS, BACKWARDS, ROLLOUT, BRAKE;
 	}
 
 	enum Steering {
-		LEFT,
-		RIGHT,
-		NONE;
+		LEFT, RIGHT, NONE;
 	}
 
 	/**
@@ -43,14 +38,15 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private static final float SECONDS_TO_ROLL_OUT = 4;
 
 	/*
-	 * How much steering can be done is based on speed. If the car drives slower, then a smaller turning radius can be
-	 * achieved. If the car is driving fast, the steering speed is reduced.
+	 * How much steering can be done is based on speed. If the car drives slower,
+	 * then a smaller turning radius can be achieved. If the car is driving fast,
+	 * the steering speed is reduced.
 	 */
 	private static final float TURN_DEGREES = 45f;
 	private static final float MIN_SECONDS_TO_TURN_DEGREES = 0.16f;
 	private static final float MAX_SECONDS_TO_TURN_DEGREES = 0.30f;
 	private static final Line STEERING_SPEED_FUNCTION = new Line(new Point(0, MIN_SECONDS_TO_TURN_DEGREES),
-	    new Point(MAX_SPEED, MAX_SECONDS_TO_TURN_DEGREES));
+			new Point(MAX_SPEED, MAX_SECONDS_TO_TURN_DEGREES));
 
 	/**
 	 * Interval in milliseconds to switch between blue and red lights.
@@ -102,10 +98,10 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private State desiredState;
 	private Steering desiredSteering;
 
-	public PoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId, String policeBlueAlarmLightTextureId,
-	    String redLightTextureId, String blueLightTextureId, String frontLightTextureId, String brakeLightTextureId,
-	    String brakeLightColorTextureId, Point worldCoordinates, Dimension initialDimension, int layer,
-	    boolean playerControlled) {
+	public PoliceCarEntity(String carTextureId, String policeRedAlarmLightTextureId,
+			String policeBlueAlarmLightTextureId, String redLightTextureId, String blueLightTextureId,
+			String frontLightTextureId, String brakeLightTextureId, String brakeLightColorTextureId,
+			Point worldCoordinates, Dimension initialDimension, int layer, boolean playerControlled) {
 		super(carTextureId, worldCoordinates, initialDimension, layer);
 		this.policeRedAlarmLightTextureId = policeRedAlarmLightTextureId;
 		this.policeBlueAlarmLightTextureId = policeBlueAlarmLightTextureId;
@@ -131,19 +127,19 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 			int correction = 17;
 			if (blue) {
 				renderer.drawTexture(blueLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
-				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
+						(float) texturePosition.getRoundY() - 78, (float) getDegrees());
 
 				extendedRenderer.drawLightTexture(policeBlueAlarmLightTextureId,
-				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees(), 1f);
+						(float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
+						(float) getDegrees(), 1f);
 
 			} else {
 				renderer.drawTexture(redLightTextureId, alpha, (float) texturePosition.getRoundX() - correction,
-				    (float) texturePosition.getRoundY() - 78, (float) getDegrees());
+						(float) texturePosition.getRoundY() - 78, (float) getDegrees());
 
 				extendedRenderer.drawLightTexture(policeRedAlarmLightTextureId,
-				    (float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
-				    (float) getDegrees(), 1f);
+						(float) texturePosition.getRoundX() - correction, (float) texturePosition.getRoundY() - 78,
+						(float) getDegrees(), 1f);
 			}
 		}
 
@@ -158,11 +154,11 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 	private void renderBrakeLightColor(RendererAccess renderer, Point screenTranslation) {
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightColorTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
-		Point leftLight = getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8, normalizeAngle(getDegrees()));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
-		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(), (float) degrees);
+		Point leftLight = getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8,
+				normalizeAngle(getDegrees()));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
+		renderer.drawTexture(brakeLightColorTextureId, 1f, leftLight.getRoundX(), leftLight.getRoundY(),
+				(float) degrees);
 	}
 
 	private void renderBrakeLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -170,16 +166,15 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 		Point lightTextureCenter = renderer.getTextureCenter(brakeLightTextureId);
 		Dimension carTextureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = Math2D.getCircle(getPosition(), -carTextureDimension.getWidth() / 2.0 - 8,
-		    Math2D.normalizeAngle(getDegrees() + currentDegrees));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
+				Math2D.normalizeAngle(getDegrees() + currentDegrees));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(brakeLightTextureId);
 		extendedRenderer.drawLightTexture(brakeLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
-		    lightTextureDimension.getRoundHeight(), false, false);
+				lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
+				(float) lightTextureDimension.getWidth(), (float) lightTextureDimension.getHeight(), 1, 1,
+				(float) degrees, 0, 0, lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(),
+				false, false);
 	}
 
 	private void renderFrontLight(RendererAccess renderer, Point screenTranslation, int currentDegrees) {
@@ -188,22 +183,22 @@ public class PoliceCarEntity extends TexturedEntity implements LibGdxRenderable,
 
 		Dimension textureDimension = renderer.getTextureDimension(getTextureId());
 		Point leftLight = getCircle(getPosition(), textureDimension.getWidth(),
-		    normalizeAngle(getDegrees() + currentDegrees));
-		leftLight = leftLight.translate(screenTranslation)
-		    .translate(lightTextureCenter.clone()
-		        .scale(-1));
+				normalizeAngle(getDegrees() + currentDegrees));
+		leftLight = leftLight.translate(screenTranslation).translate(lightTextureCenter.clone().scale(-1));
 
-		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5, Color.YELLOW);
+		// renderer.fillCircle(leftLight.getRoundX(), leftLight.getRoundY(), 5,
+		// Color.YELLOW);
 
 		Dimension lightTextureDimension = renderer.getTextureDimension(frontLightTextureId);
 		extendedRenderer.drawLightTexture(frontLightTextureId, leftLight.getRoundX(), leftLight.getRoundY(),
-		    lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(), (float) lightTextureDimension.getWidth(),
-		    (float) lightTextureDimension.getHeight(), 1, 1, (float) degrees, 0, 0, lightTextureDimension.getRoundWidth(),
-		    lightTextureDimension.getRoundHeight(), false, false);
+				lightTextureCenter.getRoundX(), lightTextureCenter.getRoundY(),
+				(float) lightTextureDimension.getWidth(), (float) lightTextureDimension.getHeight(), 1, 1,
+				(float) degrees, 0, 0, lightTextureDimension.getRoundWidth(), lightTextureDimension.getRoundHeight(),
+				false, false);
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (controller.isUpKeyPressed()) {
 			this.desiredState = State.FORWARDS;
 		} else if (controller.isDownKeyPressed()) {

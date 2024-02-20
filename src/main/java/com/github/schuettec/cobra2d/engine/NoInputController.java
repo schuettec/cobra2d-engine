@@ -95,4 +95,9 @@ public class NoInputController implements Controller {
 		return new Point();
 	}
 
+	@Override
+	public boolean isJustTouched() {
+		return false;
+	}
+
 }

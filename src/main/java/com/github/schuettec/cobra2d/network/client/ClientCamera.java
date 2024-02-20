@@ -19,6 +19,7 @@ import com.github.schuettec.cobra2d.network.common.command.server.UpdateMouseCon
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.Collision;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class ClientCamera extends BasicRectangleMapCamera implements NetworkActor, Controllable {
 
@@ -62,18 +63,16 @@ public class ClientCamera extends BasicRectangleMapCamera implements NetworkActo
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		updateServerCommands(this.serverCommands, controller);
 	}
 
 	protected void updateServerCommands(List<ServerCommand> serverCommands, Controller controller) {
 		serverCommands.clear();
-		keyCodesToListen.stream()
-		    .map(keyCode -> {
-			    boolean keyPressed = controller.isKeyPressed(keyCode);
-			    return UpdateKeysControllerCommand.ofKeyCode(keyCode, keyPressed);
-		    })
-		    .forEach(serverCommands::add);
+		keyCodesToListen.stream().map(keyCode -> {
+			boolean keyPressed = controller.isKeyPressed(keyCode);
+			return UpdateKeysControllerCommand.ofKeyCode(keyCode, keyPressed);
+		}).forEach(serverCommands::add);
 
 		serverCommands.add(new UpdateMouseControllerCommand(controller.getMousePositionWorldCoordinates()));
 	}

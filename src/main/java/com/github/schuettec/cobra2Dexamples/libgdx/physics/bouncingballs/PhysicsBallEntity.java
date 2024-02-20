@@ -24,7 +24,7 @@ import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysicsBallEntity extends BasicCircleEntity
-    implements CircleRenderable, DynamicBody, Updatable, Controllable {
+		implements CircleRenderable, DynamicBody, Updatable, Controllable {
 
 	private Body body;
 
@@ -33,8 +33,8 @@ public class PhysicsBallEntity extends BasicCircleEntity
 	private Fixture fixture;
 
 	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a 3cm radius ball on the screen that has
-	 * 30 Pixels radius.
+	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
+	 * 3cm radius ball on the screen that has 30 Pixels radius.
 	 */
 	private float renderScaleConversionFactor = 1 / 100f;
 
@@ -49,7 +49,7 @@ public class PhysicsBallEntity extends BasicCircleEntity
 		BodyDef bodyDef = new BodyDef();
 		bodyDef.type = BodyType.DynamicBody;
 		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
-		    getPosition().getRoundY() * renderScaleConversionFactor);
+				getPosition().getRoundY() * renderScaleConversionFactor);
 		bodyDef.angle = getRadians();
 		bodyDef.angularDamping = 0f;
 		bodyDef.linearDamping = 0f;
@@ -78,7 +78,7 @@ public class PhysicsBallEntity extends BasicCircleEntity
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		Point mousePoint = controller.getMousePositionWorldCoordinates();
 		boolean inCircle = Math2D.isInCircle(mousePoint, getPosition(), getRadius());
 		if (inCircle) {
@@ -94,7 +94,7 @@ public class PhysicsBallEntity extends BasicCircleEntity
 		double degrees = Math.toDegrees(radians);
 		setDegrees(degrees);
 		setPosition(saveRound(position.x / renderScaleConversionFactor),
-		    saveRound(position.y / renderScaleConversionFactor));
+				saveRound(position.y / renderScaleConversionFactor));
 	}
 
 	@Override

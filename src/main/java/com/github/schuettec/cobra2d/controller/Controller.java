@@ -5,11 +5,13 @@ import com.github.schuettec.cobra2d.math.Point;
 public interface Controller {
 
 	/**
-	 * Checks the state of the specified key code. Note: The key code is renderer-specific! For common keys use the
-	 * provided methods like isUpKeyPressed().
-	 * 
+	 * Checks the state of the specified key code. Note: The key code is
+	 * renderer-specific! For common keys use the provided methods like
+	 * isUpKeyPressed().
+	 *
 	 * @param keyCode The key code.
-	 * @return Returns <code>true</code> if the specified key is pressed, otherwise <code>false</code> is returned.
+	 * @return Returns <code>true</code> if the specified key is pressed, otherwise
+	 *         <code>false</code> is returned.
 	 */
 	public abstract boolean isKeyPressed(final int keyCode);
 
@@ -46,5 +48,7 @@ public interface Controller {
 	public Point getMousePositionOnScreen();
 
 	public Point getMousePositionWorldCoordinates();
+
+	public boolean isJustTouched();
 
 }

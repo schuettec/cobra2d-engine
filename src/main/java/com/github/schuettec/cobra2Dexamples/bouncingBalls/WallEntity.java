@@ -41,7 +41,7 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (controller.isPlusKeyPressed()) {
 			this.desiredRotation = +1;
 		}
@@ -52,15 +52,12 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
-		CollisionMap collisionMap = worldAccess.getCollisions()
-		    .detectCollision(this, HasCollisionShape::getCollisionShapeInWorldCoordinates,
-		        worldAccess.getObstaclesExcept(this), HasCollisionShape::getCollisionShapeInWorldCoordinates, true, true,
-		        false);
+		CollisionMap collisionMap = worldAccess.getCollisions().detectCollision(this,
+				HasCollisionShape::getCollisionShapeInWorldCoordinates, worldAccess.getObstaclesExcept(this),
+				HasCollisionShape::getCollisionShapeInWorldCoordinates, true, true, false);
 
-		Optional<Collision> ballCollision = collisionMap.getCollisions()
-		    .stream()
-		    .filter(c -> c.getOpponent() instanceof BallEntity)
-		    .findFirst();
+		Optional<Collision> ballCollision = collisionMap.getCollisions().stream()
+				.filter(c -> c.getOpponent() instanceof BallEntity).findFirst();
 
 		if (ballCollision.isEmpty()) {
 			double degrees = modulo360(this.getDegrees() + desiredRotation);

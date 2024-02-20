@@ -24,7 +24,7 @@ public class SimpleCarEntity extends TexturedEntity implements Controllable, Upd
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (controller.isUpKeyPressed()) {
 			this.desiredSpeed = SPEED;
 		} else if (controller.isDownKeyPressed()) {

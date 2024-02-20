@@ -47,14 +47,14 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	public BasicRectangleMapCamera(Point worldCoordinates, Dimension dimension, boolean playerControlled,
-	    Point screenPosition) {
+			Point screenPosition) {
 		super(worldCoordinates, dimension);
 		this.playerControlled = playerControlled;
 		this.screenPosition = new Point(0, 0);
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		this.mousePosition = controller.getMousePositionWorldCoordinates();
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
@@ -90,13 +90,14 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenPosition();
-		// The fill rectangle function is not center oriented. So we have to correct the position by half of dimension
+		// The fill rectangle function is not center oriented. So we have to correct the
+		// position by half of dimension
 		Point rectangleCorrection = new Point(-(getCollisionShapeDimension().getWidth() / 2.0),
-		    -(getCollisionShapeDimension().getHeight() / 2.0));
+				-(getCollisionShapeDimension().getHeight() / 2.0));
 		screenTranslation.translate(rectangleCorrection);
 		Dimension dimension = getCollisionShapeDimension();
 		renderer.fillRectangle((float) screenTranslation.getRoundX() - 1, (float) screenTranslation.getRoundY() - 1,
-		    (float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
+				(float) dimension.getWidth() + 1, (float) dimension.getHeight() + 1, Color.BLACK);
 	}
 
 	@Override
@@ -108,7 +109,8 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	@Override
 	public void drawCameraOutline(RendererAccess renderer) {
 		// Draw camera outline.
-		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenPosition(), Color.GREEN);
+		PolygonRenderable.renderPolygon(getCollisionShape(true, true, false), renderer, getScreenPosition(),
+				Color.GREEN);
 	}
 
 	protected void drawMouse(RendererAccess renderer) {
@@ -119,8 +121,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 	}
 
 	private void followOnDemand(WorldAccess worldAccess) {
-		getFollowEntity(worldAccess).ifPresent(follow -> this.setPosition(follow.getPosition()
-		    .clone()));
+		getFollowEntity(worldAccess).ifPresent(follow -> this.setPosition(follow.getPosition().clone()));
 	}
 
 	public void moveLeft() {
@@ -208,8 +209,7 @@ public class BasicRectangleMapCamera extends BasicRectangleEntity implements Abs
 		String str = "BasicRectangleMapCamera [";
 		List<EntityPoint> entityPoints = getCollisionShape(true, true, true).getEntityPoints();
 		for (EntityPoint p : entityPoints) {
-			str += p.getCoordinates()
-			    .toString() + "\n";
+			str += p.getCoordinates().toString() + "\n";
 		}
 		return str + "]";
 	}

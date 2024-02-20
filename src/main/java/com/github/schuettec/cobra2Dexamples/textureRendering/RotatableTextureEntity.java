@@ -6,18 +6,19 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class RotatableTextureEntity extends TexturedEntity implements Controllable {
 	boolean playerControlled;
 
 	public RotatableTextureEntity(String textureId, Point worldCoordinates, Dimension intialDimension, int layer,
-	    boolean playerControlled) {
+			boolean playerControlled) {
 		super(textureId, worldCoordinates, intialDimension, layer);
 		this.playerControlled = playerControlled;
 	}
 
 	@Override
-	public void processControllerState(Controller controller) {
+	public void processControllerState(WorldAccess worldAccess, Controller controller) {
 		if (playerControlled) {
 			if (controller.isLeftKeyPressed()) {
 				this.rotateLeft();
