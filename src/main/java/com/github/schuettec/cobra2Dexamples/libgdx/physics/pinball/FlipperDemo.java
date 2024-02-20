@@ -39,6 +39,7 @@ public class FlipperDemo {
     PhysicsBallEntity ball1 = new PhysicsBallEntity(new Point(240, 140), radius, forceToApply, 30);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(400, 400), new Dimension(799, 799), true);
+    camera.setPlayerControlled(false);
     camera.setDrawCameraOutline(true);
     camera.setDrawCollisionShape(true);
     camera.setDrawEntityPoints(true);
