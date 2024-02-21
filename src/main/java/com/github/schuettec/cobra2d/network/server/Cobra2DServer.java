@@ -21,6 +21,7 @@ import com.github.schuettec.cobra2d.engine.NoInputController;
 import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.network.common.command.client.ClientCommand;
@@ -88,46 +89,40 @@ public class Cobra2DServer implements Renderer, WorldListener {
 
 	@Override
 	public void afterUpdate() {
-		playersByConnection.values()
-		    .parallelStream()
-		    .forEach(player -> {
-			    Connection connection = player.getConnection();
-			    Camera playerCamera = player.getPlayerCamera();
-			    List<String> thisFrameIds = new LinkedList<>();
-			    List<Collision> cameraCollision = worldAccess.getCameraCollision(playerCamera);
-			    List<String> lastFrame = player.getLastFrameIds();
-			    cameraCollision.stream()
-			        .map(Collision::getOpponent)
-			        .forEach(entity -> {
-				        if (stateManager.isRegistered(entity)) {
-					        thisFrameIds.add(entity.getId());
-					        EntityState entityState = stateManager.readEntityState(entity);
-					        String entityClass = entity.getClass()
-					            .getName();
-					        ClientCommand command = null;
-					        if (lastFrame.contains(entity.getId())) {
-						        command = new UpdateEntityClientCommand(entityClass, entityState);
-					        } else {
-						        command = new CreateEntityClientCommand(entityClass, entityState);
-					        }
-					        sendCommand(connection, command);
+		playersByConnection.values().parallelStream().forEach(player -> {
+			Connection connection = player.getConnection();
+			Camera playerCamera = player.getPlayerCamera();
+			List<String> thisFrameIds = new LinkedList<>();
+			List<Collision> cameraCollision = worldAccess.getCameraCollision(playerCamera);
+			List<String> lastFrame = player.getLastFrameIds();
+			cameraCollision.stream().map(Collision::getOpponent).forEach(entity -> {
+				if (stateManager.isRegistered(entity)) {
+					thisFrameIds.add(entity.getId());
+					EntityState entityState = stateManager.readEntityState(entity);
+					String entityClass = entity.getClass().getName();
+					ClientCommand command = null;
+					if (lastFrame.contains(entity.getId())) {
+						command = new UpdateEntityClientCommand(entityClass, entityState);
+					} else {
+						command = new CreateEntityClientCommand(entityClass, entityState);
+					}
+					sendCommand(connection, command);
 
-					        // Update player camera
-					        String followEntityId = playerCamera.getFollowEntityId();
-					        Point position = playerCamera.getPosition();
-					        UpdateClientCameraCommand updateCamera = new UpdateClientCameraCommand(position, followEntityId);
-					        sendCommand(connection, updateCamera);
-				        }
-			        });
-			    lastFrame.removeAll(thisFrameIds);
-			    lastFrame.stream()
-			        .forEach(toRemoveEntityId -> {
-				        RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
-				        sendCommand(connection, removeCmd);
-			        });
-			    lastFrame.clear();
-			    lastFrame.addAll(thisFrameIds);
-		    });
+					// Update player camera
+					String followEntityId = playerCamera.getFollowEntityId();
+					Point position = playerCamera.getPosition();
+					UpdateClientCameraCommand updateCamera = new UpdateClientCameraCommand(position, followEntityId);
+					sendCommand(connection, updateCamera);
+				}
+			});
+			lastFrame.removeAll(thisFrameIds);
+			lastFrame.stream().forEach(toRemoveEntityId -> {
+				RemoveEntityClientCommand removeCmd = new RemoveEntityClientCommand(toRemoveEntityId);
+				sendCommand(connection, removeCmd);
+			});
+			lastFrame.clear();
+			lastFrame.addAll(thisFrameIds);
+		});
 	}
 
 	private void sendCommand(Connection connection, ClientCommand command) {
@@ -166,26 +161,18 @@ public class Cobra2DServer implements Renderer, WorldListener {
 	}
 
 	@Override
-	public Controller getControllerForEntity(Entity entity) {
-		return getPlayerByEntity(entity).map(p -> p.getController())
-		    .orElseGet(() -> {
-			    return NO_INPUT_CONTROLLER;
-		    });
+	public Controller getControllerForEntity(Skill entity) {
+		return getPlayerByEntity(entity).map(p -> p.getController()).orElseGet(() -> {
+			return NO_INPUT_CONTROLLER;
+		});
 	}
 
-	private Optional<Player> getPlayerByEntity(Entity entity) {
+	private Optional<Player> getPlayerByEntity(Skill entity) {
 		String id = entity.getId();
-		return this.playersByConnection.values()
-		    .stream()
-		    // Either the entity can be controllable in a network game
-		    // or the camera of the player
-		    .filter(p -> p.getEntity()
-		        .getId()
-		        .equals(id)
-		        || p.getPlayerCamera()
-		            .getId()
-		            .equals(id))
-		    .findFirst();
+		return this.playersByConnection.values().stream()
+				// Either the entity can be controllable in a network game
+				// or the camera of the player
+				.filter(p -> p.getEntity().getId().equals(id) || p.getPlayerCamera().getId().equals(id)).findFirst();
 	}
 
 	private Optional<Player> getPlayer(Connection connection) {

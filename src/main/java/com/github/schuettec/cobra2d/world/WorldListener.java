@@ -1,13 +1,13 @@
 package com.github.schuettec.cobra2d.world;
 
-import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 
 public interface WorldListener {
 
-	default void entityAdded(final Entity entity) {
+	default void entityAdded(final Skill entity) {
 	}
 
-	default void entityRemoved(final Entity entity) {
+	default void entityRemoved(final Skill entity) {
 	}
 
 	default void beforeUpdate() {

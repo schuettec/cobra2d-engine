@@ -2,6 +2,7 @@ package com.github.schuettec.cobra2d.network.client;
 
 import com.github.schuettec.cobra2d.entity.skills.Camera;
 import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.network.data.EntityState;
 
 /**
@@ -11,7 +12,7 @@ public interface ClientAccess {
 
 	Camera getClientCamera();
 
-	void writeEntityState(EntityState entityState, Entity entity);
+	void writeEntityState(EntityState entityState, Skill entity);
 
 	Entity createEntity(String entityClass);
 

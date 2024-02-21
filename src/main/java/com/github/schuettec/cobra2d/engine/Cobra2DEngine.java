@@ -17,7 +17,7 @@ import java.util.Properties;
 import javax.imageio.ImageIO;
 
 import com.github.schuettec.cobra2d.entity.skills.Camera;
-import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.network.server.Cobra2DServer;
 import com.github.schuettec.cobra2d.renderer.Renderer;
@@ -114,12 +114,13 @@ public class Cobra2DEngine {
 		for (DisplayMode mode : availableModes) {
 			System.out.println(mode.toString());
 			if (mode.getWidth() == resolutionX && mode.getHeight() == resolutionY
-			    && ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1) && mode.getRefreshRate() == refreshRate) {
+					&& ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1)
+					&& mode.getRefreshRate() == refreshRate) {
 				return mode;
 			}
 		}
 		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
-		    + "hz at " + bitDepth + " bit depth.");
+				+ "hz at " + bitDepth + " bit depth.");
 	}
 
 	/**
@@ -144,26 +145,25 @@ public class Cobra2DEngine {
 		this.sounds.put(address, ressourceURL);
 	}
 
-	public void addEntity(List<? extends Entity> entities) {
-		entities.stream()
-		    .forEach(e -> {
-			    world.addEntity(e);
-		    });
+	public void addEntity(List<? extends Skill> entities) {
+		entities.stream().forEach(e -> {
+			world.addEntity(e);
+		});
 	}
 
-	public void addEntity(Entity... entities) {
+	public void addEntity(Skill... entities) {
 		world.addEntity(entities);
 	}
 
-	public void addEntity(Entity entity) {
+	public void addEntity(Skill entity) {
 		world.addEntity(entity);
 	}
 
-	public void removeEntity(Entity... entities) {
+	public void removeEntity(Skill... entities) {
 		world.removeEntity(entities);
 	}
 
-	public void removeEntity(Entity entity) {
+	public void removeEntity(Skill entity) {
 		world.removeEntity(entity);
 	}
 
@@ -172,14 +172,14 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * This is a util method to get the size of a texture before the renderer was started. This method reads the specified
-	 * texture and analyzes the size.
-	 * 
+	 * This is a util method to get the size of a texture before the renderer was
+	 * started. This method reads the specified texture and analyzes the size.
+	 *
 	 * Note: This method requires, that the texture was added to the engine before.
-	 * 
+	 *
 	 * Note: Do not use this method during rendering. Use {@link RendererAccess} for
 	 * efficient renderer interaction.
-	 * 
+	 *
 	 * @param textureId The texture id added to the engine before.
 	 * @return Returns the dimension.
 	 */
@@ -191,11 +191,11 @@ public class Cobra2DEngine {
 				return new Dimension(img.getWidth(), img.getHeight());
 			} catch (IOException e) {
 				throw new RuntimeException(
-				    "Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
+						"Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
 			}
 		} else {
-			throw new RuntimeException(
-			    "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
+			throw new RuntimeException("Texture with id " + textureId
+					+ " not found. Add the texture to engine before calling this method!");
 		}
 	}
 
@@ -240,10 +240,12 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * Sets a single camera for input. Only used in a single player environment. In a multiplayer environment
-	 * {@link Cobra2DServer} manages the controller for each player.
-	 * 
-	 * @param camera The camera that is used to translate screen input coordinates to world coordinates.
+	 * Sets a single camera for input. Only used in a single player environment. In
+	 * a multiplayer environment {@link Cobra2DServer} manages the controller for
+	 * each player.
+	 *
+	 * @param camera The camera that is used to translate screen input coordinates
+	 *               to world coordinates.
 	 */
 	public void setCameraForInput(Camera camera) {
 		this.cameraForInput = camera;
@@ -257,8 +259,8 @@ public class Cobra2DEngine {
 	}
 
 	/**
-	 * @return Returns <code>true</code> if there is a single camera translating the input coordinates to world
-	 *         coordinates. Otherwise <code>false</code>
+	 * @return Returns <code>true</code> if there is a single camera translating the
+	 *         input coordinates to world coordinates. Otherwise <code>false</code>
 	 *         is returned.
 	 */
 	public boolean hasCameraForInput() {

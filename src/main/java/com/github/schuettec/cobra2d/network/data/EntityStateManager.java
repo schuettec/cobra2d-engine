@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.schuettec.cobra2d.entity.skills.Entity;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.network.external.reflection.ReflectionProvider;
 import com.github.schuettec.cobra2d.network.external.reflection.ReflectiveField;
@@ -13,15 +14,16 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 import com.github.schuettec.cobra2d.world.WorldListener;
 
 /**
- * Class that manages reading and writing of the entity state values from and to an entity.
+ * Class that manages reading and writing of the entity state values from and to
+ * an entity.
  */
 public class EntityStateManager implements WorldListener {
 
 	private static final ReflectionProvider reflectionProvider = new JavaReflectionProvider();
 
-	private Map<Class<? extends Entity>, EntityStateAccessor> accessorsByEntityType;
+	private Map<Class<? extends Skill>, EntityStateAccessor> accessorsByEntityType;
 
-	private Map<String, Class<? extends Entity>> registeredTypes;
+	private Map<String, Class<? extends Skill>> registeredTypes;
 
 	public EntityStateManager(Cobra2DWorld world) {
 		this.accessorsByEntityType = new Hashtable<>();
@@ -32,24 +34,23 @@ public class EntityStateManager implements WorldListener {
 
 	private void registerEntities(Cobra2DWorld world) {
 		/*
-		 * Register all entities that have an attribute marked as entity state, because all entities with a marked state can
-		 * be transferred during network play, even if they are not updated repeatedly.
+		 * Register all entities that have an attribute marked as entity state, because
+		 * all entities with a marked state can be transferred during network play, even
+		 * if they are not updated repeatedly.
 		 */
-		world.getAllEntities()
-		    .stream()
-		    .forEach(e -> {
-			    registerEntity(entityType(e));
-		    });
+		world.getAllEntities().stream().forEach(e -> {
+			registerEntity(entityType(e));
+		});
 	}
 
 	@Override
-	public void entityAdded(Entity entity) {
+	public void entityAdded(Skill entity) {
 		registerEntity(entityType(entity));
 	}
 
-	public <E extends Entity> void registerEntity(Class<E> entityType) {
+	public <S extends Skill> void registerEntity(Class<S> entityType) {
 		List<ReflectiveField> allInheritedFields = reflectionProvider
-		    .getAllInheritedFieldsAnnotatedWith(EntityStateValue.class, entityType);
+				.getAllInheritedFieldsAnnotatedWith(EntityStateValue.class, entityType);
 		if (!allInheritedFields.isEmpty()) {
 			EntityStateAccessor entityStateAccessor = new EntityStateAccessor(allInheritedFields);
 			accessorsByEntityType.put(entityType, entityStateAccessor);
@@ -65,19 +66,19 @@ public class EntityStateManager implements WorldListener {
 		return registeredTypes.containsKey(entityType(entity).getName());
 	}
 
-	public <E extends Entity> EntityState readEntityState(E entity) {
-		Class<? extends Entity> entityType = entityType(entity);
+	public <S extends Skill> EntityState readEntityState(S entity) {
+		Class<? extends Skill> entityType = entityType(entity);
 		EntityStateAccessor entityAccessor = entityAccessor(entityType);
 		return entityAccessor.readEntityState(entity);
 	}
 
-	public <E extends Entity> void writeEntityState(EntityState state, E entity) {
-		Class<? extends Entity> entityType = entityType(entity);
+	public <S extends Skill> void writeEntityState(EntityState state, S entity) {
+		Class<? extends Skill> entityType = entityType(entity);
 		EntityStateAccessor entityAccessor = entityAccessor(entityType);
 		entityAccessor.writeEntityState(state, entity);
 	}
 
-	private EntityStateAccessor entityAccessor(Class<? extends Entity> entityType) {
+	private EntityStateAccessor entityAccessor(Class<? extends Skill> entityType) {
 		if (accessorsByEntityType.containsKey(entityType)) {
 			return accessorsByEntityType.get(entityType);
 		} else {
@@ -85,11 +86,11 @@ public class EntityStateManager implements WorldListener {
 		}
 	}
 
-	private <E extends Entity> Class<? extends Entity> entityType(E entity) {
+	private <S extends Skill> Class<? extends Skill> entityType(S entity) {
 		return entity.getClass();
 	}
 
-	public Class<? extends Entity> getEntityClass(String entityClass) {
+	public Class<? extends Skill> getEntityClass(String entityClass) {
 		return registeredTypes.get(entityClass);
 	}
 }

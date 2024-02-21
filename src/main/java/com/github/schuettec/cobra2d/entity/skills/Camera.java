@@ -24,14 +24,14 @@ public interface Camera extends Updatable, HasCollisionShape {
 
 	/**
 	 * Entity to follow.
-	 * 
+	 *
 	 * @param followEntity Entity to follow.
 	 */
 	public void follow(Entity followEntity);
 
 	/**
 	 * Entity to follow by id.
-	 * 
+	 *
 	 * @param followEntity Entity to follow by id.
 	 */
 	public void follow(String entityId);
@@ -41,26 +41,38 @@ public interface Camera extends Updatable, HasCollisionShape {
 			return Optional.of(getFollowEntity());
 		} else {
 			if (nonNull(getFollowEntityId())) {
-				return worldAccess.getEntityById(getFollowEntityId());
+				Optional<Skill> optionalSkill = worldAccess.getEntityById(getFollowEntityId());
+				if (optionalSkill.isPresent()) {
+					Skill skill = optionalSkill.get();
+					if (skill instanceof Entity) {
+						Entity entity = (Entity) skill;
+						return Optional.of(entity);
+					} else {
+						return Optional.empty();
+					}
+				} else {
+					return Optional.empty();
+				}
 			}
 		}
 		return Optional.empty();
 	}
 
 	/**
-	 * Called before {@link #render(RendererAccess, Cobra2DWorld, List)} to set/draw the clipping mask of this camera.
-	 * 
+	 * Called before {@link #render(RendererAccess, Cobra2DWorld, List)} to set/draw
+	 * the clipping mask of this camera.
+	 *
 	 * @param renderer The {@link RendererAccess}.
 	 */
 	void renderClippingMask(final RendererAccess renderer);
 
 	/**
 	 * Renders the scene with the specified captured entities.
-	 * 
-	 * @param renderer The {@link RendererAccess}.
-	 * @param map The current map.
+	 *
+	 * @param renderer         The {@link RendererAccess}.
+	 * @param map              The current map.
 	 * @param capturedEntities The entities that colliding the viewport shape of
-	 *        this camera.
+	 *                         this camera.
 	 */
 	void render(final RendererAccess renderer, final Cobra2DWorld map, final List<Collision> capturedEntities);
 
@@ -71,14 +83,14 @@ public interface Camera extends Updatable, HasCollisionShape {
 
 	/**
 	 * Sets a new screen position for this camera.
-	 * 
+	 *
 	 * @param screenPosition The new position-.
 	 */
 	public void setScreenPosition(Point screenPosition);
 
 	/**
 	 * Translates screen coordinates to world coordinates.
-	 * 
+	 *
 	 * @param screenCoords The screen coordinates.
 	 * @return Returns the {@link InputContext}.
 	 */
@@ -86,7 +98,7 @@ public interface Camera extends Updatable, HasCollisionShape {
 
 	/**
 	 * Translates worlds coordinates to screen coordinates.
-	 * 
+	 *
 	 * @param worldCoords The worlds coordinates.
 	 * @return Returns the {@link InputContext}.
 	 */

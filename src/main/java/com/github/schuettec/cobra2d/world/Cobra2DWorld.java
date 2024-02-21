@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Joint;
+import com.badlogic.gdx.physics.box2d.JointDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
@@ -31,6 +33,7 @@ import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.network.NetworkActor;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicJoint;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 
 /**
@@ -56,7 +59,7 @@ public class Cobra2DWorld {
 
 	private static final int POSITION_ITERATIONS = 2;
 
-	protected Map<String, Entity> allEntities;
+	protected Map<String, Skill> allEntities;
 
 	protected Set<Obstacle> obstacles;
 	protected Set<Controllable> controllable;
@@ -64,6 +67,7 @@ public class Cobra2DWorld {
 	protected Set<Renderable> renderables;
 	protected Set<Camera> cameras;
 	protected Set<PhysicBody> physicBodies;
+	protected Set<PhysicJoint> physicJoints;
 	protected Set<SoundEffect> soundEffects;
 
 	protected Set<NetworkActor> networkActors;
@@ -101,12 +105,13 @@ public class Cobra2DWorld {
 			this.physicsWorld = new World(new Vector2(), true);
 		}
 
-		this.allEntities = new Hashtable<String, Entity>();
+		this.allEntities = new Hashtable<String, Skill>();
 		this.obstacles = new HashSet<>();
 		this.updateables = new HashSet<>();
 		this.controllable = new HashSet<>();
 		this.renderables = new HashSet<>();
 		this.physicBodies = new HashSet<>();
+		this.physicJoints = new HashSet<>();
 		this.soundEffects = new HashSet<>();
 		this.networkActors = new HashSet<>();
 		this.cameras = new HashSet<>();
@@ -119,7 +124,7 @@ public class Cobra2DWorld {
 		if (isUpdateWorld()) {
 			this.listenersBySkills.put(PhysicBody.class, new WorldListener() {
 				@Override
-				public void entityAdded(Entity entity) {
+				public void entityAdded(Skill entity) {
 					PhysicBody physicBody = (PhysicBody) entity;
 					BodyDef bodyDef = physicBody.createBodyDef();
 					Body body = physicsWorld.createBody(bodyDef);
@@ -127,10 +132,27 @@ public class Cobra2DWorld {
 				}
 
 				@Override
-				public void entityRemoved(Entity entity) {
+				public void entityRemoved(Skill entity) {
 					PhysicBody physicBody = (PhysicBody) entity;
 					Body body = physicBody.getBody();
 					physicsWorld.destroyBody(body);
+				}
+
+			});
+			this.listenersBySkills.put(PhysicJoint.class, new WorldListener() {
+				@Override
+				public void entityAdded(Skill entity) {
+					PhysicJoint physicJoint = (PhysicJoint) entity;
+					JointDef jointDef = physicJoint.createJointDef();
+					Joint joint = physicsWorld.createJoint(jointDef);
+					physicJoint.setJoint(joint);
+				}
+
+				@Override
+				public void entityRemoved(Skill entity) {
+					PhysicJoint physicJoint = (PhysicJoint) entity;
+					Joint joint = physicJoint.getJoint();
+					physicsWorld.destroyJoint(joint);
 				}
 
 			});
@@ -139,7 +161,7 @@ public class Cobra2DWorld {
 		this.listenersBySkills.put(Renderable.class, engine.getRenderer());
 	}
 
-	public Optional<Entity> getEntityById(String entityId) {
+	public Optional<Skill> getEntityById(String entityId) {
 		return Optional.ofNullable(allEntities.get(entityId));
 	}
 
@@ -155,51 +177,53 @@ public class Cobra2DWorld {
 		this.physicsWorld.setGravity(new Vector2(xForce, yForce));
 	}
 
-	public void addEntity(Entity... entities) {
-		for (Entity e : entities) {
+	public void addEntity(Skill... entities) {
+		for (Skill e : entities) {
 			addEntity(e);
 		}
 	}
 
-	public void addEntity(Entity entity) {
+	public void addEntity(Skill entity) {
 		this.allEntities.put(entity.getId(), entity);
 		addEntityBySkill(entity);
 	}
 
-	private void addEntityBySkill(Entity entity) {
+	private void addEntityBySkill(Skill entity) {
 		addOnDemand(Camera.class, this.cameras, entity);
 		addOnDemand(Obstacle.class, this.obstacles, entity);
 		addOnDemand(Controllable.class, this.controllable, entity);
 		addOnDemand(Updatable.class, this.updateables, entity);
 		addOnDemand(Renderable.class, this.renderables, entity);
 		addOnDemand(PhysicBody.class, this.physicBodies, entity);
+		addOnDemand(PhysicJoint.class, this.physicJoints, entity);
 		addOnDemand(SoundEffect.class, this.soundEffects, entity);
 		addOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
-	public void removeEntity(Entity... entities) {
-		for (Entity e : entities) {
+	public void removeEntity(Skill... entities) {
+		for (Skill e : entities) {
 			removeEntity(e);
 		}
 	}
 
-	public void removeEntity(Entity entity) {
+	public void removeEntity(Skill entity) {
 		this.allEntities.remove(entity);
 		removeEntityBySkill(entity);
 	}
 
-	private void removeEntityBySkill(Entity entity) {
+	private <S extends Skill> void removeEntityBySkill(S entity) {
 		removeOnDemand(Obstacle.class, this.obstacles, entity);
 		removeOnDemand(Controllable.class, this.controllable, entity);
 		removeOnDemand(Updatable.class, this.updateables, entity);
 		removeOnDemand(Renderable.class, this.renderables, entity);
 		removeOnDemand(Camera.class, this.cameras, entity);
 		removeOnDemand(PhysicBody.class, this.physicBodies, entity);
+		removeOnDemand(PhysicJoint.class, this.physicJoints, entity);
 		removeOnDemand(SoundEffect.class, this.soundEffects, entity);
 		removeOnDemand(NetworkActor.class, this.networkActors, entity);
 	}
 
-	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> obstacles, Entity entity) {
+	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> obstacles, Skill entity) {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.add(asSkill.get());
@@ -212,7 +236,7 @@ public class Cobra2DWorld {
 		return Optional.ofNullable(listenersBySkills.get(skillType));
 	}
 
-	private <S extends Skill> void removeOnDemand(Class<S> skillType, Set<S> obstacles, Entity entity) {
+	private <S extends Skill> void removeOnDemand(Class<S> skillType, Set<S> obstacles, Skill entity) {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
 			obstacles.remove(asSkill.get());
@@ -317,7 +341,7 @@ public class Cobra2DWorld {
 		}
 	}
 
-	public Set<Entity> getAllEntities() {
+	public Set<Skill> getAllEntities() {
 		return new HashSet<>(allEntities.values());
 	}
 
@@ -363,20 +387,20 @@ public class Cobra2DWorld {
 		return updateWorld;
 	}
 
-	private <S extends Skill> void notifyAddBySkill(Class<S> skillType, Entity entity) {
+	private <S extends Skill> void notifyAddBySkill(Class<S> skillType, Skill entity) {
 		skillWorldlistener(skillType).ifPresent(l -> l.entityAdded(entity));
 
 	}
 
-	private void notifyAdded(Entity entity) {
+	private void notifyAdded(Skill entity) {
 		listeners.stream().forEach(l -> l.entityAdded(entity));
 	}
 
-	private <S extends Skill> void notifyRemovedBySkill(Class<S> skillType, Entity entity) {
+	private <S extends Skill> void notifyRemovedBySkill(Class<S> skillType, Skill entity) {
 		skillWorldlistener(skillType).ifPresent(l -> l.entityRemoved(entity));
 	}
 
-	private void notifyRemoved(Entity entity) {
+	private void notifyRemoved(Skill entity) {
 		listeners.stream().forEach(l -> l.entityRemoved(entity));
 	}
 
@@ -388,11 +412,11 @@ public class Cobra2DWorld {
 		listeners.stream().forEach(l -> l.afterUpdate());
 	}
 
-	public void addEntities(Collection<Entity> toAdd) {
+	public void addEntities(Collection<Skill> toAdd) {
 		toAdd.forEach(this::addEntity);
 	}
 
-	public void removeEntities(Collection<Entity> toRemove) {
+	public void removeEntities(Collection<Skill> toRemove) {
 		toRemove.forEach(this::removeEntity);
 	}
 
@@ -402,6 +426,10 @@ public class Cobra2DWorld {
 
 	public Set<PhysicBody> getPhysicBodies() {
 		return physicBodies;
+	}
+
+	public Set<PhysicJoint> getPhysicJoints() {
+		return physicJoints;
 	}
 
 	public Set<SoundEffect> getSoundEffects() {

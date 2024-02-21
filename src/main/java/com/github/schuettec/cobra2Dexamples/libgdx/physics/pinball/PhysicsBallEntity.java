@@ -5,14 +5,12 @@ import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Point;
@@ -20,7 +18,7 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsBallEntity extends BasicCircleEntity implements CircleRenderable, DynamicBody, Updatable {
+public class PhysicsBallEntity extends BasicCircleEntity implements CircleRenderable, PhysicBody, Updatable {
 
 	private Body body;
 
@@ -41,15 +39,9 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	}
 
 	@Override
-	public BodyDef createBodyDef() {
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
-				getPosition().getRoundY() * renderScaleConversionFactor);
-		bodyDef.angle = getRadians();
+	public void configureBodyDef(BodyDef bodyDef) {
 		bodyDef.angularDamping = 0f;
-		bodyDef.linearDamping = 2f;
-		return bodyDef;
+		bodyDef.linearDamping = 0f;
 	}
 
 	@Override
@@ -63,14 +55,19 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
 		fixtureDef.density = 1f;
-		fixtureDef.friction = 0.5f;
-		fixtureDef.restitution = 1f;
+		fixtureDef.friction = 1f;
+		fixtureDef.restitution = 0.3f;
 		// Create our fixture and attach it to the body
 		this.fixture = body.createFixture(fixtureDef);
 		// Apply initial force
 		Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(getDegrees(), forceToApply);
 		body.applyForce(vForce, new Vector2(), true);
 		this.body = body;
+	}
+
+	@Override
+	public float getDensity() {
+		return 0.5f;
 	}
 
 	@Override
@@ -102,6 +99,11 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	@Override
 	public Body getBody() {
 		return body;
+	}
+
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
 	}
 
 }

@@ -7,18 +7,18 @@ import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.entity.skills.physics.StaticBody;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, StaticBody, Updatable {
+public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable {
 
 	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a 3cm radius ball on the screen that has
-	 * 30 Pixels radius.
+	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
+	 * 3cm radius ball on the screen that has 30 Pixels radius.
 	 */
 	private static final float toRenderScale = 100f;
 	private static float toPhysxFactor = 1 / toRenderScale;
@@ -75,6 +75,11 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 	@Override
 	public Body getBody() {
 		return body;
+	}
+
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
 	}
 
 }

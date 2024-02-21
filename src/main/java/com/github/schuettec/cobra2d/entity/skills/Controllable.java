@@ -7,7 +7,7 @@ import com.github.schuettec.cobra2d.world.WorldAccess;
  * Entity skill to receive controller updates before updating as an
  * {@link Updatable}.
  */
-public interface Controllable extends Entity {
+public interface Controllable extends Skill {
 
 	/**
 	 * Called by the engine to let this entity process the controller input. The

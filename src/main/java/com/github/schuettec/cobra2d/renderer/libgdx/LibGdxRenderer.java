@@ -26,8 +26,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
-import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
 import com.github.schuettec.cobra2d.renderer.Renderer;
@@ -39,9 +39,7 @@ import com.github.schuettec.cobra2d.world.Collision;
 public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	enum RendererState {
-		INITIALIZED,
-		CREATED,
-		FINISHED;
+		INITIALIZED, CREATED, FINISHED;
 	}
 
 	private Cobra2DEngine engine;
@@ -87,7 +85,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		config.useVsync(true);
 		if (engine.isFullscreen()) {
 			DisplayMode mode = getDisplayMode(engine.getResolutionX(), engine.getResolutionY(), engine.getBitDepth(),
-			    engine.getRefreshRate());
+					engine.getRefreshRate());
 			config.setFullscreenMode(mode);
 		} else {
 			config.setWindowedMode(engine.getResolutionX(), engine.getResolutionY());
@@ -113,7 +111,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	@Override
-	public void entityAdded(Entity entity) {
+	public void entityAdded(Skill entity) {
 		// Only initialize entities if the entity was added after renderer was started.
 		if (RendererState.INITIALIZED.equals(state)) {
 			Renderer.super.entityAdded(entity);
@@ -140,9 +138,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
 
-		world.getRenderables()
-		    .stream()
-		    .forEach(r -> r.initialize(rendererAccess));
+		world.getRenderables().stream().forEach(r -> r.initialize(rendererAccess));
 
 		waitForRenderer.countDown();
 	}
@@ -221,9 +217,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	public void finish() {
 		this.state = RendererState.FINISHED;
 
-		world.getRenderables()
-		    .stream()
-		    .forEach(r -> r.dispose());
+		world.getRenderables().stream().forEach(r -> r.dispose());
 
 		shapeRenderer.dispose();
 		spriteRenderer.dispose();
@@ -237,12 +231,13 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		DisplayMode[] availableModes = Lwjgl3ApplicationConfiguration.getDisplayModes(primary);
 		for (DisplayMode mode : availableModes) {
 			if (mode.width == resolutionX && mode.height == resolutionY
-			    && ((mode.bitsPerPixel == bitDepth) || mode.bitsPerPixel == -1) && mode.refreshRate == refreshRate) {
+					&& ((mode.bitsPerPixel == bitDepth) || mode.bitsPerPixel == -1)
+					&& mode.refreshRate == refreshRate) {
 				return mode;
 			}
 		}
 		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
-		    + "hz at " + bitDepth + " bit depth.");
+				+ "hz at " + bitDepth + " bit depth.");
 	}
 
 	ShapeRenderer getShapeRenderer() {
@@ -279,37 +274,29 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	private void loadTextures() {
-		textureLocations.keySet()
-		    .stream()
-		    .forEach(id -> {
-			    URL url = textureLocations.get(id);
-			    loadTexture(id, url);
-		    });
+		textureLocations.keySet().stream().forEach(id -> {
+			URL url = textureLocations.get(id);
+			loadTexture(id, url);
+		});
 	}
 
 	private void loadSounds() {
-		soundLocations.keySet()
-		    .stream()
-		    .forEach(id -> {
-			    URL url = soundLocations.get(id);
-			    loadSound(id, url);
-		    });
+		soundLocations.keySet().stream().forEach(id -> {
+			URL url = soundLocations.get(id);
+			loadSound(id, url);
+		});
 	}
 
 	private void disposeTextures() {
-		textures.values()
-		    .stream()
-		    .forEach(t -> {
-			    t.dispose();
-		    });
+		textures.values().stream().forEach(t -> {
+			t.dispose();
+		});
 	}
 
 	private void disposeSounds() {
-		sounds.values()
-		    .stream()
-		    .forEach(s -> {
-			    s.dispose();
-		    });
+		sounds.values().stream().forEach(s -> {
+			s.dispose();
+		});
 	}
 
 	Texture getTexture(String imageId) {
@@ -329,7 +316,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	@Override
-	public Controller getControllerForEntity(Entity entity) {
+	public Controller getControllerForEntity(Skill entity) {
 		return controller;
 	}
 

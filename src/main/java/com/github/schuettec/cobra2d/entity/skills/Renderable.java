@@ -17,6 +17,8 @@ public interface Renderable extends Placeable {
 	public abstract void render(final RendererAccess renderer, final Point screenTranslation);
 
 	// Layer
-	public abstract int getLayer();
+	public default int getLayer() {
+		return 0;
+	}
 
 }

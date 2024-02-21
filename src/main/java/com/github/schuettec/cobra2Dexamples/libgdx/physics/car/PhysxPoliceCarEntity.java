@@ -7,7 +7,6 @@ import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
@@ -15,7 +14,7 @@ import com.github.schuettec.cobra2Dexamples.textureRendering.TexturedEntity;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.entity.skills.state.EntityStateValue;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
@@ -29,7 +28,7 @@ import com.github.schuettec.cobra2d.renderer.libgdx.LibGdxRenderable;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysxPoliceCarEntity extends TexturedEntity
-		implements LibGdxRenderable, DynamicBody, Updatable, Controllable {
+		implements LibGdxRenderable, PhysicBody, Updatable, Controllable {
 
 	int torque = 200;
 	float m_maxForwardSpeed = 100;
@@ -337,14 +336,9 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	}
 
 	@Override
-	public BodyDef createBodyDef() {
-		this.bodyDef = new BodyDef();
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(getPosition().getRoundX() * renderScaleConversionFactor,
-				getPosition().getRoundY() * renderScaleConversionFactor);
+	public void configureBodyDef(BodyDef bodyDef) {
 		bodyDef.angle = (float) Math.toRadians(270);
 		bodyDef.allowSleep = true;
-		return bodyDef;
 	}
 
 	@Override
@@ -379,4 +373,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		return body;
 	}
 
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
+	}
 }

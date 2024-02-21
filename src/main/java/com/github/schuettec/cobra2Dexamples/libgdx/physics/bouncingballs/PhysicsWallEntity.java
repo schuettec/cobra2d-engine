@@ -1,53 +1,32 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.physics.bouncingballs;
 
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.entity.skills.physics.StaticBody;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, StaticBody, Updatable {
+public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable {
 
 	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a 3cm radius ball on the screen that has
-	 * 30 Pixels radius.
+	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
+	 * 3cm radius ball on the screen that has 30 Pixels radius.
 	 */
 	private static final float toRenderScale = 100f;
 	private static float toPhysxFactor = 1 / toRenderScale;
 
 	private Body body;
+	private Fixture fixture;
 
 	public PhysicsWallEntity(Point worldCoordinates, Dimension dimension) {
 		super(worldCoordinates, dimension);
-	}
-
-	@Override
-	public BodyDef createBodyDef() {
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.StaticBody;
-		bodyDef.position.set(getPosition().getRoundX() * toPhysxFactor, getPosition().getRoundY() * toPhysxFactor);
-		bodyDef.angle = getRadians();
-		return bodyDef;
-	}
-
-	@Override
-	public void createFixture(Body body) {
-		PolygonShape polygonShape = new PolygonShape();
-		double width = getCollisionShapeDimension().getWidth();
-		double height = getCollisionShapeDimension().getHeight();
-		float phWidth = (float) width * toPhysxFactor;
-		float phHeight = (float) height * toPhysxFactor;
-		polygonShape.setAsBox(phWidth / 2.0f, phHeight / 2.0f);
-		body.createFixture(polygonShape, 5.0f);
-		this.body = body;
 	}
 
 	@Override
@@ -75,6 +54,21 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 	@Override
 	public Body getBody() {
 		return body;
+	}
+
+	@Override
+	public float getDensity() {
+		return 5f;
+	}
+
+	@Override
+	public BodyType getBodyType() {
+		return BodyType.StaticBody;
+	}
+
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
 	}
 
 }

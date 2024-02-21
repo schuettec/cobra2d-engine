@@ -11,18 +11,20 @@ import com.github.schuettec.cobra2d.entity.skills.Entity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 
 /**
- * Access layer to add/remove entities from the world while renderer and world updater are running. This layer is
- * accessed by entities or other game managing objects to safely add/remove entities to the game world.
+ * Access layer to add/remove entities from the world while renderer and world
+ * updater are running. This layer is accessed by entities or other game
+ * managing objects to safely add/remove entities to the game world.
  */
 public class WorldAccess implements WorldListener {
 
 	private Cobra2DWorld world;
 
-	private Deque<Entity> toAdd = new ConcurrentLinkedDeque<>();
-	private Deque<Entity> toRemove = new ConcurrentLinkedDeque<>();
+	private Deque<Skill> toAdd = new ConcurrentLinkedDeque<>();
+	private Deque<Skill> toRemove = new ConcurrentLinkedDeque<>();
 
 	public WorldAccess(Cobra2DWorld world) {
 		super();
@@ -30,15 +32,15 @@ public class WorldAccess implements WorldListener {
 		this.world.addWorldListener(this);
 	}
 
-	public Optional<Entity> getEntityById(String entityId) {
+	public Optional<Skill> getEntityById(String entityId) {
 		return world.getEntityById(entityId);
 	}
 
-	public void spawnEntity(Entity entity) {
+	public void spawnEntity(Skill entity) {
 		toAdd.add(entity);
 	}
 
-	public void removeEntity(Entity entity) {
+	public void removeEntity(Skill entity) {
 		toRemove.add(entity);
 	}
 
@@ -63,7 +65,7 @@ public class WorldAccess implements WorldListener {
 		return world.getCameraCollision(camera);
 	}
 
-	public Set<Entity> getAllEntities() {
+	public Set<Skill> getAllEntities() {
 		return world.getAllEntities();
 	}
 

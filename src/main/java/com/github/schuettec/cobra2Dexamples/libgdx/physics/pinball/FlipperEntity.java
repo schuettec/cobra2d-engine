@@ -1,17 +1,14 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.physics.pinball;
 
-import java.time.Duration;
-
 import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.entity.skills.physics.DynamicBody;
+import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -21,63 +18,67 @@ import com.github.schuettec.cobra2d.utils.TimedBoolean;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class FlipperEntity extends BasicRectangleEntity
-		implements PolygonRenderable, DynamicBody, Updatable, Controllable {
+		implements PolygonRenderable, Updatable, PhysicBody, Controllable {
 
-	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
-	 * 3cm radius ball on the screen that has 30 Pixels radius.
-	 */
-	private static final float toRenderScale = 100f;
-	private static float toPhysxFactor = 1 / toRenderScale;
+	private static final double MIN_FLIPPER_DEGREES = 335d;
+	private static final double MAX_FLIPPER_DEGREES = 405d;
 
 	private Body body;
 
 	private TimedBoolean leftKeyState;
 
+	/**
+	 * The pivot point of the flipper shaft. This is the point the flipper shaft
+	 * will be rotated by.
+	 */
+	private Point pivotPointTranslation = new Point(0.5, 0);
+	private Fixture fixture;
+
+	private float density = 5f;
+	private BodyType bodyType = BodyType.DynamicBody;
+
 	public FlipperEntity(Point worldCoordinates, Dimension dimension) {
 		super(worldCoordinates, dimension);
+		moveCollisionShapeByPivotPoint(pivotPointTranslation);
 		this.leftKeyState = new TimedBoolean();
 	}
 
-	@Override
-	public BodyDef createBodyDef() {
-		BodyDef bodyDef = new BodyDef();
-		bodyDef.type = BodyType.KinematicBody;
-		bodyDef.position.set(getPosition().getRoundX() * toPhysxFactor, getPosition().getRoundY() * toPhysxFactor);
-		bodyDef.angle = getRadians();
-		return bodyDef;
-	}
-
-	@Override
-	public void createFixture(Body body) {
-		PolygonShape polygonShape = new PolygonShape();
-		double width = getCollisionShapeDimension().getWidth();
-		double height = getCollisionShapeDimension().getHeight();
-		float phWidth = (float) width * toPhysxFactor;
-		float phHeight = (float) height * toPhysxFactor;
-		polygonShape.setAsBox(phWidth / 2.0f, phHeight / 2.0f);
-		body.createFixture(polygonShape, 5.0f);
-		this.body = body;
+	/**
+	 * Translates the entitie's polygon collision shape by the pivot point to have
+	 * flipper shaft rotation point at (0|0).
+	 *
+	 * @param pivotPoint The pivot Point translation
+	 */
+	private void moveCollisionShapeByPivotPoint(Point pivotPoint) {
+		Dimension collisionShapeDimension = getCollisionShapeDimension();
+		polygon.translate(
+				pivotPoint.clone().scale(collisionShapeDimension.getWidth(), collisionShapeDimension.getHeight()));
 	}
 
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
-		Point newPosition = new Point(body.getPosition().x, body.getPosition().y);
-		newPosition = newPosition.scale(toRenderScale);
-		this.setPosition(newPosition);
+		PhysicBody.super.update(worldAccess, deltaTime);
 
-		float rotation = Math2D.toDegrees(body.getAngle());
-		this.setDegrees(rotation);
+		// Max Flipper degrees between 335 (min) -> 405 (max)
 
 		float currentFlipperAngle = Math2D.toDegrees(body.getAngle());
-
 		if (leftKeyState.isTrue()) {
-			// if(currentFlipperAngle >= )
-			Duration duration = leftKeyState.getDuration();
-			// System.out.println("Milis: " + duration.get(ChronoUnit.NANOS));
-			System.out.println("Milis: " + duration.toMillis());
-			body.setAngularVelocity(0.5f);
+
+			System.out.println(currentFlipperAngle);
+			if (currentFlipperAngle >= 390) {
+//				body.setAngularVelocity(0.01f);
+				body.applyTorque(1000f, true);
+				System.out.println("Nur wenig SPeeeed");
+			} else {
+				long velocityByMillis = Math.min(leftKeyState.getDuration().toMillis(), 80);
+				velocityByMillis = Math.max(velocityByMillis, 25);
+//				body.setAngularVelocity(velocityByMillis);
+				body.applyTorque(100f, true);
+			}
+		} else {
+			body.setAngularVelocity(-40f);
 		}
+
 	}
 
 	@Override
@@ -107,6 +108,21 @@ public class FlipperEntity extends BasicRectangleEntity
 	@Override
 	public Body getBody() {
 		return body;
+	}
+
+	@Override
+	public float getDensity() {
+		return density;
+	}
+
+	@Override
+	public BodyType getBodyType() {
+		return bodyType;
+	}
+
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
 	}
 
 }

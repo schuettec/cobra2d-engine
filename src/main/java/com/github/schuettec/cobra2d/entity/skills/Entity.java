@@ -13,18 +13,6 @@ import com.github.schuettec.cobra2d.math.Point;
 public interface Entity extends Skill {
 
 	/**
-	 * @return Returns the id of this entity.
-	 */
-	public String getId();
-
-	/**
-	 * Sets an id.
-	 * 
-	 * @param setId The id.
-	 */
-	public void setId(String setId);
-
-	/**
 	 * Returns the position of this entity.
 	 * <p>
 	 * Most of the entities will return their center points to make positioning
@@ -40,14 +28,12 @@ public interface Entity extends Skill {
 	/**
 	 * Sets the position of this entity in world coordinates.
 	 *
-	 * @param worldCoordinates
-	 *        Word coordinates.
+	 * @param worldCoordinates Word coordinates.
 	 */
 	public void setPosition(Point worldCoordinates);
 
 	/**
-	 * @param scale
-	 *        Sets the scaling factor.
+	 * @param scale Sets the scaling factor.
 	 */
 	public void setScale(double scale);
 
@@ -59,8 +45,7 @@ public interface Entity extends Skill {
 	/**
 	 * This method set the degrees of the entity rotation.
 	 *
-	 * @param degrees
-	 *        The degrees of the entity rotation.
+	 * @param degrees The degrees of the entity rotation.
 	 */
 	public void setDegrees(double degrees);
 
@@ -78,7 +63,7 @@ public interface Entity extends Skill {
 
 	/**
 	 * Sets the rotation like {@link #setDegrees(double)}.
-	 * 
+	 *
 	 * @param degrees The rotation.
 	 * @return Returns this entity for method chaining.
 	 */
@@ -86,7 +71,7 @@ public interface Entity extends Skill {
 
 	/**
 	 * Adds a translation to the position of this entity.
-	 * 
+	 *
 	 * @param translation The translation to add.
 	 * @return Returns this entity for method chaining.
 	 */
@@ -94,7 +79,7 @@ public interface Entity extends Skill {
 
 	/**
 	 * Sets the scaling of this entity like {@link #scale(double)}.
-	 * 
+	 *
 	 * @param scaleFactor The scale factor.
 	 * @return Returns this entity for method chaining.
 	 */
