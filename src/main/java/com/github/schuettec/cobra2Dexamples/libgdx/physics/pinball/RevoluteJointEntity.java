@@ -50,18 +50,17 @@ public class RevoluteJointEntity implements Updatable, Controllable, PhysicJoint
 
 	@Override
 	public void processControllerState(WorldAccess worldAccess, Controller controller) {
-		if (controller.isLeftKeyPressed()) {
-			this.leftKeyState.start();
-			joint.setMotorSpeed(240);
-		} else {
-			this.leftKeyState.reset();
-			joint.setMotorSpeed(0);
-		}
+//		if (controller.isLeftKeyPressed()) {
+//			this.leftKeyState.start();
+//			joint.setMotorSpeed(240);
+//		} else {
+//			this.leftKeyState.reset();
+//			joint.setMotorSpeed(0);
+//		}
 	}
 
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
-//System.out.println(joint.);
 	}
 
 	@Override

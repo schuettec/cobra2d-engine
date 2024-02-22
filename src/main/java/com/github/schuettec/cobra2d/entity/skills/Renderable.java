@@ -14,6 +14,12 @@ public interface Renderable extends Placeable {
 
 	// If the entity should be visible in the scene, it should give a image
 	// that will be rendered to the camera
+	/**
+	 * Called by the engine to render this object.
+	 * 
+	 * @param renderer          The access to rendering functions.
+	 * @param screenTranslation The position on screen.
+	 */
 	public abstract void render(final RendererAccess renderer, final Point screenTranslation);
 
 	// Layer

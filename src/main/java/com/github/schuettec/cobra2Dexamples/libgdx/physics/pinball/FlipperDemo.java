@@ -41,13 +41,15 @@ public class FlipperDemo {
 		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
 		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
 
+		HammerEntity hammer = new HammerEntity(new Point(50, 50), new Dimension(20, 20));
+
 		wall1.setPositionByPoint(RectanglePoint.TR, new Point(0, height));
 		wall2.setPositionByPoint(RectanglePoint.TL, new Point(width, height));
 		wall3.setPositionByPoint(RectanglePoint.TL, new Point(0, 0));
 		wall4.setPositionByPoint(RectanglePoint.TL, new Point(0, height + WALL_WIDTH));
 
 		AnchorEntity entityLeft = new AnchorEntity(new Point(70, 150), new Dimension(5, 5));
-		FlipperEntity flipperLeft = new FlipperEntity(new Point(70, 150), new Dimension(90, 18));
+		FlipperEntity flipperLeft = new FlipperEntity(new Point(70, 150), new Dimension(90, 18), hammer);
 		flipperLeft.setDegrees(330);
 
 		RevoluteJointEntity jointLeft = new RevoluteJointEntity(entityLeft, flipperLeft);
@@ -70,6 +72,7 @@ public class FlipperDemo {
 		engine.addEntity(entityLeft);
 		engine.addEntity(flipperLeft);
 		engine.addEntity(jointLeft);
+		engine.addEntity(hammer);
 
 		engine.addEntity(camera);
 		engine.setCameraForInput(camera);

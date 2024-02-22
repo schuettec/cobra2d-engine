@@ -69,7 +69,6 @@ public interface PhysicBody extends Skill, Updatable, Obstacle {
 	 * @param fixture The pre-configured fixture.
 	 */
 	public default void configureFixture(Fixture fixture) {
-
 	}
 
 	/**

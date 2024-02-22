@@ -349,6 +349,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		// renderer/cobra2D-world angle.
 		// An angle of 0° in physics engine is "north", in cobra2d/libgdx the angle of
 		// 0° is "east".
+		// Wobei das eigentlich eher daher kommt, dass oben der Vector(0,1) als
+		// Blickrichtung definiert wird.
 		// Rotate to match physics angle;
 		Polygon collisionShape = getCollisionShape(true, false, false).rotate(90);
 		Rectangle huellRect = Math2D.getHuellRect(collisionShape.getPoints());

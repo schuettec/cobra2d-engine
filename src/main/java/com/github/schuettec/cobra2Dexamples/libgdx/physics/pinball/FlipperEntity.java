@@ -36,11 +36,14 @@ public class FlipperEntity extends BasicRectangleEntity
 
 	private float density = 5f;
 	private BodyType bodyType = BodyType.DynamicBody;
+	private HammerEntity hammer;
 
-	public FlipperEntity(Point worldCoordinates, Dimension dimension) {
+	public FlipperEntity(Point worldCoordinates, Dimension dimension, HammerEntity hammer) {
 		super(worldCoordinates, dimension);
 		moveCollisionShapeByPivotPoint(pivotPointTranslation);
 		this.leftKeyState = new TimedBoolean();
+
+		this.hammer = hammer;
 	}
 
 	/**
@@ -58,25 +61,27 @@ public class FlipperEntity extends BasicRectangleEntity
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
 		PhysicBody.super.update(worldAccess, deltaTime);
-
-		// Max Flipper degrees between 335 (min) -> 405 (max)
-
 		float currentFlipperAngle = Math2D.toDegrees(body.getAngle());
+		System.out.println("Fixed rot: " + body.isFixedRotation());
 		if (leftKeyState.isTrue()) {
 
-			System.out.println(currentFlipperAngle);
+			hammer.fire();
+
 			if (currentFlipperAngle >= 390) {
-//				body.setAngularVelocity(0.01f);
-				body.applyTorque(1000f, true);
-				System.out.println("Nur wenig SPeeeed");
+				body.setFixedRotation(true);
 			} else {
 				long velocityByMillis = Math.min(leftKeyState.getDuration().toMillis(), 80);
 				velocityByMillis = Math.max(velocityByMillis, 25);
-//				body.setAngularVelocity(velocityByMillis);
-				body.applyTorque(100f, true);
+				body.applyTorque(200f, true);
+				body.setFixedRotation(false);
 			}
 		} else {
-			body.setAngularVelocity(-40f);
+			body.setFixedRotation(false);
+			if (currentFlipperAngle < 390) {
+				body.applyTorque(-100f, true);
+			} else {
+				body.applyTorque(0, true);
+			}
 		}
 
 	}
