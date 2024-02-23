@@ -47,11 +47,12 @@ public class HammerEntity extends BasicRectangleEntity implements PolygonRendera
 			System.out.println("Fire");
 			// Get the force vector in current object orientation.
 			// Scale the world normal by the desired force (scl-Method)
-			this.body.applyForceToCenter(new Vector2(0, 1500), true);
+			this.body.applyForceToCenter(new Vector2(1500, 0), true);
+			// Reset fire flag
+			this.fire = false;
+		} else {
+			this.body.applyForceToCenter(new Vector2(-1500, 0), true);
 		}
-
-		// Reset fire flag
-		this.fire = false;
 	}
 
 	@Override

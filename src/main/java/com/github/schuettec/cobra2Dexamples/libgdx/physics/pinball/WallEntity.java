@@ -3,6 +3,7 @@ package com.github.schuettec.cobra2Dexamples.libgdx.physics.pinball;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
@@ -14,7 +15,7 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable {
+public class WallEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable {
 
 	/**
 	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
@@ -25,7 +26,7 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 
 	private Body body;
 
-	public PhysicsWallEntity(Point worldCoordinates, Dimension dimension) {
+	public WallEntity(Point worldCoordinates, Dimension dimension) {
 		super(worldCoordinates, dimension);
 	}
 
@@ -46,7 +47,7 @@ public class PhysicsWallEntity extends BasicRectangleEntity implements PolygonRe
 		float phWidth = (float) width * toPhysxFactor;
 		float phHeight = (float) height * toPhysxFactor;
 		polygonShape.setAsBox(phWidth / 2.0f, phHeight / 2.0f);
-		body.createFixture(polygonShape, 5.0f);
+		Fixture fixture = body.createFixture(polygonShape, 5.0f);
 		this.body = body;
 	}
 

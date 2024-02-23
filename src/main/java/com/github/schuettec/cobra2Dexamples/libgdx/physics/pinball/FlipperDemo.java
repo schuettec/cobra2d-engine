@@ -36,12 +36,10 @@ public class FlipperDemo {
 		double height = 800;
 		double width = height * PLAYFIELD_RATIO;
 
-		PhysicsWallEntity wall1 = new PhysicsWallEntity(new Point(0, 0), new Dimension(WALL_WIDTH, height));
-		PhysicsWallEntity wall2 = new PhysicsWallEntity(new Point(0, 0), new Dimension(WALL_WIDTH, height));
-		PhysicsWallEntity wall3 = new PhysicsWallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
-		PhysicsWallEntity wall4 = new PhysicsWallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
-
-		HammerEntity hammer = new HammerEntity(new Point(50, 50), new Dimension(20, 20));
+		WallEntity wall1 = new WallEntity(new Point(0, 0), new Dimension(WALL_WIDTH, height));
+		WallEntity wall2 = new WallEntity(new Point(0, 0), new Dimension(WALL_WIDTH, height));
+		WallEntity wall3 = new WallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
+		WallEntity wall4 = new WallEntity(new Point(0, 0), new Dimension(width, WALL_WIDTH));
 
 		wall1.setPositionByPoint(RectanglePoint.TR, new Point(0, height));
 		wall2.setPositionByPoint(RectanglePoint.TL, new Point(width, height));
@@ -49,10 +47,15 @@ public class FlipperDemo {
 		wall4.setPositionByPoint(RectanglePoint.TL, new Point(0, height + WALL_WIDTH));
 
 		AnchorEntity entityLeft = new AnchorEntity(new Point(70, 150), new Dimension(5, 5));
-		FlipperEntity flipperLeft = new FlipperEntity(new Point(70, 150), new Dimension(90, 18), hammer);
+		FlipperEntity flipperLeft = new FlipperEntity(new Point(70, 150), new Dimension(90, 18));
 		flipperLeft.setDegrees(330);
-
 		RevoluteJointEntity jointLeft = new RevoluteJointEntity(entityLeft, flipperLeft);
+
+		HammerEntity hammer = new HammerEntity(new Point(50, 50), new Dimension(20, 20));
+		AnchorEntity hammerAnchor = new AnchorEntity(new Point(70, 50), new Dimension(5, 5));
+		LimitMovementJoint hammerToAnchorJoint = new LimitMovementJoint(hammerAnchor, hammer);
+
+		BallHitSensorEntity hammerSensor = new BallHitSensorEntity(new Point(50, 50), new Dimension(70, 70), hammer);
 
 		PinballCamera camera = new PinballCamera(new Point(0, height), new Dimension(1000, 1000), false);
 		camera.setPositionByPoint(RectanglePoint.TL, new Point(-20, height + 20));
@@ -72,7 +75,11 @@ public class FlipperDemo {
 		engine.addEntity(entityLeft);
 		engine.addEntity(flipperLeft);
 		engine.addEntity(jointLeft);
+
 		engine.addEntity(hammer);
+		engine.addEntity(hammerAnchor);
+		engine.addEntity(hammerToAnchorJoint);
+		engine.addEntity(hammerSensor);
 
 		engine.addEntity(camera);
 		engine.setCameraForInput(camera);

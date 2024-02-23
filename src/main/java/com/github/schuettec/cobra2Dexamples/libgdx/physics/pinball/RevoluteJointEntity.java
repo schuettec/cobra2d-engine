@@ -4,16 +4,13 @@ import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJoint;
 import com.badlogic.gdx.physics.box2d.joints.RevoluteJointDef;
-import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.skills.Controllable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicJoint;
 import com.github.schuettec.cobra2d.math.Math2D;
-import com.github.schuettec.cobra2d.utils.TimedBoolean;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class RevoluteJointEntity implements Updatable, Controllable, PhysicJoint {
+public class RevoluteJointEntity implements Updatable, PhysicJoint {
 
 	private String id;
 
@@ -21,13 +18,10 @@ public class RevoluteJointEntity implements Updatable, Controllable, PhysicJoint
 	private PhysicBody body1;
 	private PhysicBody body2;
 
-	private TimedBoolean leftKeyState;
-
 	public RevoluteJointEntity(PhysicBody body1, PhysicBody body2) {
 		this.id = createId();
 		this.body1 = body1;
 		this.body2 = body2;
-		this.leftKeyState = new TimedBoolean();
 
 	}
 
@@ -43,20 +37,7 @@ public class RevoluteJointEntity implements Updatable, Controllable, PhysicJoint
 		revJointDef.enableLimit = true;
 		revJointDef.upperAngle = Math2D.toRadians(61);
 		revJointDef.lowerAngle = Math2D.toRadians(0);
-		revJointDef.enableMotor = true;
-		revJointDef.motorSpeed = 0;
 		return revJointDef;
-	}
-
-	@Override
-	public void processControllerState(WorldAccess worldAccess, Controller controller) {
-//		if (controller.isLeftKeyPressed()) {
-//			this.leftKeyState.start();
-//			joint.setMotorSpeed(240);
-//		} else {
-//			this.leftKeyState.reset();
-//			joint.setMotorSpeed(0);
-//		}
 	}
 
 	@Override

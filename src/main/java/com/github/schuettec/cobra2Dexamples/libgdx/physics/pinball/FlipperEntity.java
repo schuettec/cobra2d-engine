@@ -34,16 +34,20 @@ public class FlipperEntity extends BasicRectangleEntity
 	private Point pivotPointTranslation = new Point(0.5, 0);
 	private Fixture fixture;
 
-	private float density = 5f;
+	private float density = 1f;
 	private BodyType bodyType = BodyType.DynamicBody;
-	private HammerEntity hammer;
 
-	public FlipperEntity(Point worldCoordinates, Dimension dimension, HammerEntity hammer) {
+	public FlipperEntity(Point worldCoordinates, Dimension dimension) {
 		super(worldCoordinates, dimension);
 		moveCollisionShapeByPivotPoint(pivotPointTranslation);
 		this.leftKeyState = new TimedBoolean();
+	}
 
-		this.hammer = hammer;
+	@Override
+	public void configureFixture(Fixture fixture) {
+		PhysicBody.super.configureFixture(fixture);
+		fixture.setFriction(1f);
+		fixture.setRestitution(0f);
 	}
 
 	/**
@@ -62,11 +66,7 @@ public class FlipperEntity extends BasicRectangleEntity
 	public void update(WorldAccess worldAccess, float deltaTime) {
 		PhysicBody.super.update(worldAccess, deltaTime);
 		float currentFlipperAngle = Math2D.toDegrees(body.getAngle());
-		System.out.println("Fixed rot: " + body.isFixedRotation());
 		if (leftKeyState.isTrue()) {
-
-			hammer.fire();
-
 			if (currentFlipperAngle >= 390) {
 				body.setFixedRotation(true);
 			} else {
@@ -77,10 +77,10 @@ public class FlipperEntity extends BasicRectangleEntity
 			}
 		} else {
 			body.setFixedRotation(false);
-			if (currentFlipperAngle < 390) {
+			if (currentFlipperAngle > 330) {
 				body.applyTorque(-100f, true);
 			} else {
-				body.applyTorque(0, true);
+				body.setFixedRotation(true);
 			}
 		}
 

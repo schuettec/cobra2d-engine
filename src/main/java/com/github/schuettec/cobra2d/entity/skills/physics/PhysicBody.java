@@ -13,13 +13,12 @@ import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2d.entity.skills.Obstacle;
-import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public interface PhysicBody extends Skill, Updatable, Obstacle {
+public interface PhysicBody extends PhysicObject, Updatable, Obstacle {
 	/**
 	 * Returns a {@link BodyDef} with the initial entity position and rotation.
 	 *
@@ -106,38 +105,6 @@ public interface PhysicBody extends Skill, Updatable, Obstacle {
 		}
 		polygonShape.set(vertices);
 		return polygonShape;
-	}
-
-	public default float toPhysicsValue(float worldValue) {
-		return worldValue * getPhysicsScale();
-	}
-
-	public default float toWorldValue(float physicsValue) {
-		return physicsValue / getPhysicsScale();
-	}
-
-	public default float toPhysicsValue(double worldValue) {
-		return (float) (worldValue * getPhysicsScale());
-	}
-
-	public default float toWorldValue(double physicsValue) {
-		return (float) (physicsValue / getPhysicsScale());
-	}
-
-	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
-	 * 3cm radius ball on the screen that has 30 Pixels radius.
-	 */
-	public default float getWorldScale() {
-		return 100f;
-	}
-
-	/**
-	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world. We want to show a
-	 * 3cm radius ball on the screen that has 30 Pixels radius.
-	 */
-	public default float getPhysicsScale() {
-		return 1 / getWorldScale();
 	}
 
 	/**

@@ -18,7 +18,7 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsBallEntity extends BasicCircleEntity implements CircleRenderable, PhysicBody, Updatable {
+public class BallEntity extends BasicCircleEntity implements CircleRenderable, PhysicBody, Updatable {
 
 	private Body body;
 
@@ -32,7 +32,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 	 */
 	private float renderScaleConversionFactor = 1 / 100f;
 
-	public PhysicsBallEntity(Point worldCoordinates, double radius, double forceToApply, double degrees) {
+	public BallEntity(Point worldCoordinates, double radius, double forceToApply, double degrees) {
 		super(worldCoordinates, radius);
 		this.forceToApply = forceToApply;
 		this.setDegrees(degrees);
@@ -40,8 +40,6 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 
 	@Override
 	public void configureBodyDef(BodyDef bodyDef) {
-		bodyDef.angularDamping = 0f;
-		bodyDef.linearDamping = 0f;
 	}
 
 	@Override
@@ -54,7 +52,7 @@ public class PhysicsBallEntity extends BasicCircleEntity implements CircleRender
 		// Create a fixture definition to apply our shape to
 		FixtureDef fixtureDef = new FixtureDef();
 		fixtureDef.shape = shape;
-		fixtureDef.density = 1f;
+		fixtureDef.density = 2f;
 		fixtureDef.friction = 1f;
 		fixtureDef.restitution = 0.3f;
 		// Create our fixture and attach it to the body
