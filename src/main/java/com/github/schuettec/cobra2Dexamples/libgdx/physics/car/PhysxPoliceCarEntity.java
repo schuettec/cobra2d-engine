@@ -342,7 +342,7 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 	}
 
 	@Override
-	public void createFixture(Body body) {
+	public Fixture createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
 
 		// Be very careful here: The angle in the physics world is different to
@@ -368,6 +368,8 @@ public class PhysxPoliceCarEntity extends TexturedEntity
 		// Create our fixture and attach it to the body
 		this.fixture = body.createFixture(fixtureDef);
 		this.body = body;
+
+		return fixture;
 	}
 
 	@Override

@@ -3,7 +3,6 @@ package com.github.schuettec.cobra2Dexamples.libgdx.physics.pinball;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
-import com.github.schuettec.cobra2Dexamples.bouncingBalls.BallEntity;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
@@ -39,7 +38,8 @@ public class BallHitSensorEntity extends BasicRectangleEntity implements Polygon
 				HasCollisionShape::getCollisionShapeInWorldCoordinates, worldAccess.getObstaclesExcept(this),
 				HasCollisionShape::getCollisionShapeInWorldCoordinates, false, false, false);
 		boolean isCollidingWithBall = collisionMap.getCollisions().stream()
-				.filter(c -> c.getEntity() instanceof BallEntity).findFirst().isPresent();
+				.filter(c -> c.getOpponent() instanceof BallEntity).findFirst().isPresent();
+
 		if (isCollidingWithBall) {
 			if (!wasFired) {
 				System.out.println("FIred");
@@ -73,7 +73,7 @@ public class BallHitSensorEntity extends BasicRectangleEntity implements Polygon
 
 	@Override
 	public Color getDrawColor() {
-		return Color.WHITE;
+		return Color.GREEN;
 	}
 
 }

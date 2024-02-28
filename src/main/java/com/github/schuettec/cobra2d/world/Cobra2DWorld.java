@@ -17,8 +17,13 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
+import com.badlogic.gdx.physics.box2d.Contact;
+import com.badlogic.gdx.physics.box2d.ContactImpulse;
+import com.badlogic.gdx.physics.box2d.ContactListener;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Joint;
 import com.badlogic.gdx.physics.box2d.JointDef;
+import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
@@ -96,6 +101,30 @@ public class Cobra2DWorld {
 
 	private WorldAccess worldAccess;
 
+	private ContactListener contactListener = new ContactListener() {
+
+		@Override
+		public void preSolve(Contact contact, Manifold oldManifold) {
+		}
+
+		@Override
+		public void postSolve(Contact contact, ContactImpulse impulse) {
+		}
+
+		@Override
+		public void beginContact(Contact contact) {
+//			Skill entityA = (Skill) contact.getFixtureA().getUserData();
+//			Skill entityB = (Skill) contact.getFixtureB().getUserData();
+
+		}
+
+		@Override
+		public void endContact(Contact contact) {
+
+		}
+
+	};
+
 	public Cobra2DWorld(Cobra2DEngine engine, boolean updateWorld) {
 		this.engine = engine;
 		this.updateWorld = updateWorld;
@@ -103,6 +132,7 @@ public class Cobra2DWorld {
 		if (isUpdateWorld()) {
 			// Create a default physics world with zero gravity
 			this.physicsWorld = new World(new Vector2(), true);
+			this.physicsWorld.setContactListener(contactListener);
 		}
 
 		this.allEntities = new Hashtable<String, Skill>();
@@ -128,7 +158,8 @@ public class Cobra2DWorld {
 					PhysicBody physicBody = (PhysicBody) entity;
 					BodyDef bodyDef = physicBody.createBodyDef();
 					Body body = physicsWorld.createBody(bodyDef);
-					physicBody.createFixture(body);
+					Fixture fixture = physicBody.createFixture(body);
+					fixture.setUserData(this);
 				}
 
 				@Override
@@ -145,6 +176,7 @@ public class Cobra2DWorld {
 					PhysicJoint physicJoint = (PhysicJoint) entity;
 					JointDef jointDef = physicJoint.createJointDef();
 					Joint joint = physicsWorld.createJoint(jointDef);
+					joint.setUserData(physicJoints);
 					physicJoint.setJoint(joint);
 				}
 

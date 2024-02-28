@@ -49,12 +49,14 @@ public interface PhysicBody extends PhysicObject, Updatable, Obstacle {
 	 * for the entity.
 	 *
 	 * @param body The body representing an entity in the physics engine.
+	 * @return
 	 */
-	public default void createFixture(Body body) {
+	public default Fixture createFixture(Body body) {
 		PolygonShape polygonShape = getBodyFromPolygonCollisionShape();
 		Fixture fixture = body.createFixture(polygonShape, getDensity());
 		configureFixture(fixture);
 		setBody(body);
+		return fixture;
 	}
 
 	/**

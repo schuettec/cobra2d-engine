@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.CircleShape;
+import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
@@ -40,7 +41,7 @@ public class PhysicsBallEntity extends BasicCircleEntity
 	}
 
 	@Override
-	public void createFixture(Body body) {
+	public Fixture createFixture(Body body) {
 		CircleShape shape = new CircleShape();
 		double worldRadius = getCollisionShape(true, false, false).getRadius();
 		float radius = (float) worldRadius * renderScaleConversionFactor;
@@ -53,11 +54,12 @@ public class PhysicsBallEntity extends BasicCircleEntity
 		fixtureDef.friction = 0f;
 		fixtureDef.restitution = 1f;
 		// Create our fixture and attach it to the body
-		body.createFixture(fixtureDef);
+		Fixture fixture = body.createFixture(fixtureDef);
 		// Apply initial force
 		Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(getDegrees(), forceToApply);
 		body.applyForce(vForce, new Vector2(), true);
 		this.body = body;
+		return fixture;
 	}
 
 	@Override

@@ -40,7 +40,7 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 	}
 
 	@Override
-	public void createFixture(Body body) {
+	public Fixture createFixture(Body body) {
 		PolygonShape polygonShape = new PolygonShape();
 		double width = getCollisionShapeDimension().getWidth();
 		double height = getCollisionShapeDimension().getHeight();
@@ -49,6 +49,7 @@ public class WallEntity extends BasicRectangleEntity implements PolygonRenderabl
 		polygonShape.setAsBox(phWidth / 2.0f, phHeight / 2.0f);
 		Fixture fixture = body.createFixture(polygonShape, 5.0f);
 		this.body = body;
+		return fixture;
 	}
 
 	@Override
