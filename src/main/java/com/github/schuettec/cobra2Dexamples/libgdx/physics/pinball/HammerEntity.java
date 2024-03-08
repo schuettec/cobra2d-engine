@@ -1,5 +1,8 @@
 package com.github.schuettec.cobra2Dexamples.libgdx.physics.pinball;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -28,6 +31,7 @@ public class HammerEntity extends BasicRectangleEntity implements PolygonRendera
 	public void configureBodyDef(BodyDef bodyDef) {
 		PhysicBody.super.configureBodyDef(bodyDef);
 		bodyDef.gravityScale = 0.1f;
+		bodyDef.bullet = true;
 	}
 
 	@Override
@@ -44,14 +48,19 @@ public class HammerEntity extends BasicRectangleEntity implements PolygonRendera
 
 		// Fire!!
 		if (fire) {
-			System.out.println("Fire");
 			// Get the force vector in current object orientation.
 			// Scale the world normal by the desired force (scl-Method)
-			this.body.applyForceToCenter(new Vector2(1500, 0), true);
+			float angle = this.body.getAngle();
+			float magnitude = 1500;
+			Vector2 force = new Vector2((float) cos(angle) * magnitude, (float) sin(angle) * magnitude);
+			this.body.applyForceToCenter(force, true);
 			// Reset fire flag
 			this.fire = false;
 		} else {
-			this.body.applyForceToCenter(new Vector2(-1500, 0), true);
+			float angle = this.body.getAngle();
+			float magnitude = -1500;
+			Vector2 force = new Vector2((float) cos(angle) * magnitude, (float) sin(angle) * magnitude);
+			this.body.applyForceToCenter(force, true);
 		}
 	}
 

@@ -51,9 +51,10 @@ public class FlipperDemo {
 		flipperLeft.setDegrees(330);
 		RevoluteJointEntity jointLeft = new RevoluteJointEntity(entityLeft, flipperLeft);
 
-		HammerEntity hammer = new HammerEntity(new Point(50, 50), new Dimension(20, 20));
-		AnchorEntity hammerAnchor = new AnchorEntity(new Point(70, 50), new Dimension(5, 5));
-		LimitMovementJoint hammerToAnchorJoint = new LimitMovementJoint(hammerAnchor, hammer);
+		AnchorEntity hammerAnchor = new AnchorEntity(new Point(50, 50), new Dimension(5, 5));
+		hammerAnchor.setDegrees(90);
+		HammerEntity hammer = new HammerEntity(new Point(50, 50), new Dimension(15, 15));
+		LimitMovementJoint hammerToAnchorJoint = new LimitMovementJoint(hammerAnchor, hammer, 30);
 
 		BallHitSensorEntity hammerSensor = new BallHitSensorEntity(new Point(50, 50), new Dimension(70, 70), hammer);
 
@@ -84,6 +85,8 @@ public class FlipperDemo {
 		engine.addEntity(camera);
 		engine.setCameraForInput(camera);
 		engine.start();
+
+		System.out.println(hammer.getDegrees());
 	}
 
 }

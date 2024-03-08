@@ -17,10 +17,13 @@ public class LimitMovementJoint implements Updatable, PhysicJoint {
 	private PhysicBody sensor;
 	private PhysicBody moveableBody;
 
-	public LimitMovementJoint(PhysicBody sensor, PhysicBody moveableBody) {
+	private long upperTranslationInWorldDistance;
+
+	public LimitMovementJoint(PhysicBody sensor, PhysicBody moveableBody, long upperTranslationInWorldDistance) {
 		this.id = createId();
 		this.sensor = sensor;
 		this.moveableBody = moveableBody;
+		this.upperTranslationInWorldDistance = upperTranslationInWorldDistance;
 
 	}
 
@@ -31,11 +34,11 @@ public class LimitMovementJoint implements Updatable, PhysicJoint {
 		jointDef.bodyB = moveableBody.getBody();
 		jointDef.localAnchorA.set(0f, 0f);
 		jointDef.localAnchorB.set(0f, 0f);
-//		revJointDef.referenceAngle = Math2D.toRadians(330);
+		jointDef.referenceAngle = (float) Math.toRadians(moveableBody.getDegrees());
 		jointDef.collideConnected = true;
 		jointDef.enableLimit = true;
 		jointDef.lowerTranslation = 0;
-		jointDef.upperTranslation = toPhysicsValue(40);
+		jointDef.upperTranslation = toPhysicsValue(upperTranslationInWorldDistance);
 		return jointDef;
 	}
 

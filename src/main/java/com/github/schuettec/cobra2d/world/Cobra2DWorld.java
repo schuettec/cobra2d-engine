@@ -101,6 +101,9 @@ public class Cobra2DWorld {
 
 	private WorldAccess worldAccess;
 
+	// TODO: Add collisions in the physic world to the collision map.
+	// TODO: Collision detection is currently an active task of every game entity.
+	// This should be handled by the engine in every update step.
 	private ContactListener contactListener = new ContactListener() {
 
 		@Override
