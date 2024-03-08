@@ -20,8 +20,10 @@ import com.github.schuettec.cobra2d.world.WorldAccess;
 public class FlipperEntity extends BasicRectangleEntity
 		implements PolygonRenderable, Updatable, PhysicBody, Controllable {
 
-	private static final double MIN_FLIPPER_DEGREES = 335d;
-	private static final double MAX_FLIPPER_DEGREES = 405d;
+	private static final float DOWN_TORQUE = 100f;
+	private static final float UP_TORQUE = 200f;
+	private static final double MIN_FLIPPER_DEGREES = 330d;
+	private static final double MAX_FLIPPER_DEGREES = 390d;
 
 	private Body body;
 
@@ -46,7 +48,7 @@ public class FlipperEntity extends BasicRectangleEntity
 	@Override
 	public void configureFixture(Fixture fixture) {
 		PhysicBody.super.configureFixture(fixture);
-		fixture.setFriction(1f);
+		fixture.setFriction(0.1f);
 		fixture.setRestitution(0f);
 	}
 
@@ -66,20 +68,23 @@ public class FlipperEntity extends BasicRectangleEntity
 	public void update(WorldAccess worldAccess, float deltaTime) {
 		PhysicBody.super.update(worldAccess, deltaTime);
 		float currentFlipperAngle = Math2D.toDegrees(body.getAngle());
+		System.out.println(currentFlipperAngle);
 		if (leftKeyState.isTrue()) {
-			if (currentFlipperAngle >= 390) {
+			if (currentFlipperAngle >= MAX_FLIPPER_DEGREES) {
+				System.out.println("ICh hör uff");
 				body.setFixedRotation(true);
 			} else {
-				long velocityByMillis = Math.min(leftKeyState.getDuration().toMillis(), 80);
-				velocityByMillis = Math.max(velocityByMillis, 25);
-				body.applyTorque(200f, true);
+				System.out.println("Ich geb Gas");
+				body.applyTorque(UP_TORQUE, true);
 				body.setFixedRotation(false);
 			}
 		} else {
 			body.setFixedRotation(false);
-			if (currentFlipperAngle > 330) {
-				body.applyTorque(-100f, true);
+			if (currentFlipperAngle > MIN_FLIPPER_DEGREES) {
+				System.out.println("Downforce");
+				body.applyTorque(-DOWN_TORQUE, true);
 			} else {
+				System.out.println("Sleep");
 				body.setFixedRotation(true);
 			}
 		}

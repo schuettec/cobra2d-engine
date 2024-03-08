@@ -19,6 +19,8 @@ import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class HammerEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable, Fireable {
 
+	private static final int MAGNITUDE = 1000;
+
 	public HammerEntity(Point worldCoordinates, Dimension dimension) {
 		super(worldCoordinates, dimension);
 	}
@@ -38,7 +40,7 @@ public class HammerEntity extends BasicRectangleEntity implements PolygonRendera
 	public void configureFixture(Fixture fixture) {
 		PhysicBody.super.configureFixture(fixture);
 		fixture.setDensity(1f);
-		fixture.setFriction(1f);
+		fixture.setFriction(0.5f);
 		fixture.setRestitution(0f);
 	}
 
@@ -51,14 +53,14 @@ public class HammerEntity extends BasicRectangleEntity implements PolygonRendera
 			// Get the force vector in current object orientation.
 			// Scale the world normal by the desired force (scl-Method)
 			float angle = this.body.getAngle();
-			float magnitude = 1500;
+			float magnitude = MAGNITUDE;
 			Vector2 force = new Vector2((float) cos(angle) * magnitude, (float) sin(angle) * magnitude);
 			this.body.applyForceToCenter(force, true);
 			// Reset fire flag
 			this.fire = false;
 		} else {
 			float angle = this.body.getAngle();
-			float magnitude = -1500;
+			float magnitude = -MAGNITUDE;
 			Vector2 force = new Vector2((float) cos(angle) * magnitude, (float) sin(angle) * magnitude);
 			this.body.applyForceToCenter(force, true);
 		}
