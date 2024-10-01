@@ -37,11 +37,15 @@ public class RevoluteJointEntity implements Updatable, PhysicJoint {
 		revJointDef.enableLimit = true;
 		revJointDef.upperAngle = Math2D.toRadians(61);
 		revJointDef.lowerAngle = Math2D.toRadians(0);
+		revJointDef.enableMotor = true;
 		return revJointDef;
 	}
 
 	@Override
 	public void update(WorldAccess worldAccess, float deltaTime) {
+		joint.setMaxMotorTorque(1);
+		joint.setMotorSpeed(1);
+		System.out.println("Joint angle:" + joint.getJointAngle());
 	}
 
 	@Override
