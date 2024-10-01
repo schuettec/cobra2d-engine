@@ -33,9 +33,10 @@ public class Point implements Shape, Cloneable {
 		return (int) Math.round(y);
 	}
 
-	public void translate(double x, double y) {
+	public Point translate(double x, double y) {
 		this.x += x;
 		this.y += y;
+		return this;
 	}
 
 	public double getX() {
@@ -57,10 +58,8 @@ public class Point implements Shape, Cloneable {
 	/**
 	 * Sets the location of this {@link Point}.
 	 *
-	 * @param x
-	 *        The new x coordinate of this {@link Point}.
-	 * @param y
-	 *        The new y coordinate of this {@link Point}.
+	 * @param x The new x coordinate of this {@link Point}.
+	 * @param y The new y coordinate of this {@link Point}.
 	 */
 	public void setLocation(double x, double y) {
 		this.x = x;
@@ -70,8 +69,7 @@ public class Point implements Shape, Cloneable {
 	/**
 	 * Sets the location of this {@link Point}.
 	 *
-	 * @param p
-	 *        The new location of this {@link Point}.
+	 * @param p The new location of this {@link Point}.
 	 */
 	public void setLocation(Point p) {
 		this.x = p.x;
