@@ -27,9 +27,10 @@
 		</developer>
 	</developers>
 	<properties>
+		<gdx-box2d-version>1.12.1</gdx-box2d-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>15</maven.compiler.source>
-		<maven.compiler.target>15</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
 	<distributionManagement>
 		<repository>
@@ -181,24 +182,24 @@
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-backend-lwjgl3</artifactId>
-			<version>1.11.0</version>
+			<version>${gdx-box2d-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-platform</artifactId>
-			<version>1.11.0</version>
+			<version>${gdx-box2d-version}</version>
 			<classifier>natives-desktop</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-box2d-platform</artifactId>
-			<version>1.11.0</version>
+			<version>${gdx-box2d-version}</version>
 			<classifier>natives-desktop</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.badlogicgames.gdx</groupId>
 			<artifactId>gdx-box2d</artifactId>
-			<version>1.11.0</version>
+			<version>${gdx-box2d-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.esotericsoftware</groupId>

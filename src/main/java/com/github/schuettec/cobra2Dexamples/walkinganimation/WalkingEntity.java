@@ -1,30 +1,42 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation;
 
 import com.github.schuettec.cobra2Dexamples.moveableShapes.MoveableCircleEntity;
-import com.github.schuettec.cobra2d.math.Math2D;
+import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class WalkingEntity extends MoveableCircleEntity {
 
+	private static final int MAX_STEP = 50;
+
 	private int currentStep = 0;
-	private int maxStep = 1000;
-	private double radius;
+
+	private Leg leg1;
+
+	private Leg leg2;
 
 	public WalkingEntity(Point worldCoordinates, double radius, boolean playerControlled) {
 		super(worldCoordinates, radius, playerControlled);
-		this.radius = radius;
+		LegBuilder builder = Leg.newLeg()
+		    .setLegLength(radius)
+		    .setWinkelVorschwungOberschenkel(60)
+		    .setWinkelRückschwungOberschenkel(40)
+		    .setMaxStep(MAX_STEP);
+		this.leg1 = builder.build();
+		this.leg2 = builder.build();
 	}
 
 	@Override
 	public void render(RendererAccess renderer, Point position) {
 		super.render(renderer, position);
 
-		currentStep = (currentStep + 1) % maxStep;
+		leg1.calculateStep(position, currentStep)
+		    .render(renderer, position);
+		leg2.calculateStep(position, currentStep + (MAX_STEP / 2))
+		    .render(renderer, position);
 
-		Point o1S = getPosition().clone().translate(position);
-		Point o1E = Math2D.getCircle(o1S, radius, -45);
+		currentStep = (currentStep + 1) % MAX_STEP;
 
-		renderer.drawLine(o1S.getRoundX(), o1S.getRoundY(), o1E.getRoundX(), o1E.getRoundY(), getDrawColor());
 	}
+
 }
