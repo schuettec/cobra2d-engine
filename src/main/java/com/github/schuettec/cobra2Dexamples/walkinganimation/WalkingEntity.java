@@ -68,6 +68,13 @@ public class WalkingEntity extends MoveableCircleEntity
 
   @Override
   public void update(WorldAccess worldAccess, float deltaTime) {
+    if (fast) {
+      leg1.setEllipsisWalkAnimMaxY(130d);
+      leg2.setEllipsisWalkAnimMaxY(130d);
+    } else {
+      leg1.setEllipsisWalkAnimMaxY(80d);
+      leg2.setEllipsisWalkAnimMaxY(80d);
+    }
   }
 
   @Override

@@ -20,9 +20,6 @@ public class Leg {
   private final int maxStep;
   private final double legLength;
 
-  private double unterschenkelLänge;
-  private double oberschenkelLänge;
-
   private double ellipsisWalkAnimMaxX;
   private double ellipsisWalkAnimMaxY;
   private HarmonicOscillation ellipsisOscilatorX;
@@ -125,10 +122,6 @@ public class Leg {
     this.ellipsisWalkAnimMaxX = builder.ellipsisWalkAnimMaxX;
     this.ellipsisWalkAnimMaxY = builder.ellipsisWalkAnimMaxY;
 
-    this.unterschenkelLänge = legLength
-        / (verhältnisOberschenkelUnterschenkel + 1);
-    this.oberschenkelLänge = legLength - unterschenkelLänge;
-
     this.ellipsisOscilatorX = new HarmonicOscillation(maxStep,
         ellipsisWalkAnimMaxX, 0.5d, Type.COSINUS, false);
     this.ellipsisOscilatorY = new HarmonicOscillation(maxStep,
@@ -142,6 +135,9 @@ public class Leg {
   // Inverse Kinematik-Methode
   public LegRenderable berechneWinkel(Point start, boolean left,
       Point ziel) {
+
+    double oberschenkelLänge = getOberschenkelLänge();
+    double unterschenkelLänge = getUnterschenkelLänge();
 
     double winkelOffset = Math2D.getAngle(start, ziel);
 
@@ -181,9 +177,19 @@ public class Leg {
 
   }
 
+  private double getOberschenkelLänge() {
+    return legLength - getUnterschenkelLänge();
+  }
+
+  private double getUnterschenkelLänge() {
+    return legLength / (verhältnisOberschenkelUnterschenkel + 1);
+  }
+
   public LegRenderable calculateStep(Point worldCoordinates,
       boolean left, double currentStep) {
 
+    ellipsisOscilatorX.setAmplitude(ellipsisWalkAnimMaxX);
+    ellipsisOscilatorY.setAmplitude(ellipsisWalkAnimMaxY);
     double sX = ellipsisOscilatorX.apply(currentStep);
     double sY = ellipsisOscilatorY.apply(currentStep);
 
@@ -203,6 +209,10 @@ public class Leg {
   private LegRenderable createLegRenderableFromWinkel(
       Point worldCoordinates, double winkelOberschenkel,
       double winkelUnterschenkel, double winkelFuss) {
+
+    double oberschenkelLänge = getOberschenkelLänge();
+    double unterschenkelLänge = getUnterschenkelLänge();
+
     Point o1S = worldCoordinates.clone();
     Point o1E = Math2D.getCircle(o1S, oberschenkelLänge,
         winkelOberschenkel);
@@ -216,4 +226,35 @@ public class Leg {
 
     return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E);
   }
+
+  public double getEllipsisWalkAnimMaxX() {
+    return ellipsisWalkAnimMaxX;
+  }
+
+  public void setEllipsisWalkAnimMaxX(
+      double ellipsisWalkAnimMaxX) {
+    this.ellipsisWalkAnimMaxX = ellipsisWalkAnimMaxX;
+  }
+
+  public double getEllipsisWalkAnimMaxY() {
+    return ellipsisWalkAnimMaxY;
+  }
+
+  public void setEllipsisWalkAnimMaxY(
+      double ellipsisWalkAnimMaxY) {
+    this.ellipsisWalkAnimMaxY = ellipsisWalkAnimMaxY;
+  }
+
+  public double getLängeFuß() {
+    return längeFuß;
+  }
+
+  public int getMaxStep() {
+    return maxStep;
+  }
+
+  public double getLegLength() {
+    return legLength;
+  }
+
 }

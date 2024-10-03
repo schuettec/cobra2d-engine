@@ -49,4 +49,28 @@ public class HarmonicOscillation
         + 1;
   }
 
+  public double getAmplitude() {
+    return amplitude;
+  }
+
+  public void setAmplitude(double amplitude) {
+    this.amplitude = amplitude;
+  }
+
+  public double getFrequency() {
+    return frequency;
+  }
+
+  public void setFrequency(double frequency) {
+    this.frequency = frequency;
+  }
+
+  public boolean isFlip() {
+    return flip;
+  }
+
+  public void setFlip(boolean flip) {
+    this.flip = flip;
+  }
+
 }
