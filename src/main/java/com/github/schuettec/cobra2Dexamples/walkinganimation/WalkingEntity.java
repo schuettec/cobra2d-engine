@@ -83,6 +83,7 @@ public class WalkingEntity extends MoveableCircleEntity
       leg1.setEllipsisWalkAnimMaxY(80d);
       leg2.setEllipsisWalkAnimMaxY(80d);
     }
+
   }
 
   @Override
@@ -92,6 +93,15 @@ public class WalkingEntity extends MoveableCircleEntity
     // --- Calculate max point
     Point mousePointNormalized = mousePoint.clone();
     Point bodyPosition = getPosition().clone();
+
+    double distance = Math2D.getEntfernung(bodyPosition,
+        mousePoint);
+    double mouseAngle = Math2D.getAngle(bodyPosition,
+        mousePoint);
+    if (distance > getRadius()) {
+      mousePointNormalized = Math2D.getCircle(bodyPosition,
+          getRadius(), mouseAngle);
+    }
 
     if (crouch) {
       int crouchTranslate = 80;
@@ -103,15 +113,6 @@ public class WalkingEntity extends MoveableCircleEntity
     } else {
       leg1.setRadius(leg1.getLegLength());
       leg2.setRadius(leg2.getLegLength());
-    }
-
-    double distance = Math2D.getEntfernung(bodyPosition,
-        mousePoint);
-    double mouseAngle = Math2D.getAngle(bodyPosition,
-        mousePoint);
-    if (distance > getRadius()) {
-      mousePointNormalized = Math2D.getCircle(bodyPosition,
-          getRadius(), mouseAngle);
     }
 
     Point mousePointScreen = mousePointNormalized.clone()
