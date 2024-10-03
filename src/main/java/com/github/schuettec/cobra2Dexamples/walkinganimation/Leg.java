@@ -24,6 +24,7 @@ public class Leg {
   private double ellipsisWalkAnimMaxY;
   private HarmonicOscillation ellipsisOscilatorX;
   private HarmonicOscillation ellipsisOscilatorY;
+  private double radius;
 
   record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
@@ -118,6 +119,7 @@ public class Leg {
 
     this.maxStep = builder.maxStep;
     this.legLength = builder.legLength;
+    this.radius = legLength;
 
     this.ellipsisWalkAnimMaxX = builder.ellipsisWalkAnimMaxX;
     this.ellipsisWalkAnimMaxY = builder.ellipsisWalkAnimMaxY;
@@ -147,8 +149,6 @@ public class Leg {
 
     double alpha = acos(
         (pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2. * b * c));
-    double beta = acos(
-        (pow(a, 2) + pow(c, 2) - pow(b, 2)) / (2. * a * c));
     double gamma = acos(
         (pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2. * a * b));
 
@@ -196,7 +196,7 @@ public class Leg {
     Point positionSchwingungselipseZentrum = Math2D.getCircle(
         worldCoordinates.clone()
             .translate(0, ellipsisWalkAnimMaxY / 2.),
-        legLength, 270d);
+        radius, 270d);
 
     Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
         .translate(positionSchwingungselipseZentrum);
@@ -255,6 +255,14 @@ public class Leg {
 
   public double getLegLength() {
     return legLength;
+  }
+
+  public double getRadius() {
+    return radius;
+  }
+
+  public void setRadius(double radius) {
+    this.radius = radius;
   }
 
 }

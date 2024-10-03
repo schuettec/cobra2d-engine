@@ -28,6 +28,8 @@ public class WalkingEntity extends MoveableCircleEntity
 
   private boolean fast;
 
+  private boolean crouch;
+
   public WalkingEntity(Point worldCoordinates, double radius,
       boolean playerControlled) {
     super(worldCoordinates, radius, playerControlled);
@@ -49,6 +51,12 @@ public class WalkingEntity extends MoveableCircleEntity
       this.fast = true;
     } else {
       this.fast = false;
+    }
+
+    if (controller.isCtrlLeftKeyPressed()) {
+      this.crouch = true;
+    } else {
+      this.crouch = false;
     }
 
     if (controller.isLeftKeyPressed()) {
@@ -83,12 +91,26 @@ public class WalkingEntity extends MoveableCircleEntity
 
     // --- Calculate max point
     Point mousePointNormalized = mousePoint.clone();
-    double distance = Math2D.getEntfernung(getPosition(),
+    Point bodyPosition = getPosition().clone();
+
+    if (crouch) {
+      int crouchTranslate = 80;
+      bodyPosition.translate(0, -crouchTranslate);
+      leg1.setRadius(leg1.getLegLength() - crouchTranslate - 20);
+      leg1.setEllipsisWalkAnimMaxY(30);
+      leg2.setRadius(leg2.getLegLength() - crouchTranslate - 20);
+      leg2.setEllipsisWalkAnimMaxY(30);
+    } else {
+      leg1.setRadius(leg1.getLegLength());
+      leg2.setRadius(leg2.getLegLength());
+    }
+
+    double distance = Math2D.getEntfernung(bodyPosition,
         mousePoint);
-    double mouseAngle = Math2D.getAngle(getPosition(),
+    double mouseAngle = Math2D.getAngle(bodyPosition,
         mousePoint);
     if (distance > getRadius()) {
-      mousePointNormalized = Math2D.getCircle(getPosition(),
+      mousePointNormalized = Math2D.getCircle(bodyPosition,
           getRadius(), mouseAngle);
     }
 
@@ -105,10 +127,10 @@ public class WalkingEntity extends MoveableCircleEntity
       leg2CurrentStep = currentStep;
     }
 
-    leg1.calculateStep(getPosition(), left, leg1CurrentStep)
+    leg1.calculateStep(bodyPosition, left, leg1CurrentStep)
         .render(renderer, position);
 
-    leg1.calculateStep(getPosition(), left, leg2CurrentStep)
+    leg2.calculateStep(bodyPosition, left, leg2CurrentStep)
         .render(renderer, position);
 
     // Step control
