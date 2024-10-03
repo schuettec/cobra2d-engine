@@ -3,12 +3,14 @@ package com.github.schuettec.cobra2Dexamples.walkinganimation;
 import com.github.schuettec.cobra2Dexamples.moveableShapes.MoveableCircleEntity;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class WalkingEntity extends MoveableCircleEntity {
+public class WalkingEntity extends MoveableCircleEntity
+    implements Updatable {
 
   private static final int MAX_STEP = 50;
 
@@ -24,13 +26,13 @@ public class WalkingEntity extends MoveableCircleEntity {
 
   private boolean run;
 
+  private boolean fast;
+
   public WalkingEntity(Point worldCoordinates, double radius,
       boolean playerControlled) {
     super(worldCoordinates, radius, playerControlled);
     LegBuilder builder = Leg.newLeg()
         .setLegLength(radius)
-        .setWinkelVorschwungOberschenkel(60)
-        .setWinkelRückschwungOberschenkel(40)
         .setMaxStep(MAX_STEP);
     this.leg1 = builder.build();
     this.leg2 = builder.build();
@@ -42,6 +44,12 @@ public class WalkingEntity extends MoveableCircleEntity {
     super.processControllerState(worldAccess, controller);
     this.mousePoint = controller
         .getMousePositionWorldCoordinates();
+
+    if (controller.isShiftLeftKeyPressed()) {
+      this.fast = true;
+    } else {
+      this.fast = false;
+    }
 
     if (controller.isLeftKeyPressed()) {
       left = true;
@@ -56,7 +64,10 @@ public class WalkingEntity extends MoveableCircleEntity {
     } else {
       run = false;
     }
+  }
 
+  @Override
+  public void update(WorldAccess worldAccess, float deltaTime) {
   }
 
   @Override
