@@ -211,6 +211,13 @@ public class Leg {
     double fussWinkel = normalizeAngle(
         unterschenkelwinkel + (unterschenkelwinkel / 3d));
 
+    // FLip
+    // oberschenkelWinkel = normalizeAngle(
+    // 180d - oberschenkelWinkel);
+    // unterschenkelwinkel = normalizeAngle(
+    // 180d - unterschenkelwinkel);
+    // fussWinkel = normalizeAngle(180d - fussWinkel);
+
     return createLegRenderableFromWinkel(start,
         oberschenkelWinkel, unterschenkelwinkel, fussWinkel);
 
