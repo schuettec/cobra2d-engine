@@ -1,5 +1,10 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation;
 
+import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
+import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
+import static java.lang.Math.acos;
+import static java.lang.Math.pow;
+
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
@@ -180,103 +185,34 @@ public class Leg {
   }
 
   // Inverse Kinematik-Methode
-  public LegRenderable berechneWinkel(Point worldCoordinates,
-      Point ziel) {
+  public LegRenderable berechneWinkel(Point start, Point ziel) {
 
-    Point position = worldCoordinates.clone();
+    double winkelOffset = Math2D.getAngle(start, ziel);
 
-    // Zielposition relativ zur Hüftposition berechnen
-    double hüfteX = position.x;
-    double hüfteY = position.y;
+    double a = Math2D.getEntfernung(start, ziel);
+    double b = oberschenkelLänge;
+    double c = unterschenkelLänge;
 
-    double zielX = ziel.x;
-    double zielY = ziel.y;
+    double alpha = acos(
+        (pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2. * b * c));
+    double beta = acos(
+        (pow(a, 2) + pow(c, 2) - pow(b, 2)) / (2. * a * c));
+    double gamma = acos(
+        (pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2. * a * b));
 
-    // Unterhalb des Hüftpunkts
-    double minWinkelOberschenkel = Math.toRadians(180);
-    // Horizontale nach rechts
-    double maxWinkelOberschenkel = Math.toRadians(360);
-    // Unterschenkel kann nur gestreckt werden
-    double minWinkelUnterschenkel = Math.toRadians(180);
-    // Maximale Beugung des Knies
-    double maxWinkelUnterschenkel = Math.toRadians(360);
+    double oberschenkelWinkel = Double.isNaN(gamma)
+        ? winkelOffset
+        : normalizeAngle(toDegrees(gamma) + winkelOffset);
 
-    // --- paste gpt code here
+    double unterschenkelwinkel = Double.isNaN(alpha)
+        ? oberschenkelWinkel : normalizeAngle(
+            toDegrees(alpha) + oberschenkelWinkel + 180d);
 
-    // Zielposition relativ zur Hüfte berechnen
-    double deltaX = zielX - hüfteX;
-    double deltaY = zielY - hüfteY;
+    double fussWinkel = normalizeAngle(
+        unterschenkelwinkel + (unterschenkelwinkel / 3d));
 
-    // Abstand vom Hüftgelenk zum Ziel (Pythagoras)
-    double d = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-
-    // Maximale Reichweite des Beins
-    double maximaleReichweite = oberschenkelLänge
-        + unterschenkelLänge;
-
-    // Wenn das Ziel zu weit entfernt ist, wird das Ziel auf den
-    // nächstmöglichen Punkt gesetzt
-    if (d > maximaleReichweite) {
-      deltaX *= maximaleReichweite / d;
-      deltaY *= maximaleReichweite / d;
-      d = maximaleReichweite; // Setze d auf die maximale
-                              // Reichweite
-      zielX = hüfteX + deltaX;
-      zielY = hüfteY + deltaY;
-    }
-
-    // Wenn das Ziel zu nah an der Hüfte ist, setze es auf die
-    // minimale Reichweite
-    double minimaleReichweite = Math
-        .abs(oberschenkelLänge - unterschenkelLänge);
-    if (d < minimaleReichweite) {
-      deltaX *= minimaleReichweite / d;
-      deltaY *= minimaleReichweite / d;
-      d = minimaleReichweite; // Setze d auf die minimale
-                              // Reichweite
-      zielX = hüfteX + deltaX;
-      zielY = hüfteY + deltaY;
-    }
-
-    // Berechnung des winkelUnterschenkel (Kosinussatz)
-    double cosWinkelUnterschenkel = (oberschenkelLänge
-        * oberschenkelLänge
-        + unterschenkelLänge * unterschenkelLänge - d * d)
-        / (2 * oberschenkelLänge * unterschenkelLänge);
-    double winkelUnterschenkel = Math
-        .acos(Math.max(-1, Math.min(1, cosWinkelUnterschenkel))); // Begrenzung
-                                                                  // auf
-                                                                  // den
-                                                                  // Wertebereich
-                                                                  // [-1,
-                                                                  // 1]
-
-    // Berechnung des winkelOberschenkel
-    double cosWinkelOberschenkel = (d * d
-        + oberschenkelLänge * oberschenkelLänge
-        - unterschenkelLänge * unterschenkelLänge)
-        / (2 * oberschenkelLänge * d);
-    double winkelOberschenkel = Math
-        .acos(Math.max(-1, Math.min(1, cosWinkelOberschenkel)));
-
-    // Winkel zwischen der Zielrichtung und der Horizontalen
-    double zielWinkel = Math.atan2(deltaY, deltaX);
-    double winkelOberschenkelFinal = zielWinkel
-        + winkelOberschenkel;
-
-    // Begrenzen auf den zulässigen Bewegungsbereich (zwischen 0°
-    // und -180°)
-    winkelOberschenkelFinal = beschränkeWinkel(
-        winkelOberschenkelFinal, minWinkelOberschenkel,
-        maxWinkelOberschenkel);
-    winkelUnterschenkel = beschränkeWinkel(winkelUnterschenkel,
-        minWinkelUnterschenkel, maxWinkelUnterschenkel);
-
-    // --- paste gpt code above
-
-    return createLegRenderableFromWinkel(worldCoordinates,
-        Math.toDegrees(winkelOberschenkelFinal),
-        Math.toDegrees(winkelUnterschenkel), 0);
+    return createLegRenderableFromWinkel(start,
+        oberschenkelWinkel, unterschenkelwinkel, fussWinkel);
 
   }
 

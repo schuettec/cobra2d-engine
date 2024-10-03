@@ -49,6 +49,47 @@ public class WalkingEntity extends MoveableCircleEntity {
   public void render(RendererAccess renderer, Point position) {
     super.render(renderer, position);
 
+    // --- Calculate max point
+    Point mousePointNormalized = mousePoint.clone();
+    double distance = Math2D.getEntfernung(getPosition(),
+        mousePoint);
+    double mouseAngle = Math2D.getAngle(getPosition(),
+        mousePoint);
+    if (distance > getRadius()) {
+      mousePointNormalized = Math2D.getCircle(getPosition(),
+          getRadius(), mouseAngle);
+    }
+
+    Point mousePointScreen = mousePointNormalized.clone()
+        .translate(position);
+    renderer.drawRectangle(mousePointScreen.getFloatX() - 5,
+        mousePointScreen.getFloatY() - 5, 10, 10,
+        getDrawColor());
+
+    leg1.berechneWinkel(getPosition(), mousePointNormalized)
+        .render(renderer, position);
+
+    // -- Schwingungsellipse
+    double sX = 5 * Math.cos(currentStep);
+    double sY = 2 * Math.sin(currentStep);
+    Point positionSchwingungselipseZentrum = Math2D
+        .getCircle(getPosition(), getRadius(), 270d);
+    Point schwingungsEllipsePunkt = new Point(sX, sY)
+        .translate(positionSchwingungselipseZentrum)
+        .translate(position);
+
+    renderer.drawRectangle(
+        schwingungsEllipsePunkt.getFloatX() - 5,
+        schwingungsEllipsePunkt.getFloatY() - 5, 10, 10,
+        getDrawColor());
+
+    currentStep = (currentStep + 1) % MAX_STEP;
+
+  }
+
+  public void render1(RendererAccess renderer, Point position) {
+    super.render(renderer, position);
+
     Point center = getPosition().clone()
         .translate(position);
     renderer.fillCircle((float) center.x + 5,
