@@ -32,18 +32,24 @@ public class Leg {
       Point oberschenkelEnde, Point unterschenkelStart,
       Point unterschenkelEnde, Point fußStart, Point fußEnde) {
 
-    public void render(RendererAccess renderer, Point position) {
-      Point oberschenkelStart2 = position.clone()
+    /**
+     * @param renderer
+     * @param screenTranslation A translation movin the local
+     *        coord-system to world/screen coordinates.
+     */
+    public void render(RendererAccess renderer,
+        Point screenTranslation) {
+      Point oberschenkelStart2 = screenTranslation.clone()
           .translate(oberschenkelStart);
-      Point oberschenkelEnde2 = position.clone()
+      Point oberschenkelEnde2 = screenTranslation.clone()
           .translate(oberschenkelEnde);
-      Point unterschenkelStart2 = position.clone()
+      Point unterschenkelStart2 = screenTranslation.clone()
           .translate(unterschenkelStart);
-      Point unterschenkelEnde2 = position.clone()
+      Point unterschenkelEnde2 = screenTranslation.clone()
           .translate(unterschenkelEnde);
-      Point fußStart2 = position.clone()
+      Point fußStart2 = screenTranslation.clone()
           .translate(fußStart);
-      Point fußEnde2 = position.clone()
+      Point fußEnde2 = screenTranslation.clone()
           .translate(fußEnde);
       renderer.drawLine(oberschenkelStart2.getRoundX(),
           oberschenkelStart2.getRoundY(),
@@ -56,7 +62,6 @@ public class Leg {
       renderer.drawLine(fußStart2.getRoundX(),
           fußStart2.getRoundY(), fußEnde2.getRoundX(),
           fußEnde2.getRoundY(), Color.YELLOW);
-
     }
   }
 
@@ -175,9 +180,10 @@ public class Leg {
   }
 
   // Inverse Kinematik-Methode
-  public LegRenderable berechneWinkel(Point ziel) {
+  public LegRenderable berechneWinkel(Point worldCoordinates,
+      Point ziel) {
 
-    Point position = new Point(0, 0);
+    Point position = worldCoordinates.clone();
 
     // Zielposition relativ zur Hüftposition berechnen
     double hüfteX = position.x;
@@ -186,12 +192,18 @@ public class Leg {
     double zielX = ziel.x;
     double zielY = ziel.y;
 
-    double minWinkelOberschenkel = 0;
-    double minWinkelUnterschenkel = 0;
-    double maxWinkelOberschenkel = 360;
-    double maxWinkelUnterschenkel = 360;
+    // Unterhalb des Hüftpunkts
+    double minWinkelOberschenkel = Math.toRadians(180);
+    // Horizontale nach rechts
+    double maxWinkelOberschenkel = Math.toRadians(360);
+    // Unterschenkel kann nur gestreckt werden
+    double minWinkelUnterschenkel = Math.toRadians(180);
+    // Maximale Beugung des Knies
+    double maxWinkelUnterschenkel = Math.toRadians(360);
 
-    // Zielposition relativ zur Hüftposition berechnen
+    // --- paste gpt code here
+
+    // Zielposition relativ zur Hüfte berechnen
     double deltaX = zielX - hüfteX;
     double deltaY = zielY - hüfteY;
 
@@ -205,8 +217,6 @@ public class Leg {
     // Wenn das Ziel zu weit entfernt ist, wird das Ziel auf den
     // nächstmöglichen Punkt gesetzt
     if (d > maximaleReichweite) {
-      // Ziel skalieren, sodass es auf die maximale Reichweite
-      // fällt
       deltaX *= maximaleReichweite / d;
       deltaY *= maximaleReichweite / d;
       d = maximaleReichweite; // Setze d auf die maximale
@@ -254,15 +264,17 @@ public class Leg {
     double winkelOberschenkelFinal = zielWinkel
         + winkelOberschenkel;
 
-    // Beschränkungen auf die Oberschenkel- und
-    // Unterschenkelwinkel anwenden
+    // Begrenzen auf den zulässigen Bewegungsbereich (zwischen 0°
+    // und -180°)
     winkelOberschenkelFinal = beschränkeWinkel(
         winkelOberschenkelFinal, minWinkelOberschenkel,
         maxWinkelOberschenkel);
     winkelUnterschenkel = beschränkeWinkel(winkelUnterschenkel,
         minWinkelUnterschenkel, maxWinkelUnterschenkel);
 
-    return createLegRenderableFromWinkel(
+    // --- paste gpt code above
+
+    return createLegRenderableFromWinkel(worldCoordinates,
         Math.toDegrees(winkelOberschenkelFinal),
         Math.toDegrees(winkelUnterschenkel), 0);
 
@@ -274,7 +286,8 @@ public class Leg {
     return Math.max(minWinkel, Math.min(maxWinkel, winkel));
   }
 
-  public LegRenderable calculateStep(int currentStep) {
+  public LegRenderable calculateStep(Point worldCoordinates,
+      int currentStep) {
 
     double winkelOberschenkel = toOberschenkelWinkel(
         currentStep);
@@ -284,15 +297,15 @@ public class Leg {
 
     double winkelFuss = toFussWinkel(currentStep);
 
-    return createLegRenderableFromWinkel(winkelOberschenkel,
-        winkelUnterschenkel, winkelFuss);
+    return createLegRenderableFromWinkel(worldCoordinates,
+        winkelOberschenkel, winkelUnterschenkel, winkelFuss);
 
   }
 
   private LegRenderable createLegRenderableFromWinkel(
-      double winkelOberschenkel, double winkelUnterschenkel,
-      double winkelFuss) {
-    Point o1S = new Point(0, 0);
+      Point worldCoordinates, double winkelOberschenkel,
+      double winkelUnterschenkel, double winkelFuss) {
+    Point o1S = worldCoordinates.clone();
     Point o1E = Math2D.getCircle(o1S, oberschenkelLänge,
         winkelOberschenkel);
 

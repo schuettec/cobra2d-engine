@@ -1,8 +1,13 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation;
 
+import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
+import static java.lang.Math.acos;
+import static java.lang.Math.pow;
+
 import com.github.schuettec.cobra2Dexamples.moveableShapes.MoveableCircleEntity;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2d.controller.Controller;
+import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
@@ -49,25 +54,82 @@ public class WalkingEntity extends MoveableCircleEntity {
     renderer.fillCircle((float) center.x + 5,
         (float) center.y - 5, 10f, Color.RED);
 
-    renderer.drawLine((float) center.x, (float) center.y,
-        (float) center.x + 50, (float) center.y,
+    // --- Calculate max point
+    Point mousePointNormalized = mousePoint.clone();
+    double distance = Math2D.getEntfernung(getPosition(),
+        mousePoint);
+    double mouseAngle = Math2D.getAngle(getPosition(),
+        mousePoint);
+    if (distance > getRadius()) {
+      mousePointNormalized = Math2D.getCircle(getPosition(),
+          getRadius(), mouseAngle);
+    }
+
+    // Berechne Figurlängen
+    double verhältnisOberschenkelUnterschenkel = 1.2d;
+    double unterschenkelLänge = getRadius()
+        / (verhältnisOberschenkelUnterschenkel + 1);
+    double oberschenkelLänge = getRadius() - unterschenkelLänge;
+
+    // Berechne Dreieck
+    Point start = getPosition().clone();
+    Point ziel = mousePointNormalized.clone();
+    // Nochmal Distanz d in Weltkoordinaten
+    double d = Math2D.getEntfernung(start, ziel);
+    double a = d;
+    double b = oberschenkelLänge;
+    double c = unterschenkelLänge;
+
+    double alpha = acos(
+        (pow(b, 2) + pow(c, 2) - pow(a, 2)) / (2. * b * c));
+    double beta = acos(
+        (pow(a, 2) + pow(c, 2) - pow(b, 2)) / (2. * a * c));
+    double gamma = acos(
+        (pow(a, 2) + pow(b, 2) - pow(c, 2)) / (2. * a * b));
+
+    double oberschenkelWinkel = toDegrees(gamma) + mouseAngle;
+    double unterschenkelwinkel = toDegrees(alpha)
+        + oberschenkelWinkel + 180;
+    System.out.println(oberschenkelWinkel);
+    Point p1 = start.clone();
+    Point p2 = Math2D.getCircle(start, b, oberschenkelWinkel);
+    Point p3 = Math2D.getCircle(p2, c, unterschenkelwinkel);
+
+    Point p1Screen = p1.clone()
+        .translate(position);
+    Point p2Screen = p2.clone()
+        .translate(position);
+    Point p3Screen = p3.clone()
+        .translate(position);
+
+    // Render legs
+    renderer.drawLine(p1Screen.getFloatX(), p1Screen.getFloatY(),
+        p2Screen.getFloatX(), p2Screen.getFloatY(),
         Color.CHARTREUSE);
 
-    leg1.calculateStep(currentStep)
-        .render(renderer, getPosition().clone()
-            .translate(position));
-    leg2.calculateStep(currentStep + (MAX_STEP / 2))
-        .render(renderer, getPosition().clone()
-            .translate(position));
+    renderer.drawLine(p2Screen.getFloatX(), p2Screen.getFloatY(),
+        p3Screen.getFloatX(), p3Screen.getFloatY(),
+        Color.FIREBRICK);
+
+    // Render it
+    renderer.drawLine((float) center.x, (float) center.y,
+        mousePointNormalized.clone()
+            .translate(position)
+            .getFloatX(),
+        mousePointNormalized.clone()
+            .translate(position)
+            .getFloatY(),
+        Color.CHARTREUSE);
+
+    // --- End Max point
+
+    leg1.calculateStep(getPosition().clone(), currentStep)
+        .render(renderer, position);
+    leg2.calculateStep(getPosition().clone(),
+        currentStep + (MAX_STEP / 2))
+        .render(renderer, position);
 
     currentStep = (currentStep + 1) % MAX_STEP;
-
-    // System.out.println(
-    // "Pos: " + getPosition() + "Mouse: " + mousePoint);
-    //
-    //
-    // leg1.berechneWinkel(mousePoint)
-    // .render(renderer, position);
 
   }
 
