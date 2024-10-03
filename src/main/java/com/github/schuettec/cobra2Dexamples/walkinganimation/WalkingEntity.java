@@ -90,7 +90,6 @@ public class WalkingEntity extends MoveableCircleEntity {
     double oberschenkelWinkel = toDegrees(gamma) + mouseAngle;
     double unterschenkelwinkel = toDegrees(alpha)
         + oberschenkelWinkel + 180;
-    System.out.println(oberschenkelWinkel);
     Point p1 = start.clone();
     Point p2 = Math2D.getCircle(start, b, oberschenkelWinkel);
     Point p3 = Math2D.getCircle(p2, c, unterschenkelwinkel);
