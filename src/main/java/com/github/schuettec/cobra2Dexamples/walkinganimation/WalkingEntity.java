@@ -44,30 +44,29 @@ public class WalkingEntity extends MoveableCircleEntity {
   public void render(RendererAccess renderer, Point position) {
     super.render(renderer, position);
 
-    Point center = getPosition().translate(position);
+    Point center = getPosition().clone()
+        .translate(position);
     renderer.fillCircle((float) center.x + 5,
         (float) center.y - 5, 10f, Color.RED);
-    //
-    // leg1.calculateStep(new Point(0, 0), currentStep)
-    // .render(renderer, position.clone()
-    // .translate(getPosition()));
-    // leg2.calculateStep(new Point(0, 0),
-    // currentStep + (MAX_STEP / 2))
-    // .render(renderer, position.clone()
-    // .translate(getPosition()));
 
-    leg1.calculateStep(getPosition().clone(), currentStep)
-        .render(renderer, position);
-    leg2.calculateStep(getPosition().clone(),
-        currentStep + (MAX_STEP / 2))
-        .render(renderer, position.clone());
+    renderer.drawLine((float) center.x, (float) center.y,
+        (float) center.x + 50, (float) center.y,
+        Color.CHARTREUSE);
+
+    leg1.calculateStep(currentStep)
+        .render(renderer, getPosition().clone()
+            .translate(position));
+    leg2.calculateStep(currentStep + (MAX_STEP / 2))
+        .render(renderer, getPosition().clone()
+            .translate(position));
 
     currentStep = (currentStep + 1) % MAX_STEP;
 
     // System.out.println(
     // "Pos: " + getPosition() + "Mouse: " + mousePoint);
     //
-    // leg1.berechneWinkel(getPosition(), mousePoint)
+    //
+    // leg1.berechneWinkel(mousePoint)
     // .render(renderer, position);
 
   }

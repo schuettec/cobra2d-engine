@@ -175,8 +175,9 @@ public class Leg {
   }
 
   // Inverse Kinematik-Methode
-  public LegRenderable berechneWinkel(Point position,
-      Point ziel) {
+  public LegRenderable berechneWinkel(Point ziel) {
+
+    Point position = new Point(0, 0);
 
     // Zielposition relativ zur Hüftposition berechnen
     double hüfteX = position.x;
@@ -261,7 +262,7 @@ public class Leg {
     winkelUnterschenkel = beschränkeWinkel(winkelUnterschenkel,
         minWinkelUnterschenkel, maxWinkelUnterschenkel);
 
-    return createLegRenderableFromWinkel(position,
+    return createLegRenderableFromWinkel(
         Math.toDegrees(winkelOberschenkelFinal),
         Math.toDegrees(winkelUnterschenkel), 0);
 
@@ -273,8 +274,7 @@ public class Leg {
     return Math.max(minWinkel, Math.min(maxWinkel, winkel));
   }
 
-  public LegRenderable calculateStep(Point position,
-      int currentStep) {
+  public LegRenderable calculateStep(int currentStep) {
 
     double winkelOberschenkel = toOberschenkelWinkel(
         currentStep);
@@ -284,16 +284,15 @@ public class Leg {
 
     double winkelFuss = toFussWinkel(currentStep);
 
-    return createLegRenderableFromWinkel(position,
-        winkelOberschenkel, winkelUnterschenkel, winkelFuss);
+    return createLegRenderableFromWinkel(winkelOberschenkel,
+        winkelUnterschenkel, winkelFuss);
 
   }
 
   private LegRenderable createLegRenderableFromWinkel(
-      Point position, double winkelOberschenkel,
-      double winkelUnterschenkel, double winkelFuss) {
-    Point o1S = position.clone()
-        .translate(position);
+      double winkelOberschenkel, double winkelUnterschenkel,
+      double winkelFuss) {
+    Point o1S = new Point(0, 0);
     Point o1E = Math2D.getCircle(o1S, oberschenkelLänge,
         winkelOberschenkel);
 
