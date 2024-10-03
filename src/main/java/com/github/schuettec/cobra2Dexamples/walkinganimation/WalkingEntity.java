@@ -115,7 +115,7 @@ public class WalkingEntity extends MoveableCircleEntity {
           getDrawColor());
 
       // Invers kinematics leg 1
-      leg2.berechneWinkel(getPosition(), schwingungsEllipsePunkt) // mousePointNormalized
+      leg2.berechneWinkel(getPosition(), schwingungsEllipsePunkt)
           .render(renderer, position);
     }
 
