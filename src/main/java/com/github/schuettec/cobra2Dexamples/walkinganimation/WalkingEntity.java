@@ -20,6 +20,10 @@ public class WalkingEntity extends MoveableCircleEntity {
 
   private Point mousePoint;
 
+  private boolean left;
+
+  private boolean run;
+
   public WalkingEntity(Point worldCoordinates, double radius,
       boolean playerControlled) {
     super(worldCoordinates, radius, playerControlled);
@@ -38,6 +42,23 @@ public class WalkingEntity extends MoveableCircleEntity {
     super.processControllerState(worldAccess, controller);
     this.mousePoint = controller
         .getMousePositionWorldCoordinates();
+
+    if (controller.isLeftKeyPressed()) {
+      left = true;
+      run = true;
+    } else {
+      left = false;
+    }
+
+    if (controller.isRightKeyPressed()) {
+      run = true;
+    }
+
+    if (!controller.isLeftKeyPressed()
+        && !controller.isRightKeyPressed()) {
+      run = false;
+    }
+
   }
 
   @Override
@@ -61,81 +82,20 @@ public class WalkingEntity extends MoveableCircleEntity {
         mousePointScreen.getFloatY() - 5, 10, 10,
         getDrawColor());
 
-    // -- Schwingungsellipse 1
-    double maxX = 250d;
-    double maxY = 80d;
+    leg1.calculateStep(getPosition(), left,
+        (currentStep + 25) % MAX_STEP)
+        .render(renderer, position);
 
-    // Leg 1
-    {
-      double sX = schwingungX(maxX, MAX_STEP, currentStep);
-      double sY = schwingungY(maxY, MAX_STEP, currentStep);
+    leg1.calculateStep(getPosition(), left, currentStep)
+        .render(renderer, position);
 
-      Point positionSchwingungselipseZentrum = Math2D
-          .getCircle(getPosition().clone()
-              .translate(0, maxY / 2.), getRadius(), 270d);
-
-      Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
-          .translate(positionSchwingungselipseZentrum);
-
-      Point schwingungsEllipsePunktScreen = schwingungsEllipsePunkt
-          .clone()
-          .translate(position);
-
-      renderer.drawRectangle(
-          schwingungsEllipsePunktScreen.getFloatX() - 5,
-          schwingungsEllipsePunktScreen.getFloatY() - 5, 10, 10,
-          getDrawColor());
-
-      // Invers kinematics leg 1
-      leg1.berechneWinkel(getPosition(), schwingungsEllipsePunkt) // mousePointNormalized
-          .render(renderer, position);
-    }
-
-    // Leg 2
-    {
-      double sX = schwingungX(maxX, MAX_STEP,
-          (currentStep + 25) % MAX_STEP);
-      double sY = schwingungY(maxY, MAX_STEP,
-          (currentStep + 25) % MAX_STEP);
-
-      Point positionSchwingungselipseZentrum = Math2D
-          .getCircle(getPosition().clone()
-              .translate(0, maxY / 2.), getRadius(), 270d);
-
-      Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
-          .translate(positionSchwingungselipseZentrum);
-
-      Point schwingungsEllipsePunktScreen = schwingungsEllipsePunkt
-          .clone()
-          .translate(position);
-
-      renderer.drawRectangle(
-          schwingungsEllipsePunktScreen.getFloatX() - 5,
-          schwingungsEllipsePunktScreen.getFloatY() - 5, 10, 10,
-          getDrawColor());
-
-      // Invers kinematics leg 1
-      leg2.berechneWinkel(getPosition(), schwingungsEllipsePunkt)
-          .render(renderer, position);
-    }
-
+    System.out.println("RUn" + run);
     // Step control
-    currentStep = (currentStep + 1) % MAX_STEP;
-
-  }
-
-  public double schwingungX(double maxX, double maxStep,
-      double step) {
-    return (maxX / 2.)
-        * Math.cos((2 * Math.PI) / maxStep * step + Math.PI)
-        + 1d;
-  }
-
-  public double schwingungY(double maxY, double maxStep,
-      double step) {
-    return (maxY / 2.)
-        * -Math.sin((2 * Math.PI) / maxStep * step + Math.PI)
-        + 1d;
+    if (run) {
+      currentStep = (currentStep + 1) % MAX_STEP;
+    } else {
+      currentStep = 0;
+    }
   }
 
 }

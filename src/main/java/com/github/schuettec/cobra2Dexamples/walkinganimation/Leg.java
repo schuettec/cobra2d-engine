@@ -33,6 +33,9 @@ public class Leg {
   private double unterschenkelLänge;
   private double oberschenkelLänge;
 
+  private double ellipsisWalkAnimMaxX;
+  private double ellipsisWalkAnimMaxY;
+
   record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
       Point unterschenkelEnde, Point fußStart, Point fußEnde) {
@@ -85,6 +88,9 @@ public class Leg {
     private double winkelNeutral = 270;
     private int maxStep = 100;
     private double legLength;
+
+    private double ellipsisWalkAnimMaxX = 250d;
+    private double ellipsisWalkAnimMaxY = 80d;
 
     // Builder-Methoden für jeden Parameter
     public LegBuilder setVerhältnisOberschenkelUnterschenkel(
@@ -147,6 +153,18 @@ public class Leg {
       return this;
     }
 
+    public LegBuilder setEllipsisWalkAnimMaxX(
+        double ellipsisWalkAnimMaxX) {
+      this.ellipsisWalkAnimMaxX = ellipsisWalkAnimMaxX;
+      return this;
+    }
+
+    public LegBuilder setEllipsisWalkAnimMaxY(
+        double ellipsisWalkAnimMaxY) {
+      this.ellipsisWalkAnimMaxY = ellipsisWalkAnimMaxY;
+      return this;
+    }
+
     // Methode zum Erstellen der LegConfiguration
     public Leg build() {
       return new Leg(this);
@@ -175,6 +193,9 @@ public class Leg {
     this.maxStep = builder.maxStep;
     this.legLength = builder.legLength;
 
+    this.ellipsisWalkAnimMaxX = builder.ellipsisWalkAnimMaxX;
+    this.ellipsisWalkAnimMaxY = builder.ellipsisWalkAnimMaxY;
+
     this.unterschenkelLänge = legLength
         / (verhältnisOberschenkelUnterschenkel + 1);
     this.oberschenkelLänge = legLength - unterschenkelLänge;
@@ -185,7 +206,8 @@ public class Leg {
   }
 
   // Inverse Kinematik-Methode
-  public LegRenderable berechneWinkel(Point start, Point ziel) {
+  public LegRenderable berechneWinkel(Point start, boolean left,
+      Point ziel) {
 
     double winkelOffset = Math2D.getAngle(start, ziel);
 
@@ -211,37 +233,38 @@ public class Leg {
     double fussWinkel = normalizeAngle(
         unterschenkelwinkel + (unterschenkelwinkel / 3d));
 
-    // FLip
-    // oberschenkelWinkel = normalizeAngle(
-    // 180d - oberschenkelWinkel);
-    // unterschenkelwinkel = normalizeAngle(
-    // 180d - unterschenkelwinkel);
-    // fussWinkel = normalizeAngle(180d - fussWinkel);
+    // Flip direction if left
+    if (left) {
+      oberschenkelWinkel = normalizeAngle(
+          180d - oberschenkelWinkel);
+      unterschenkelwinkel = normalizeAngle(
+          180d - unterschenkelwinkel);
+      fussWinkel = normalizeAngle(180d - fussWinkel);
+    }
 
     return createLegRenderableFromWinkel(start,
         oberschenkelWinkel, unterschenkelwinkel, fussWinkel);
 
   }
 
-  // Methode zur Beschränkung der Winkel
-  private double beschränkeWinkel(double winkel,
-      double minWinkel, double maxWinkel) {
-    return Math.max(minWinkel, Math.min(maxWinkel, winkel));
-  }
-
   public LegRenderable calculateStep(Point worldCoordinates,
-      int currentStep) {
+      boolean left, int currentStep) {
 
-    double winkelOberschenkel = toOberschenkelWinkel(
+    double sX = ellipsisX(ellipsisWalkAnimMaxX, maxStep,
+        currentStep);
+    double sY = ellipsisY(ellipsisWalkAnimMaxY, maxStep,
         currentStep);
 
-    double winkelUnterschenkel = toUnterschenkelWinkel(
-        currentStep);
+    Point positionSchwingungselipseZentrum = Math2D.getCircle(
+        worldCoordinates.clone()
+            .translate(0, ellipsisWalkAnimMaxY / 2.),
+        legLength, 270d);
 
-    double winkelFuss = toFussWinkel(currentStep);
+    Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
+        .translate(positionSchwingungselipseZentrum);
 
-    return createLegRenderableFromWinkel(worldCoordinates,
-        winkelOberschenkel, winkelUnterschenkel, winkelFuss);
+    return berechneWinkel(worldCoordinates, left,
+        schwingungsEllipsePunkt);
 
   }
 
@@ -262,33 +285,18 @@ public class Leg {
     return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E);
   }
 
-  private double toFussWinkel(int step) {
-    return winkelNeutral + winkelVorschwungFuß - (maxWinkelFuß
-        / 2.0d)
-        * (Math.cos(((2d * Math.PI) / maxStep) * step + Math.PI)
-            + 1d);
+  public double ellipsisX(double maxX, double maxStep,
+      double step) {
+    return (maxX / 2.)
+        * Math.cos((2 * Math.PI) / maxStep * step + Math.PI)
+        + 1d;
   }
 
-  /**
-   * @param step Time 0-{@link #maxStep}
-   * @return Gibt den Winkel des Oberschenkels zurück
-   *         normalisiert in Welt-Winkel.
-   */
-  private double toOberschenkelWinkel(double step) {
-    return winkelNeutral + winkelVorschwungOberschenkel
-        - (maxWinkelOberschenkel / 2.0d) * (Math.cos(
-            ((2d * Math.PI) / maxStep) * step + Math.PI) + 1d);
-  }
-
-  /**
-   * @param step Time 0-{@link #maxStep}
-   * @return Gibt den Winkel des Oberschenkels zurück
-   *         normalisiert in Welt-Winkel.
-   */
-  private double toUnterschenkelWinkel(double step) {
-    return winkelNeutral + winkelVorschwungUnterschenkel
-        - (maxWinkelUnterschenkel / 2.0d) * (Math.cos(
-            ((2d * Math.PI) / maxStep) * step + Math.PI) + 1d);
+  public double ellipsisY(double maxY, double maxStep,
+      double step) {
+    return (maxY / 2.)
+        * -Math.sin((2 * Math.PI) / maxStep * step + Math.PI)
+        + 1d;
   }
 
 }
