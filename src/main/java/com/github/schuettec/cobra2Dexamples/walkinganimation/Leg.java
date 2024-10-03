@@ -5,6 +5,8 @@ import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
 
+import com.github.schuettec.cobra2d.math.HarmonicOscillation;
+import com.github.schuettec.cobra2d.math.HarmonicOscillation.Type;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
@@ -35,6 +37,8 @@ public class Leg {
 
   private double ellipsisWalkAnimMaxX;
   private double ellipsisWalkAnimMaxY;
+  private HarmonicOscillation ellipsisOscilatorX;
+  private HarmonicOscillation ellipsisOscilatorY;
 
   record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
@@ -199,6 +203,11 @@ public class Leg {
     this.unterschenkelLänge = legLength
         / (verhältnisOberschenkelUnterschenkel + 1);
     this.oberschenkelLänge = legLength - unterschenkelLänge;
+
+    this.ellipsisOscilatorX = new HarmonicOscillation(maxStep,
+        ellipsisWalkAnimMaxX, 0.5d, Type.COSINUS, false);
+    this.ellipsisOscilatorY = new HarmonicOscillation(maxStep,
+        ellipsisWalkAnimMaxY, 0.5d, Type.SINUS, true);
   }
 
   public static LegBuilder newLeg() {
@@ -248,12 +257,10 @@ public class Leg {
   }
 
   public LegRenderable calculateStep(Point worldCoordinates,
-      boolean left, int currentStep) {
+      boolean left, double currentStep) {
 
-    double sX = ellipsisX(ellipsisWalkAnimMaxX, maxStep,
-        currentStep);
-    double sY = ellipsisY(ellipsisWalkAnimMaxY, maxStep,
-        currentStep);
+    double sX = ellipsisOscilatorX.apply(currentStep);
+    double sY = ellipsisOscilatorY.apply(currentStep);
 
     Point positionSchwingungselipseZentrum = Math2D.getCircle(
         worldCoordinates.clone()
@@ -284,19 +291,4 @@ public class Leg {
 
     return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E);
   }
-
-  public double ellipsisX(double maxX, double maxStep,
-      double step) {
-    return (maxX / 2.)
-        * Math.cos((2 * Math.PI) / maxStep * step + Math.PI)
-        + 1d;
-  }
-
-  public double ellipsisY(double maxY, double maxStep,
-      double step) {
-    return (maxY / 2.)
-        * -Math.sin((2 * Math.PI) / maxStep * step + Math.PI)
-        + 1d;
-  }
-
 }

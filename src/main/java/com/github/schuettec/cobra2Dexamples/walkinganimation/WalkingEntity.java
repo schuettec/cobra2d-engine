@@ -12,7 +12,7 @@ public class WalkingEntity extends MoveableCircleEntity {
 
   private static final int MAX_STEP = 50;
 
-  private int currentStep = 0;
+  private double currentStep = 0;
 
   private Leg leg1;
 
@@ -45,17 +45,15 @@ public class WalkingEntity extends MoveableCircleEntity {
 
     if (controller.isLeftKeyPressed()) {
       left = true;
-      run = true;
-    } else {
+    }
+    if (controller.isRightKeyPressed()) {
       left = false;
     }
 
-    if (controller.isRightKeyPressed()) {
+    if (controller.isLeftKeyPressed()
+        || controller.isRightKeyPressed()) {
       run = true;
-    }
-
-    if (!controller.isLeftKeyPressed()
-        && !controller.isRightKeyPressed()) {
+    } else {
       run = false;
     }
 
@@ -82,14 +80,19 @@ public class WalkingEntity extends MoveableCircleEntity {
         mousePointScreen.getFloatY() - 5, 10, 10,
         getDrawColor());
 
-    leg1.calculateStep(getPosition(), left,
-        (currentStep + 25) % MAX_STEP)
+    double leg1CurrentStep = 0;
+    double leg2CurrentStep = 0;
+    if (run) {
+      leg1CurrentStep = (currentStep + 25) % MAX_STEP;
+      leg2CurrentStep = currentStep;
+    }
+
+    leg1.calculateStep(getPosition(), left, leg1CurrentStep)
         .render(renderer, position);
 
-    leg1.calculateStep(getPosition(), left, currentStep)
+    leg1.calculateStep(getPosition(), left, leg2CurrentStep)
         .render(renderer, position);
 
-    System.out.println("RUn" + run);
     // Step control
     if (run) {
       currentStep = (currentStep + 1) % MAX_STEP;

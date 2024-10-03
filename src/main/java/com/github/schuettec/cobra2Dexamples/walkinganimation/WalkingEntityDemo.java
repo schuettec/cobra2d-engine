@@ -34,7 +34,7 @@ public class WalkingEntityDemo {
         true);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(
-        new Point(100, 100), new Dimension(800, 800), true);
+        new Point(100, 100), new Dimension(800, 800), false);
     camera.setDrawCameraOutline(true);
     camera.setDrawCollisionShape(true);
     camera.setDrawEntityPoints(true);
