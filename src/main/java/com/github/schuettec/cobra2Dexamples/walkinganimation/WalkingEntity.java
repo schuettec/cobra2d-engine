@@ -4,7 +4,6 @@ import com.github.schuettec.cobra2Dexamples.moveableShapes.MoveableCircleEntity;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
-import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
@@ -30,6 +29,8 @@ public class WalkingEntity extends MoveableCircleEntity
 
   private boolean crouch;
 
+  private WalkAnimationController walkAnimationController;
+
   public WalkingEntity(Point worldCoordinates, double radius,
       boolean playerControlled) {
     super(worldCoordinates, radius, playerControlled);
@@ -38,6 +39,8 @@ public class WalkingEntity extends MoveableCircleEntity
         .setMaxStep(MAX_STEP);
     this.leg1 = builder.build();
     this.leg2 = builder.build();
+    this.walkAnimationController = new WalkAnimationController(
+        MAX_STEP, radius, 250d, 80d);
   }
 
   @Override
@@ -79,11 +82,9 @@ public class WalkingEntity extends MoveableCircleEntity
   @Override
   public void update(WorldAccess worldAccess, float deltaTime) {
     if (fast) {
-      leg1.setEllipsisWalkAnimMaxY(130d);
-      leg2.setEllipsisWalkAnimMaxY(130d);
+      walkAnimationController.setStepHeight(130d);
     } else {
-      leg1.setEllipsisWalkAnimMaxY(80d);
-      leg2.setEllipsisWalkAnimMaxY(80d);
+      walkAnimationController.setStepHeight(80d);
     }
 
   }
@@ -93,35 +94,9 @@ public class WalkingEntity extends MoveableCircleEntity
     super.render(renderer, position);
 
     // --- Calculate max point
-    Point mousePointNormalized = mousePoint.clone();
     Point bodyPosition = getPosition().clone();
 
-    double distance = Math2D.getEntfernung(bodyPosition,
-        mousePoint);
-    double mouseAngle = Math2D.getAngle(bodyPosition,
-        mousePoint);
-    if (distance > getRadius()) {
-      mousePointNormalized = Math2D.getCircle(bodyPosition,
-          getRadius(), mouseAngle);
-    }
-
-    if (crouch) {
-      int crouchTranslate = 80;
-      bodyPosition.translate(0, -crouchTranslate);
-      leg1.setRadius(leg1.getLegLength() - crouchTranslate - 20);
-      leg1.setEllipsisWalkAnimMaxY(30);
-      leg2.setRadius(leg2.getLegLength() - crouchTranslate - 20);
-      leg2.setEllipsisWalkAnimMaxY(30);
-    } else {
-      leg1.setRadius(leg1.getLegLength());
-      leg2.setRadius(leg2.getLegLength());
-    }
-
-    Point mousePointScreen = mousePointNormalized.clone()
-        .translate(position);
-    renderer.drawRectangle(mousePointScreen.getFloatX() - 5,
-        mousePointScreen.getFloatY() - 5, 10, 10,
-        getDrawColor());
+    walkAnimationController.setCrouch(crouch);
 
     double leg1CurrentStep = 0;
     double leg2CurrentStep = 0;
@@ -130,10 +105,12 @@ public class WalkingEntity extends MoveableCircleEntity
       leg2CurrentStep = currentStep;
     }
 
-    leg1.calculateStep(bodyPosition, left, leg1CurrentStep)
+    leg1.calculateStep(bodyPosition, walkAnimationController,
+        left, leg1CurrentStep)
         .render(renderer, position);
 
-    leg2.calculateStep(bodyPosition, left, leg2CurrentStep)
+    leg2.calculateStep(bodyPosition, walkAnimationController,
+        left, leg2CurrentStep)
         .render(renderer, position);
 
     // Step control

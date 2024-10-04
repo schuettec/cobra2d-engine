@@ -5,8 +5,7 @@ import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
 
-import com.github.schuettec.cobra2d.math.HarmonicOscillation;
-import com.github.schuettec.cobra2d.math.HarmonicOscillation.Type;
+import com.github.schuettec.cobra2Dexamples.walkinganimation.LegAnimationController.AnimationResult;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.Color;
@@ -19,12 +18,6 @@ public class Leg {
 
   private final int maxStep;
   private final double legLength;
-
-  private double ellipsisWalkAnimMaxX;
-  private double ellipsisWalkAnimMaxY;
-  private HarmonicOscillation ellipsisOscilatorX;
-  private HarmonicOscillation ellipsisOscilatorY;
-  private double radius;
 
   record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
@@ -70,9 +63,6 @@ public class Leg {
     private int maxStep = 100;
     private double legLength;
 
-    private double ellipsisWalkAnimMaxX = 250d;
-    private double ellipsisWalkAnimMaxY = 80d;
-
     // Builder-Methoden für jeden Parameter
     public LegBuilder setVerhältnisOberschenkelUnterschenkel(
         double verhältnis) {
@@ -95,18 +85,6 @@ public class Leg {
       return this;
     }
 
-    public LegBuilder setEllipsisWalkAnimMaxX(
-        double ellipsisWalkAnimMaxX) {
-      this.ellipsisWalkAnimMaxX = ellipsisWalkAnimMaxX;
-      return this;
-    }
-
-    public LegBuilder setEllipsisWalkAnimMaxY(
-        double ellipsisWalkAnimMaxY) {
-      this.ellipsisWalkAnimMaxY = ellipsisWalkAnimMaxY;
-      return this;
-    }
-
     // Methode zum Erstellen der LegConfiguration
     public Leg build() {
       return new Leg(this);
@@ -119,15 +97,7 @@ public class Leg {
 
     this.maxStep = builder.maxStep;
     this.legLength = builder.legLength;
-    this.radius = legLength;
 
-    this.ellipsisWalkAnimMaxX = builder.ellipsisWalkAnimMaxX;
-    this.ellipsisWalkAnimMaxY = builder.ellipsisWalkAnimMaxY;
-
-    this.ellipsisOscilatorX = new HarmonicOscillation(maxStep,
-        ellipsisWalkAnimMaxX, 0.5d, Type.COSINUS, false);
-    this.ellipsisOscilatorY = new HarmonicOscillation(maxStep,
-        ellipsisWalkAnimMaxY, 0.5d, Type.SINUS, true);
   }
 
   public static LegBuilder newLeg() {
@@ -186,23 +156,13 @@ public class Leg {
   }
 
   public LegRenderable calculateStep(Point worldCoordinates,
-      boolean left, double currentStep) {
+      LegAnimationController animationController, boolean left,
+      double currentStep) {
+    AnimationResult result = animationController
+        .calculateTargetByStep(worldCoordinates, currentStep);
 
-    ellipsisOscilatorX.setAmplitude(ellipsisWalkAnimMaxX);
-    ellipsisOscilatorY.setAmplitude(ellipsisWalkAnimMaxY);
-    double sX = ellipsisOscilatorX.apply(currentStep);
-    double sY = ellipsisOscilatorY.apply(currentStep);
-
-    Point positionSchwingungselipseZentrum = Math2D.getCircle(
-        worldCoordinates.clone()
-            .translate(0, ellipsisWalkAnimMaxY / 2.),
-        radius, 270d);
-
-    Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
-        .translate(positionSchwingungselipseZentrum);
-
-    return berechneWinkel(worldCoordinates, left,
-        schwingungsEllipsePunkt);
+    return berechneWinkel(result.bodyPosition(), left,
+        result.targetPoint());
 
   }
 
@@ -227,24 +187,6 @@ public class Leg {
     return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E);
   }
 
-  public double getEllipsisWalkAnimMaxX() {
-    return ellipsisWalkAnimMaxX;
-  }
-
-  public void setEllipsisWalkAnimMaxX(
-      double ellipsisWalkAnimMaxX) {
-    this.ellipsisWalkAnimMaxX = ellipsisWalkAnimMaxX;
-  }
-
-  public double getEllipsisWalkAnimMaxY() {
-    return ellipsisWalkAnimMaxY;
-  }
-
-  public void setEllipsisWalkAnimMaxY(
-      double ellipsisWalkAnimMaxY) {
-    this.ellipsisWalkAnimMaxY = ellipsisWalkAnimMaxY;
-  }
-
   public double getLängeFuß() {
     return längeFuß;
   }
@@ -255,14 +197,6 @@ public class Leg {
 
   public double getLegLength() {
     return legLength;
-  }
-
-  public double getRadius() {
-    return radius;
-  }
-
-  public void setRadius(double radius) {
-    this.radius = radius;
   }
 
 }
