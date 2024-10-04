@@ -4,51 +4,60 @@ import com.github.schuettec.cobra2d.math.Point;
 
 public interface Controller {
 
-	/**
-	 * Checks the state of the specified key code. Note: The key code is
-	 * renderer-specific! For common keys use the provided methods like
-	 * isUpKeyPressed().
-	 *
-	 * @param keyCode The key code.
-	 * @return Returns <code>true</code> if the specified key is pressed, otherwise
-	 *         <code>false</code> is returned.
-	 */
-	public abstract boolean isKeyPressed(final int keyCode);
+  /**
+   * Checks the state of the specified key code. Note: The key
+   * code is
+   * renderer-specific! For common keys use the provided methods
+   * like
+   * isUpKeyPressed().
+   *
+   * @param keyCode The key code.
+   * @return Returns <code>true</code> if the specified key is
+   *         pressed, otherwise
+   *         <code>false</code> is returned.
+   */
+  public abstract boolean isKeyPressed(final int keyCode);
 
-	public boolean isEscapePressed();
+  public boolean isEscapePressed();
 
-	public boolean isUpKeyPressed();
+  public boolean isUpKeyPressed();
 
-	boolean isDownKeyPressed();
+  boolean isDownKeyPressed();
 
-	boolean isLeftKeyPressed();
+  boolean isLeftKeyPressed();
 
-	boolean isRightKeyPressed();
+  boolean isRightKeyPressed();
 
-	public boolean isWKeyPressed();
+  public boolean isWKeyPressed();
 
-	public boolean isAKeyPressed();
+  public boolean isAKeyPressed();
 
-	public boolean isSKeyPressed();
+  public boolean isSKeyPressed();
 
-	public boolean isDKeyPressed();
+  public boolean isDKeyPressed();
 
-	public boolean isSpaceKeyPressed();
+  public boolean isSpaceKeyPressed();
 
-	public boolean isCtrlLeftKeyPressed();
+  public boolean isCtrlLeftKeyPressed();
 
-	public boolean isShiftLeftKeyPressed();
+  public boolean isShiftLeftKeyPressed();
 
-	public boolean isAltLeftKeyPressed();
+  public boolean isAltLeftKeyPressed();
 
-	public boolean isPlusKeyPressed();
+  public boolean isCtrlRightKeyPressed();
 
-	public boolean isMinusKeyPressed();
+  public boolean isShiftRightKeyPressed();
 
-	public Point getMousePositionOnScreen();
+  public boolean isAltRightKeyPressed();
 
-	public Point getMousePositionWorldCoordinates();
+  public boolean isPlusKeyPressed();
 
-	public boolean isJustTouched();
+  public boolean isMinusKeyPressed();
+
+  public Point getMousePositionOnScreen();
+
+  public Point getMousePositionWorldCoordinates();
+
+  public boolean isJustTouched();
 
 }

@@ -47,13 +47,15 @@ public class WalkingEntity extends MoveableCircleEntity
     this.mousePoint = controller
         .getMousePositionWorldCoordinates();
 
-    if (controller.isShiftLeftKeyPressed()) {
+    if (controller.isShiftLeftKeyPressed()
+        || controller.isShiftRightKeyPressed()) {
       this.fast = true;
     } else {
       this.fast = false;
     }
 
-    if (controller.isCtrlLeftKeyPressed()) {
+    if (controller.isCtrlLeftKeyPressed()
+        || controller.isCtrlRightKeyPressed()) {
       this.crouch = true;
     } else {
       this.crouch = false;
