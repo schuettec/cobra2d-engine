@@ -9,6 +9,7 @@ import com.github.schuettec.cobra2d.entity.camera.BasicRectangleMapCamera;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererType;
+import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class PhysicsWalkingDemo {
   public static void main(String[] args) {
@@ -16,6 +17,8 @@ public class PhysicsWalkingDemo {
     final Properties properties = new Properties();
     // DemoUtils.windowMode(properties);
     DemoUtils.windowMode(properties);
+    properties.put(Cobra2DProperties.RESOLUTION_X, "1600"); // 1920
+    properties.put(Cobra2DProperties.RESOLUTION_Y, "800"); // 1080
     properties.put(Cobra2DProperties.MAP_UPDATE, "true");
     properties.put(Cobra2DProperties.RENDERER,
         RendererType.LIBGDX.toString());
@@ -26,23 +29,20 @@ public class PhysicsWalkingDemo {
     Cobra2DEngine engine = new Cobra2DEngine(properties);
     engine.initialize();
 
-    PhysicsWallEntity linkeWand = new PhysicsWallEntity(
-        new Point(20, 400), new Dimension(20, 789));
-    PhysicsWallEntity rechteWand = new PhysicsWallEntity(
-        new Point(779, 400), new Dimension(20, 789));
-    PhysicsWallEntity decke = new PhysicsWallEntity(
-        new Point(400, 779), new Dimension(789, 20));
+    Cobra2DWorld world = engine.getWorld();
+    world.setGravity(0, -9.7f);
+
     PhysicsWallEntity boden = new PhysicsWallEntity(
-        new Point(400, 19), new Dimension(789, 20));
+        new Point(0, 19), new Dimension(1600, 20));
 
     PhysicsWallEntity block = new PhysicsWallEntity(
         new Point(600, 100), new Dimension(200, 200));
 
     PhysicsWalkingEntity player = new PhysicsWalkingEntity(
-        new Point(300, 200), 200, 90, 0);
+        new Point(300, 400), 100, 4, 0);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(
-        new Point(400, 400), new Dimension(799, 799), false);
+        new Point(0, 400), new Dimension(1600, 799), false);
     camera.setDrawCameraOutline(true);
     camera.setDrawCollisionShape(true);
     camera.setDrawEntityPoints(true);
@@ -54,8 +54,7 @@ public class PhysicsWalkingDemo {
     // automatically
     // camera.setScreenPosition(new Point(0, 0));
 
-    engine.addEntity(player, linkeWand, rechteWand, decke,
-        boden);
+    engine.addEntity(player, boden);
     // block);
     engine.addEntity(camera);
     engine.setCameraForInput(camera);

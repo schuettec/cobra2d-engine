@@ -37,7 +37,7 @@ public class WalkingEntity extends MoveableCircleEntity {
     this.leg1 = builder.build();
     this.leg2 = builder.build();
     this.walkAnimationController = new WalkAnimationController(
-        MAX_STEP, radius, 250d, 80d, 100d);
+        MAX_STEP, radius, 250d, 80d, 100d, 80d);
   }
 
   @Override

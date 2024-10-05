@@ -4,27 +4,35 @@ import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
+import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.WalkAnimationController;
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
+import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
+import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
+import com.github.schuettec.cobra2d.entity.skills.RectangleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
+import com.github.schuettec.cobra2d.math.Circle;
+import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
+import com.github.schuettec.cobra2d.math.Polygon;
+import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsWalkingEntity extends BasicCircleEntity
-    implements CircleRenderable, PhysicBody, Updatable,
-    Controllable {
+public class PhysicsWalkingEntity extends BasicRectangleEntity
+    implements CircleRenderable, RectangleRenderable, PhysicBody,
+    Updatable, Controllable {
 
   private static final int MAX_STEP = 50;
 
@@ -55,9 +63,13 @@ public class PhysicsWalkingEntity extends BasicCircleEntity
    */
   private float renderScaleConversionFactor = 1 / 100f;
 
+  private double radius;
+
   public PhysicsWalkingEntity(Point worldCoordinates,
       double radius, double forceToApply, double degrees) {
-    super(worldCoordinates, radius);
+    super(worldCoordinates,
+        new Dimension(2. * radius, 2. * radius));
+    this.radius = radius;
     this.forceToApply = forceToApply;
     this.setDegrees(degrees);
 
@@ -67,24 +79,36 @@ public class PhysicsWalkingEntity extends BasicCircleEntity
     this.leg1 = builder.build();
     this.leg2 = builder.build();
     this.walkAnimationController = new WalkAnimationController(
-        MAX_STEP, radius, 250d, 80d, 100d);
+        MAX_STEP, radius, 97, 40d, 80d, 30d);
+  }
+
+  @Override
+  public void configureBodyDef(BodyDef bodyDef) {
+    bodyDef.fixedRotation = true;
+    bodyDef.linearDamping = 1f;
+    bodyDef.angularDamping = 1f;
   }
 
   @Override
   public Fixture createFixture(Body body) {
-    CircleShape shape = new CircleShape();
-    double worldRadius = getCollisionShape(true, false, false)
-        .getRadius();
-    float radius = (float) worldRadius
+    PolygonShape polygonShape = new PolygonShape();
+    Polygon collisionShape = getCollisionShape(true, false,
+        false);
+    Rectangle huellRect = Math2D
+        .getHuellRect(collisionShape.getPoints());
+    Dimension dimension = huellRect.getDimension();
+    float width = (float) dimension.getWidth()
         * renderScaleConversionFactor;
-    shape.setRadius(radius);
+    float height = (float) dimension.getHeight()
+        * renderScaleConversionFactor;
+    polygonShape.setAsBox(width / 2.0f, height / 2.0f);
 
     // Create a fixture definition to apply our shape to
     FixtureDef fixtureDef = new FixtureDef();
-    fixtureDef.shape = shape;
+    fixtureDef.shape = polygonShape;
     fixtureDef.density = 1f;
     fixtureDef.friction = 1f;
-    fixtureDef.restitution = 1f;
+    fixtureDef.restitution = 0f;
     // Create our fixture and attach it to the body
     Fixture fixture = body.createFixture(fixtureDef);
     this.body = body;
@@ -128,10 +152,14 @@ public class PhysicsWalkingEntity extends BasicCircleEntity
   public void update(WorldAccess worldAccess, float deltaTime) {
 
     // if run
+    Vector2 currenVelocity = this.getBody()
+        .getLinearVelocity();
     if (run) {
-      Vector2 vForce = PhysicBody.getDegreesAndForceAsVector(
-          getDegrees(), forceToApply);
-      body.applyForce(vForce, new Vector2(), true);
+      body.setLinearVelocity(
+          (left ? -1f : 1f) * (float) forceToApply,
+          currenVelocity.y);
+    } else {
+      body.setLinearVelocity(0, currenVelocity.y);
     }
 
     Vector2 position = body.getPosition();
@@ -145,10 +173,14 @@ public class PhysicsWalkingEntity extends BasicCircleEntity
 
   @Override
   public void render(RendererAccess renderer, Point position) {
-
-    CircleRenderable.renderCircle(
+    PolygonRenderable.renderPolygon(
         getCollisionShapeInWorldCoordinates(), renderer,
         position, Color.MAGENTA);
+
+    Circle circle = new Circle(new Point(), radius)
+        .translate(getPosition());
+    CircleRenderable.renderCircle(circle, renderer, position,
+        Color.MAGENTA);
 
     // --- Calculate max point
     Point bodyPosition = getPosition().clone();

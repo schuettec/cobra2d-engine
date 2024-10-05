@@ -27,13 +27,14 @@ public class WalkAnimationController
 
   public WalkAnimationController(double maxStep,
       double legLength, double stepSize, double stepHeight,
-      double stepHeightFast) {
+      double stepHeightFast, double crouchHeight) {
     this.maxStep = maxStep;
     this.radius = legLength;
 
     this.stepSize = stepSize;
     this.stepHeight = stepHeight;
     this.stepHeightFast = stepHeightFast;
+    this.crouchHeight = crouchHeight;
 
     this.ellipsisOscilatorX = new HarmonicOscillation(maxStep,
         stepSize, 0.5d, Type.COSINUS, false);
