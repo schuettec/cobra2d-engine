@@ -3,13 +3,11 @@ package com.github.schuettec.cobra2Dexamples.walkinganimation;
 import com.github.schuettec.cobra2Dexamples.moveableShapes.MoveableCircleEntity;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.Leg.LegBuilder;
 import com.github.schuettec.cobra2d.controller.Controller;
-import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class WalkingEntity extends MoveableCircleEntity
-    implements Updatable {
+public class WalkingEntity extends MoveableCircleEntity {
 
   private static final int MAX_STEP = 50;
 
@@ -40,7 +38,7 @@ public class WalkingEntity extends MoveableCircleEntity
     this.leg1 = builder.build();
     this.leg2 = builder.build();
     this.walkAnimationController = new WalkAnimationController(
-        MAX_STEP, radius, 250d, 80d);
+        MAX_STEP, radius, 250d, 80d, 100d);
   }
 
   @Override
@@ -80,16 +78,6 @@ public class WalkingEntity extends MoveableCircleEntity
   }
 
   @Override
-  public void update(WorldAccess worldAccess, float deltaTime) {
-    if (fast) {
-      walkAnimationController.setStepHeight(130d);
-    } else {
-      walkAnimationController.setStepHeight(80d);
-    }
-
-  }
-
-  @Override
   public void render(RendererAccess renderer, Point position) {
     super.render(renderer, position);
 
@@ -97,11 +85,14 @@ public class WalkingEntity extends MoveableCircleEntity
     Point bodyPosition = getPosition().clone();
 
     walkAnimationController.setCrouch(crouch);
+    walkAnimationController.setFast(fast);
 
     double leg1CurrentStep = 0;
     double leg2CurrentStep = 0;
+
     if (run) {
-      leg1CurrentStep = (currentStep + 25) % MAX_STEP;
+      leg1CurrentStep = (currentStep + (MAX_STEP / 2.))
+          % MAX_STEP;
       leg2CurrentStep = currentStep;
     }
 

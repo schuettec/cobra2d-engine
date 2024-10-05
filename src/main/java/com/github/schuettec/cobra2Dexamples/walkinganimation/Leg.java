@@ -5,6 +5,8 @@ import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
 
+import java.util.List;
+
 import com.github.schuettec.cobra2Dexamples.walkinganimation.LegAnimationController.AnimationResult;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
@@ -21,7 +23,8 @@ public class Leg {
 
   record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
-      Point unterschenkelEnde, Point fußStart, Point fußEnde) {
+      Point unterschenkelEnde, Point fußStart, Point fußEnde,
+      List<Point> debugPoints) {
 
     /**
      * @param renderer
@@ -53,6 +56,15 @@ public class Leg {
       renderer.drawLine(fußStart2.getRoundX(),
           fußStart2.getRoundY(), fußEnde2.getRoundX(),
           fußEnde2.getRoundY(), Color.YELLOW);
+
+      for (Point d : debugPoints) {
+        Point sP = d.clone()
+            .translate(screenTranslation);
+        float debugRadius = 1f;
+        renderer.fillOval(sP.getFloatX() - debugRadius,
+            sP.getFloatY() - debugRadius, 2 * debugRadius,
+            2 * debugRadius, Color.MAGENTA);
+      }
     }
   }
 
@@ -105,8 +117,11 @@ public class Leg {
   }
 
   // Inverse Kinematik-Methode
-  public LegRenderable berechneWinkel(Point start, boolean left,
-      Point ziel) {
+  public LegRenderable berechneWinkel(AnimationResult result,
+      boolean left) {
+
+    Point start = result.bodyPosition();
+    Point ziel = result.targetPoint();
 
     double oberschenkelLänge = getOberschenkelLänge();
     double unterschenkelLänge = getUnterschenkelLänge();
@@ -142,7 +157,7 @@ public class Leg {
       fussWinkel = normalizeAngle(180d - fussWinkel);
     }
 
-    return createLegRenderableFromWinkel(start,
+    return createLegRenderableFromWinkel(result, start,
         oberschenkelWinkel, unterschenkelwinkel, fussWinkel);
 
   }
@@ -161,14 +176,13 @@ public class Leg {
     AnimationResult result = animationController
         .calculateTargetByStep(worldCoordinates, currentStep);
 
-    return berechneWinkel(result.bodyPosition(), left,
-        result.targetPoint());
-
+    return berechneWinkel(result, left);
   }
 
   private LegRenderable createLegRenderableFromWinkel(
-      Point worldCoordinates, double winkelOberschenkel,
-      double winkelUnterschenkel, double winkelFuss) {
+      AnimationResult result, Point worldCoordinates,
+      double winkelOberschenkel, double winkelUnterschenkel,
+      double winkelFuss) {
 
     double oberschenkelLänge = getOberschenkelLänge();
     double unterschenkelLänge = getUnterschenkelLänge();
@@ -184,7 +198,8 @@ public class Leg {
     Point f1S = u1E.clone();
     Point f1E = Math2D.getCircle(f1S, längeFuß, winkelFuss);
 
-    return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E);
+    return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E,
+        result.debugPoints());
   }
 
   public double getLängeFuß() {
