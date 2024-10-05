@@ -30,8 +30,8 @@ public class WalkingEntityDemo {
     Cobra2DEngine engine = new Cobra2DEngine(properties);
     engine.initialize();
 
-    WalkingEntity e = new WalkingEntity(new Point(300, 300), 200,
-        true);
+    WalkingEntity e = new WalkingEntity(new Point(300, 300),
+        200);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(
         new Point(100, 100), new Dimension(800, 800), false);

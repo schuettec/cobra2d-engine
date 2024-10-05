@@ -29,9 +29,8 @@ public class WalkingEntity extends MoveableCircleEntity {
 
   private WalkAnimationController walkAnimationController;
 
-  public WalkingEntity(Point worldCoordinates, double radius,
-      boolean playerControlled) {
-    super(worldCoordinates, radius, playerControlled);
+  public WalkingEntity(Point worldCoordinates, double radius) {
+    super(worldCoordinates, radius, false);
     LegBuilder builder = Leg.newLeg()
         .setLegLength(radius)
         .setMaxStep(MAX_STEP);

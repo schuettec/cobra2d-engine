@@ -21,7 +21,7 @@ public class Leg {
   private final int maxStep;
   private final double legLength;
 
-  record LegRenderable(Point oberschenkelStart,
+  public record LegRenderable(Point oberschenkelStart,
       Point oberschenkelEnde, Point unterschenkelStart,
       Point unterschenkelEnde, Point fußStart, Point fußEnde,
       List<Point> debugPoints) {
