@@ -2,6 +2,8 @@ package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 
+import java.util.Optional;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -16,6 +18,7 @@ import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Controllable;
+import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.RectangleRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
@@ -28,6 +31,8 @@ import com.github.schuettec.cobra2d.math.Polygon;
 import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
+import com.github.schuettec.cobra2d.world.Collision;
+import com.github.schuettec.cobra2d.world.CollisionMap;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class PhysicsWalkingEntity extends BasicRectangleEntity
@@ -65,10 +70,12 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 
   private double radius;
 
+  private Optional<Point> nextStepPoint;
+
   public PhysicsWalkingEntity(Point worldCoordinates,
-      double radius, double forceToApply, double degrees) {
-    super(worldCoordinates,
-        new Dimension(2. * radius, 2. * radius));
+      Dimension dimension, double radius, double forceToApply,
+      double degrees) {
+    super(worldCoordinates, dimension);
     this.radius = radius;
     this.forceToApply = forceToApply;
     this.setDegrees(degrees);
@@ -151,15 +158,61 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
   @Override
   public void update(WorldAccess worldAccess, float deltaTime) {
 
+    CollisionMap collisionMap = worldAccess.getCollisions()
+        .detectCollision(this,
+            HasCollisionShape::getCollisionShapeInWorldCoordinates,
+            worldAccess.getObstaclesExcept(this),
+            HasCollisionShape::getCollisionShapeInWorldCoordinates,
+            false, false, false);
+    boolean isCollidingWithWall = collisionMap.getCollisions()
+        .stream()
+        .filter(c -> c
+            .getOpponent() instanceof PhysicsWallObstacleEntity)
+        .findFirst()
+        .isPresent();
+
+    Optional<Collision> first = collisionMap.getCollisions()
+        .stream()
+        .filter(c -> c
+            .getOpponent() instanceof PhysicsWalkFloorEntity)
+        .findFirst();
+    boolean isCollidingWithWalkingObstacle = first.isPresent();
+
+    PhysicsWalkFloorEntity stepOverObstacle = null;
+    if (isCollidingWithWalkingObstacle) {
+      stepOverObstacle = (PhysicsWalkFloorEntity) first.get()
+          .getOpponent();
+      double nextStepXPos = getPosition().x
+          + getDimension(false, false).getWidth();
+      this.nextStepPoint = stepOverObstacle
+          .getNextStep(nextStepXPos);
+    } else {
+      this.nextStepPoint = Optional.empty();
+    }
+
+    // if (isCollidingWithWall || isCollidingWithWalkingObstacle)
+    // {
+    // System.out.println("Collision");
+    // }
+
     // if run
-    Vector2 currenVelocity = this.getBody()
+    Vector2 currentVelocity = this.getBody()
         .getLinearVelocity();
+    boolean shouldStepOverWalkingObstacle = currentVelocity.x == 0
+        && isCollidingWithWalkingObstacle;
+
     if (run) {
+      // if (shouldStepOverWalkingObstacle) {
+      // run = false;
+      // Point stepOverPoint = stepOverObstacle
+      // .getStepOverPoint();
+      // setPosition(stepOverPoint);
+      // }
       body.setLinearVelocity(
           (left ? -1f : 1f) * (float) forceToApply,
-          currenVelocity.y);
+          currentVelocity.y);
     } else {
-      body.setLinearVelocity(0, currenVelocity.y);
+      body.setLinearVelocity(0, currentVelocity.y);
     }
 
     Vector2 position = body.getPosition();
@@ -181,6 +234,14 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
         .translate(getPosition());
     CircleRenderable.renderCircle(circle, renderer, position,
         Color.MAGENTA);
+
+    if (nextStepPoint.isPresent()) {
+      Point point = nextStepPoint.get()
+          .clone()
+          .translate(position);
+      renderer.fillCircle(point.getFloatX() - 2,
+          point.getFloatY() - 2, 4, Color.CYAN);
+    }
 
     // --- Calculate max point
     Point bodyPosition = getPosition().clone();

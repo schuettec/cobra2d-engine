@@ -32,14 +32,14 @@ public class PhysicsWalkingDemo {
     Cobra2DWorld world = engine.getWorld();
     world.setGravity(0, -9.7f);
 
-    PhysicsWallEntity boden = new PhysicsWallEntity(
+    PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(
         new Point(0, 19), new Dimension(1600, 20));
 
-    PhysicsWallEntity block = new PhysicsWallEntity(
-        new Point(600, 100), new Dimension(200, 200));
+    PhysicsWalkFloorEntity block = new PhysicsWalkFloorEntity(
+        new Point(600, 55), new Dimension(50, 50));
 
     PhysicsWalkingEntity player = new PhysicsWalkingEntity(
-        new Point(300, 400), 100, 4, 0);
+        new Point(300, 400), new Dimension(50, 200), 100, 4, 0);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(
         new Point(0, 400), new Dimension(1600, 799), false);
@@ -54,7 +54,7 @@ public class PhysicsWalkingDemo {
     // automatically
     // camera.setScreenPosition(new Point(0, 0));
 
-    engine.addEntity(player, boden);
+    engine.addEntity(player, boden, block);
     // block);
     engine.addEntity(camera);
     engine.setCameraForInput(camera);

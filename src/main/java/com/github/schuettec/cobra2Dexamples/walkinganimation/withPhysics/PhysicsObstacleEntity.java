@@ -1,8 +1,12 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 
+import java.util.List;
+
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Fixture;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.github.schuettec.cobra2d.entity.BasicRectangleEntity;
 import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.entity.skills.Updatable;
@@ -13,7 +17,7 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsWallEntity extends BasicRectangleEntity
+public class PhysicsObstacleEntity extends BasicRectangleEntity
     implements PolygonRenderable, PhysicBody, Updatable {
 
   /**
@@ -27,9 +31,31 @@ public class PhysicsWallEntity extends BasicRectangleEntity
   private Body body;
   private Fixture fixture;
 
-  public PhysicsWallEntity(Point worldCoordinates,
+  public PhysicsObstacleEntity(Point worldCoordinates,
       Dimension dimension) {
     super(worldCoordinates, dimension);
+  }
+
+  @Override
+  public PolygonShape getBodyFromPolygonCollisionShape() {
+    PolygonShape polygonShape = new PolygonShape();
+    List<Point> entityPoints = getCollisionShape(false, false,
+        false)
+            // Scale down, so that collision detection works in
+            // combination with physics (which resolves to early
+            // collision)
+            .scale(0.9d)
+            .getPoints();
+    int numberOfPoints = entityPoints.size();
+    Vector2[] vertices = new Vector2[numberOfPoints];
+    for (int i = 0; i < numberOfPoints; i++) {
+      Point ep = entityPoints.get(i);
+      vertices[i] = new Vector2();
+      vertices[i].x = toPhysicsValue(ep.getX());
+      vertices[i].y = toPhysicsValue(ep.getY());
+    }
+    polygonShape.set(vertices);
+    return polygonShape;
   }
 
   @Override
