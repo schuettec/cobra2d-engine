@@ -49,8 +49,12 @@ public class StepUpAnimationController
 
     Line interpolation = null;
     // interpolation = new Line(targetPoint, sourcePoint);
+    if (liegtLinksVon(targetPoint, sourcePoint)) {
+      System.out.println("LIEGT LINKS");
+      targetPoint = spiegeln(targetPoint, sourcePoint);
+    }
 
-    interpolation = new Line(targetPoint, sourcePoint);
+    interpolation = new Line(sourcePoint, targetPoint);
     double minX = interpolation.getMinX();
     double maxX = interpolation.getMaxX();
 
@@ -62,4 +66,14 @@ public class StepUpAnimationController
         null);
   }
 
+  public static Point spiegeln(Point p, Point s) {
+    double xGespiegelt = 2d * s.x - p.x;
+    return new Point(xGespiegelt, p.y);
+  }
+
+  public static boolean liegtLinksVon(Point p1, Point p2) {
+    // Prüfen, ob p1 links von p2 liegt (d.h. ob die x-Koordinate
+    // kleiner ist)
+    return p1.x < p2.x;
+  }
 }

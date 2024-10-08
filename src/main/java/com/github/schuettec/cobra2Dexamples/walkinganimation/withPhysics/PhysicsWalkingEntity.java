@@ -209,6 +209,7 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
           // Reset animation step
           if (!stepUpEvent) {
             currentStep = 0;
+            System.out.println("RESET");
           }
           stepUpEvent = true;
         } else if (lineParallelY.isPresent()
@@ -219,6 +220,7 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
           // Reset animation step
           if (!stepUpEvent) {
             currentStep = 0;
+            System.out.println("RESET");
           }
           stepUpEvent = true;
         }
@@ -339,9 +341,11 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
       if (left && nonNull(leftFloor)) {
         stepUpAnimationController
             .setTargetPoint(nextStepPointLeft);
-      } else {
+        System.out.println("Animate to left");
+      } else if (!left && nonNull(rightFloor)) {
         stepUpAnimationController
             .setTargetPoint(nextStepPointRight);
+        System.out.println("Animate to right");
       }
 
       leg1.calculateStep(bodyPosition, stepUpAnimationController,
@@ -354,6 +358,7 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
       System.out.println("STep up and run " + currentStep);
       if (currentStep == MAX_STEP) {
         stepUpEvent = false;
+        System.out.println("EVENT ENDE");
       }
     } else {
 
