@@ -11,19 +11,19 @@ import com.github.schuettec.cobra2d.math.Point;
 public class WalkAnimationController
     implements LegAnimationController {
 
-  private HarmonicOscillation ellipsisOscilatorX;
-  private HarmonicOscillation ellipsisOscilatorY;
+  protected HarmonicOscillation ellipsisOscilatorX;
+  protected HarmonicOscillation ellipsisOscilatorY;
 
-  private double maxStep;
+  protected double maxStep;
 
-  private double stepSize = 250d;
-  private double stepHeight = 80d;
-  private double stepHeightFast = 130d;
-  private double crouchHeight = 80d;
+  protected double stepSize = 250d;
+  protected double stepHeight = 80d;
+  protected double stepHeightFast = 130d;
+  protected double crouchHeight = 80d;
 
-  private double radius;
-  private boolean crouch = false;
-  private boolean fast = false;
+  protected double radius;
+  protected boolean crouch = false;
+  protected boolean fast = false;
 
   public WalkAnimationController(double maxStep,
       double legLength, double stepSize, double stepHeight,

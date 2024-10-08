@@ -4,6 +4,7 @@ import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 import static com.github.schuettec.cobra2d.math.Math2D.toDegrees;
 import static java.lang.Math.acos;
 import static java.lang.Math.pow;
+import static java.util.Objects.nonNull;
 
 import java.util.List;
 
@@ -57,13 +58,15 @@ public class Leg {
           fußStart2.getRoundY(), fußEnde2.getRoundX(),
           fußEnde2.getRoundY(), Color.YELLOW);
 
-      for (Point d : debugPoints) {
-        Point sP = d.clone()
-            .translate(screenTranslation);
-        float debugRadius = 1f;
-        renderer.fillOval(sP.getFloatX() - debugRadius,
-            sP.getFloatY() - debugRadius, 2 * debugRadius,
-            2 * debugRadius, Color.MAGENTA);
+      if (nonNull(debugPoints)) {
+        for (Point d : debugPoints) {
+          Point sP = d.clone()
+              .translate(screenTranslation);
+          float debugRadius = 1f;
+          renderer.fillOval(sP.getFloatX() - debugRadius,
+              sP.getFloatY() - debugRadius, 2 * debugRadius,
+              2 * debugRadius, Color.MAGENTA);
+        }
       }
     }
   }

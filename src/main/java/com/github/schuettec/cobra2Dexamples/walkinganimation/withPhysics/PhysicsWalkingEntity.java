@@ -83,6 +83,10 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 
   private PhysicsWalkFloorEntity bottomFloor;
 
+  private StepUpAnimationController stepUpAnimationController;
+
+  private boolean stepUpEvent;
+
   public PhysicsWalkingEntity(Point worldCoordinates,
       Dimension dimension, double radius, double forceToApply,
       double degrees) {
@@ -97,6 +101,8 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
     this.leg1 = builder.build();
     this.leg2 = builder.build();
     this.walkAnimationController = new WalkAnimationController(
+        MAX_STEP, radius, 97, 40d, 80d, 30d);
+    this.stepUpAnimationController = new StepUpAnimationController(
         MAX_STEP, radius, 97, 40d, 80d, 30d);
   }
 
@@ -200,50 +206,29 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
           CollisionDetail detail = lineParallelY.get();
           nextStepPointLeft = detail.getIntersection();
           leftFloor = opponent;
+          // Reset animation step
+          if (!stepUpEvent) {
+            currentStep = 0;
+          }
+          stepUpEvent = true;
         } else if (lineParallelY.isPresent()
             && isRight(oPosition)) {
           CollisionDetail detail = lineParallelY.get();
           nextStepPointRight = detail.getIntersection();
           rightFloor = opponent;
+          // Reset animation step
+          if (!stepUpEvent) {
+            currentStep = 0;
+          }
+          stepUpEvent = true;
         }
       }
     }
 
-    // boolean isCollidingWithWalkingObstacle =
-    // !collidingWalkFloors
-    // .isEmpty();
-    //
-    // PhysicsWalkFloorEntity stepOverObstacle = null;
-    // if (isCollidingWithWalkingObstacle) {
-    // stepOverObstacle = (PhysicsWalkFloorEntity) first.get()
-    // .getOpponent();
-    // double nextStepXPos = getPosition().x
-    // + getDimension(false, false).getWidth();
-    // this.nextStepPoint = stepOverObstacle
-    // .getNextStep(nextStepXPos);
-    // } else {
-    // this.nextStepPoint = Optional.empty();
-    // }
-
-    // if (isCollidingWithWall || isCollidingWithWalkingObstacle)
-    // {
-    // System.out.println("Collision");
-    // }
-
     // if run
     Vector2 currentVelocity = this.getBody()
         .getLinearVelocity();
-    // boolean shouldStepOverWalkingObstacle = currentVelocity.x
-    // == 0
-    // && isCollidingWithWalkingObstacle;
-
     if (run) {
-      // if (shouldStepOverWalkingObstacle) {
-      // run = false;
-      // Point stepOverPoint = stepOverObstacle
-      // .getStepOverPoint();
-      // setPosition(stepOverPoint);
-      // }
       body.setLinearVelocity(
           (left ? -1f : 1f) * (float) forceToApply,
           currentVelocity.y);
@@ -344,31 +329,60 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
     // --- Calculate max point
     Point bodyPosition = getPosition().clone();
 
-    walkAnimationController.setCrouch(crouch);
-    walkAnimationController.setFast(fast);
+    if (stepUpEvent && run) {
+      Point unterschenkelEnde = leg1
+          .calculateStep(bodyPosition, walkAnimationController,
+              left, 0)
+          .unterschenkelEnde();
+      stepUpAnimationController
+          .setSourcePoint(unterschenkelEnde);
+      if (left && nonNull(leftFloor)) {
+        stepUpAnimationController
+            .setTargetPoint(nextStepPointLeft);
+      } else {
+        stepUpAnimationController
+            .setTargetPoint(nextStepPointRight);
+      }
 
-    double leg1CurrentStep = 0;
-    double leg2CurrentStep = 0;
-
-    if (run) {
-      leg1CurrentStep = (currentStep + (MAX_STEP / 2.))
-          % MAX_STEP;
-      leg2CurrentStep = currentStep;
-    }
-
-    leg1.calculateStep(bodyPosition, walkAnimationController,
-        left, leg1CurrentStep)
-        .render(renderer, position);
-
-    leg2.calculateStep(bodyPosition, walkAnimationController,
-        left, leg2CurrentStep)
-        .render(renderer, position);
-
-    // Step control
-    if (run) {
+      leg1.calculateStep(bodyPosition, stepUpAnimationController,
+          left, currentStep)
+          .render(renderer, position);
+      leg2.calculateStep(bodyPosition, walkAnimationController,
+          left, 0)
+          .render(renderer, position);
       currentStep = (currentStep + 1) % MAX_STEP;
+      System.out.println("STep up and run " + currentStep);
+      if (currentStep == MAX_STEP) {
+        stepUpEvent = false;
+      }
     } else {
-      currentStep = 0;
+
+      walkAnimationController.setCrouch(crouch);
+      walkAnimationController.setFast(fast);
+
+      double leg1CurrentStep = 0;
+      double leg2CurrentStep = 0;
+
+      if (run) {
+        leg1CurrentStep = (currentStep + (MAX_STEP / 2.))
+            % MAX_STEP;
+        leg2CurrentStep = currentStep;
+      }
+
+      leg1.calculateStep(bodyPosition, walkAnimationController,
+          left, leg1CurrentStep)
+          .render(renderer, position);
+
+      leg2.calculateStep(bodyPosition, walkAnimationController,
+          left, leg2CurrentStep)
+          .render(renderer, position);
+
+      // Step control
+      if (run) {
+        currentStep = (currentStep + 1) % MAX_STEP;
+      } else {
+        currentStep = 0;
+      }
     }
   }
 
