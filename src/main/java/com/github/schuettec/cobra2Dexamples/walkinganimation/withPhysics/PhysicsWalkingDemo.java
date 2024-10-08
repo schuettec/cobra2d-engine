@@ -34,9 +34,15 @@ public class PhysicsWalkingDemo {
 
     PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(
         new Point(0, 19), new Dimension(1600, 20));
+    System.out.println("Boden: " + boden.getId());
 
-    PhysicsWalkFloorEntity block = new PhysicsWalkFloorEntity(
+    PhysicsWalkFloorEntity block1 = new PhysicsWalkFloorEntity(
         new Point(600, 55), new Dimension(50, 50));
+    System.out.println("Block 1: " + block1.getId());
+
+    PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(
+        new Point(100, 55), new Dimension(50, 50));
+    System.out.println("Block 2: " + block2.getId());
 
     PhysicsWalkingEntity player = new PhysicsWalkingEntity(
         new Point(300, 400), new Dimension(50, 200), 100, 4, 0);
@@ -54,7 +60,7 @@ public class PhysicsWalkingDemo {
     // automatically
     // camera.setScreenPosition(new Point(0, 0));
 
-    engine.addEntity(player, boden, block);
+    engine.addEntity(player, boden, block1, block2);
     // block);
     engine.addEntity(camera);
     engine.setCameraForInput(camera);

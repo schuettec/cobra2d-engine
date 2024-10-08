@@ -1,8 +1,10 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
+import static java.util.Objects.nonNull;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -25,6 +27,7 @@ import com.github.schuettec.cobra2d.entity.skills.Updatable;
 import com.github.schuettec.cobra2d.entity.skills.physics.PhysicBody;
 import com.github.schuettec.cobra2d.math.Circle;
 import com.github.schuettec.cobra2d.math.Dimension;
+import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
@@ -32,6 +35,7 @@ import com.github.schuettec.cobra2d.math.Rectangle;
 import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.Collision;
+import com.github.schuettec.cobra2d.world.CollisionDetail;
 import com.github.schuettec.cobra2d.world.CollisionMap;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
@@ -70,7 +74,14 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 
   private double radius;
 
-  private Optional<Point> nextStepPoint;
+  private Point nextStepPointLeft;
+  private Point nextStepPointRight;
+
+  private PhysicsWalkFloorEntity leftFloor;
+
+  private PhysicsWalkFloorEntity rightFloor;
+
+  private PhysicsWalkFloorEntity bottomFloor;
 
   public PhysicsWalkingEntity(Point worldCoordinates,
       Dimension dimension, double radius, double forceToApply,
@@ -163,32 +174,56 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
             HasCollisionShape::getCollisionShapeInWorldCoordinates,
             worldAccess.getObstaclesExcept(this),
             HasCollisionShape::getCollisionShapeInWorldCoordinates,
-            false, false, false);
-    boolean isCollidingWithWall = collisionMap.getCollisions()
-        .stream()
-        .filter(c -> c
-            .getOpponent() instanceof PhysicsWallObstacleEntity)
-        .findFirst()
-        .isPresent();
+            false, true, false);
 
-    Optional<Collision> first = collisionMap.getCollisions()
-        .stream()
-        .filter(c -> c
-            .getOpponent() instanceof PhysicsWalkFloorEntity)
-        .findFirst();
-    boolean isCollidingWithWalkingObstacle = first.isPresent();
+    leftFloor = null;
+    rightFloor = null;
+    bottomFloor = null;
 
-    PhysicsWalkFloorEntity stepOverObstacle = null;
-    if (isCollidingWithWalkingObstacle) {
-      stepOverObstacle = (PhysicsWalkFloorEntity) first.get()
-          .getOpponent();
-      double nextStepXPos = getPosition().x
-          + getDimension(false, false).getWidth();
-      this.nextStepPoint = stepOverObstacle
-          .getNextStep(nextStepXPos);
-    } else {
-      this.nextStepPoint = Optional.empty();
+    for (Collision c : collisionMap.getCollisions()) {
+      if (c.getOpponent() instanceof PhysicsWalkFloorEntity) {
+        PhysicsWalkFloorEntity opponent = (PhysicsWalkFloorEntity) c
+            .getOpponent();
+        Point oPosition = opponent.getPosition();
+
+        Optional<CollisionDetail> lineParallelX = hasCollisionLineMatching(
+            c, Line::isParallelX);
+        Optional<CollisionDetail> lineParallelY = hasCollisionLineMatching(
+            c, Line::isParallelY);
+        if (lineParallelX.isPresent()
+            && !hasCollisionLineMatching(c, Line::isParallelY)
+                .isPresent()
+            && isBottom(oPosition)) {
+          bottomFloor = opponent;
+        } else if (lineParallelY.isPresent()
+            && isLeft(oPosition)) {
+          CollisionDetail detail = lineParallelY.get();
+          nextStepPointLeft = detail.getIntersection();
+          leftFloor = opponent;
+        } else if (lineParallelY.isPresent()
+            && isRight(oPosition)) {
+          CollisionDetail detail = lineParallelY.get();
+          nextStepPointRight = detail.getIntersection();
+          rightFloor = opponent;
+        }
+      }
     }
+
+    // boolean isCollidingWithWalkingObstacle =
+    // !collidingWalkFloors
+    // .isEmpty();
+    //
+    // PhysicsWalkFloorEntity stepOverObstacle = null;
+    // if (isCollidingWithWalkingObstacle) {
+    // stepOverObstacle = (PhysicsWalkFloorEntity) first.get()
+    // .getOpponent();
+    // double nextStepXPos = getPosition().x
+    // + getDimension(false, false).getWidth();
+    // this.nextStepPoint = stepOverObstacle
+    // .getNextStep(nextStepXPos);
+    // } else {
+    // this.nextStepPoint = Optional.empty();
+    // }
 
     // if (isCollidingWithWall || isCollidingWithWalkingObstacle)
     // {
@@ -198,8 +233,9 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
     // if run
     Vector2 currentVelocity = this.getBody()
         .getLinearVelocity();
-    boolean shouldStepOverWalkingObstacle = currentVelocity.x == 0
-        && isCollidingWithWalkingObstacle;
+    // boolean shouldStepOverWalkingObstacle = currentVelocity.x
+    // == 0
+    // && isCollidingWithWalkingObstacle;
 
     if (run) {
       // if (shouldStepOverWalkingObstacle) {
@@ -224,6 +260,54 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
         saveRound(position.y / renderScaleConversionFactor));
   }
 
+  private Optional<CollisionDetail> hasCollisionLineMatching(
+      Collision c, Predicate<Line> predicate) {
+    return c.getCollisionDetails()
+        .stream()
+        .filter(detail -> {
+          Line entityLine = detail.getEntityLine();
+          if (nonNull(entityLine)) {
+            if (predicate.test(entityLine)) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        })
+        .findFirst();
+  }
+
+  private boolean isLeft(Point oPosition) {
+    // opponent position must be lover than entity.
+    double myX = getPosition().x;
+    if (oPosition.x <= myX) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean isRight(Point oPosition) {
+    double myX = getPosition().x;
+    if (oPosition.x >= myX) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  private boolean isBottom(Point oPosition) {
+    double myY = getPosition().y;
+    double myHeight = getDimension(false, false).getHeight();
+    if (oPosition.y <= myY + myHeight) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @Override
   public void render(RendererAccess renderer, Point position) {
     PolygonRenderable.renderPolygon(
@@ -235,12 +319,26 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
     CircleRenderable.renderCircle(circle, renderer, position,
         Color.MAGENTA);
 
-    if (nextStepPoint.isPresent()) {
-      Point point = nextStepPoint.get()
-          .clone()
+    if (nonNull(leftFloor)) {
+      Point point = nextStepPointLeft.clone()
           .translate(position);
       renderer.fillCircle(point.getFloatX() - 2,
           point.getFloatY() - 2, 4, Color.CYAN);
+    }
+
+    if (nonNull(rightFloor)) {
+      Point point = nextStepPointRight.clone()
+          .translate(position);
+      renderer.fillCircle(point.getFloatX() - 2,
+          point.getFloatY() - 2, 4, Color.YELLOW);
+    }
+
+    if (nonNull(bottomFloor)) {
+      Point point = bottomFloor.getPosition()
+          .clone()
+          .translate(position);
+      renderer.fillCircle(point.getFloatX() - 2,
+          point.getFloatY() - 2, 4, Color.RED);
     }
 
     // --- Calculate max point
