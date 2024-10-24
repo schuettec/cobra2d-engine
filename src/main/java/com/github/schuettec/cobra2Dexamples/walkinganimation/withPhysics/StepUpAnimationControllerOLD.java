@@ -3,14 +3,15 @@ package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 import static java.util.Objects.isNull;
 
 import com.github.schuettec.cobra2Dexamples.walkinganimation.WalkAnimationController;
+import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class StepUpAnimationController extends WalkAnimationController {
+public class StepUpAnimationControllerOLD extends WalkAnimationController {
 
 	private Point targetPoint;
 	private Point sourcePoint;
 
-	public StepUpAnimationController(double maxStep, double legLength, double stepSize, double stepHeight,
+	public StepUpAnimationControllerOLD(double maxStep, double legLength, double stepSize, double stepHeight,
 	    double stepHeightFast, double crouchHeight) {
 		super(maxStep, legLength, stepSize, stepHeight, stepHeightFast, crouchHeight);
 
@@ -44,11 +45,25 @@ public class StepUpAnimationController extends WalkAnimationController {
 
 		Point targetPoint = this.targetPoint;
 
+		Line interpolation = null;
+		boolean mirrored = false;
+		// interpolation = new Line(targetPoint, sourcePoint);
 		if (liegtLinksVon(targetPoint, sourcePoint)) {
+			System.out.println("LIEGT LINKS");
 			targetPoint = spiegeln(targetPoint, sourcePoint);
+			mirrored = true;
 		}
 
-		return new AnimationResult(worldCoordinates, targetPoint, null);
+		interpolation = new Line(sourcePoint, targetPoint);
+		double minX = interpolation.getMinX();
+		double maxX = interpolation.getMaxX();
+
+		// Umrechnen von Steps auf Line-Koordinatensystem
+		double x = minX + currentStep / maxStep * (maxX - minX);
+
+		double y = interpolation.getValue(x);
+
+		return new AnimationResult(worldCoordinates, new Point(x, y), null);
 	}
 
 	public static Point spiegeln(Point p, Point s) {
