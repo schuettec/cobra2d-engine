@@ -40,9 +40,9 @@ public class PhysicsWalkingDemo {
 		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(0, 400), new Dimension(50, 200), 100, 4, 0);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 400), new Dimension(1600, 799), false);
-		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(true);
-		camera.setDrawCollisionPoints(true);
+		camera.setDrawCameraOutline(false);
+		camera.setDrawCollisionShape(false);
+		camera.setDrawCollisionPoints(false);
 		camera.setDrawMouse(true);
 		camera.setScreenPosition(new Point(400, 400));
 		engine.setCameraForInput(camera);

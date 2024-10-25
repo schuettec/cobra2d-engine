@@ -21,9 +21,10 @@ public class Leg {
 
 	private final int maxStep;
 	private final double legLength;
+	private boolean renderDebugPoints;
 
 	public record LegRenderable(Point oberschenkelStart, Point oberschenkelEnde, Point unterschenkelStart,
-	    Point unterschenkelEnde, Point fußStart, Point fußEnde, List<Point> debugPoints) {
+	    Point unterschenkelEnde, Point fußStart, Point fußEnde, boolean renderDebugPoints, List<Point> debugPoints) {
 
 		/**
 		 * @param renderer
@@ -50,13 +51,15 @@ public class Leg {
 			renderer.drawLine(fußStart2.getRoundX(), fußStart2.getRoundY(), fußEnde2.getRoundX(), fußEnde2.getRoundY(),
 			    Color.YELLOW);
 
-			if (nonNull(debugPoints)) {
-				for (Point d : debugPoints) {
-					Point sP = d.clone()
-					    .translate(screenTranslation);
-					float debugRadius = 1f;
-					renderer.fillOval(sP.getFloatX() - debugRadius, sP.getFloatY() - debugRadius, 2 * debugRadius,
-					    2 * debugRadius, Color.MAGENTA);
+			if (renderDebugPoints) {
+				if (nonNull(debugPoints)) {
+					for (Point d : debugPoints) {
+						Point sP = d.clone()
+						    .translate(screenTranslation);
+						float debugRadius = 1f;
+						renderer.fillOval(sP.getFloatX() - debugRadius, sP.getFloatY() - debugRadius, 2 * debugRadius,
+						    2 * debugRadius, Color.MAGENTA);
+					}
 				}
 			}
 		}
@@ -68,6 +71,13 @@ public class Leg {
 
 		private int maxStep = 100;
 		private double legLength;
+
+		private boolean renderDebugPoints = false;
+
+		public LegBuilder setRenderDebugPoints(boolean renderDebugPoints) {
+			this.renderDebugPoints = renderDebugPoints;
+			return this;
+		}
 
 		// Builder-Methoden für jeden Parameter
 		public LegBuilder setVerhältnisOberschenkelUnterschenkel(double verhältnis) {
@@ -102,11 +112,16 @@ public class Leg {
 
 		this.maxStep = builder.maxStep;
 		this.legLength = builder.legLength;
+		this.renderDebugPoints = builder.renderDebugPoints;
 
 	}
 
 	public static LegBuilder newLeg() {
 		return new LegBuilder();
+	}
+
+	public boolean isRenderDebugPoints() {
+		return renderDebugPoints;
 	}
 
 	private double getOberschenkelLänge() {
@@ -169,7 +184,7 @@ public class Leg {
 		Point f1S = u1E.clone();
 		Point f1E = Math2D.getCircle(f1S, längeFuß, winkelFuss);
 
-		return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E, result.debugPoints());
+		return new LegRenderable(o1S, o1E, u1S, u1E, f1S, f1E, renderDebugPoints, result.debugPoints());
 	}
 
 	public double getLängeFuß() {

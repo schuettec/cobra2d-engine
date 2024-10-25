@@ -3,14 +3,12 @@ package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 import java.util.List;
 import java.util.Optional;
 
-import com.github.schuettec.cobra2d.entity.skills.PolygonRenderable;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.EntityPoint;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.math.Polygon;
-import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 
 public class PhysicsWalkFloorEntity extends PhysicsObstacleEntity implements FloorStairSkill {
@@ -47,19 +45,19 @@ public class PhysicsWalkFloorEntity extends PhysicsObstacleEntity implements Flo
 	public void render(RendererAccess renderer, Point position) {
 		super.render(renderer, position);
 
-		Polygon leftSensor = getStepUpSensorLeft().clone();
-		PolygonRenderable.renderPolygon(leftSensor, renderer, position, Color.GREEN);
-
-		Polygon rightSensor = getStepUpSensorRight().clone();
-		PolygonRenderable.renderPolygon(rightSensor, renderer, position, Color.GREEN);
-
-		Point stepUpPointLeft = getStepUpPointLeft().clone()
-		    .translate(position);
-		renderer.drawCircle(stepUpPointLeft.getFloatX(), stepUpPointLeft.getFloatY(), 4, Color.GREEN);
-
-		Point stepUpPointRight = getStepUpPointRight().clone()
-		    .translate(position);
-		renderer.drawCircle(stepUpPointRight.getFloatX(), stepUpPointRight.getFloatY(), 4, Color.GREEN);
+		// Polygon leftSensor = getStepUpSensorLeft().clone();
+		// PolygonRenderable.renderPolygon(leftSensor, renderer, position, Color.GREEN);
+		//
+		// Polygon rightSensor = getStepUpSensorRight().clone();
+		// PolygonRenderable.renderPolygon(rightSensor, renderer, position, Color.GREEN);
+		//
+		// Point stepUpPointLeft = getStepUpPointLeft().clone()
+		// .translate(position);
+		// renderer.drawCircle(stepUpPointLeft.getFloatX(), stepUpPointLeft.getFloatY(), 4, Color.GREEN);
+		//
+		// Point stepUpPointRight = getStepUpPointRight().clone()
+		// .translate(position);
+		// renderer.drawCircle(stepUpPointRight.getFloatX(), stepUpPointRight.getFloatY(), 4, Color.GREEN);
 	}
 
 	@Override

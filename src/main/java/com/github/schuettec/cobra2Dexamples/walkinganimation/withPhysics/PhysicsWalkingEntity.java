@@ -75,6 +75,7 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 		this.setDegrees(degrees);
 
 		LegBuilder builder = Leg.newLeg()
+		    .setRenderDebugPoints(false)
 		    .setLegLength(radius)
 		    .setMaxStep(MAX_STEP);
 		this.leg1 = builder.build();
@@ -195,8 +196,6 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 		// --- Calculate max point
 		Point bodyPosition = getPosition().clone();
 
-		System.out.println("Walk-Controller: " + walkController);
-
 		if (walkController.isStepUpLeft() || walkController.isStepUpRight()) {
 			stepUpAnimationController.setSourcePoint(bodyPosition);
 			Point nextStepPoint = walkController.getNextStepPoint();
@@ -236,6 +235,10 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 			}
 		}
 
+		// drawSensorLines(renderer, position);
+	}
+
+	private void drawSensorLines(RendererAccess renderer, Point position) {
 		Line[] sensorLines = walkController.getSensorLines();
 
 		Point leftSensor1 = sensorLines[0].getX1()
@@ -251,7 +254,6 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 		    .translate(position);
 		renderer.drawLine(rightSensor1.getFloatX(), rightSensor1.getFloatY(), rightSensor2.getFloatX(),
 		    rightSensor2.getFloatY(), Color.GREEN);
-		// }
 	}
 
 	@Override
