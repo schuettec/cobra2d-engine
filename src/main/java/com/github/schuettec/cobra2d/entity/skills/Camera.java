@@ -69,10 +69,10 @@ public interface Camera extends Updatable, HasCollisionShape {
 	/**
 	 * Renders the scene with the specified captured entities.
 	 *
-	 * @param renderer         The {@link RendererAccess}.
-	 * @param map              The current map.
+	 * @param renderer The {@link RendererAccess}.
+	 * @param map The current map.
 	 * @param capturedEntities The entities that colliding the viewport shape of
-	 *                         this camera.
+	 *        this camera.
 	 */
 	void render(final RendererAccess renderer, final Cobra2DWorld map, final List<Collision> capturedEntities);
 

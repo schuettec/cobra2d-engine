@@ -26,6 +26,8 @@ public interface AbstractCamera extends Camera {
 
 	public boolean isDrawCollisionShape();
 
+	public boolean isDrawCollisionPoints();
+
 	public boolean isDrawCameraOutline();
 
 	public void setCenterOnScreen(boolean centerOnScreen);
@@ -33,6 +35,8 @@ public interface AbstractCamera extends Camera {
 	public void setDrawEntityPoints(boolean drawEntityPoints);
 
 	public void setDrawCollisionShape(boolean drawCollisionShape);
+
+	public void setDrawCollisionPoints(boolean drawCollisionPoints);
 
 	public void setDrawCameraOutline(boolean drawCameraOutline);
 
@@ -71,14 +75,15 @@ public interface AbstractCamera extends Camera {
 
 			Point worldToScreenTranslation = getWorldToScreenTranslation();
 
+			drawCollisionPoints(collisionPoints, renderer, map, worldToScreenTranslation, entity);
+			drawEntityPoint(renderer, worldToScreenTranslation, entity);
+
 			// Render entity
 			if (entity instanceof Renderable) {
 				Renderable renderable = (Renderable) entity;
 				renderable.render(renderer, worldToScreenTranslation);
 			}
 
-			getCollisionPoints(collisionPoints, renderer, map, worldToScreenTranslation, entity);
-			drawEntityPoint(renderer, worldToScreenTranslation, entity);
 		}
 
 		drawCollisionPoints(renderer, collisionPoints);
@@ -130,7 +135,7 @@ public interface AbstractCamera extends Camera {
 		    .translate(getWorldToScreenTranslation());
 	}
 
-	default void getCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, Cobra2DWorld map,
+	default void drawCollisionPoints(List<Point> collisionPoints, final RendererAccess renderer, Cobra2DWorld map,
 	    Point cameraTranslation, Entity entity) {
 		// Render entity shape and get collision points
 		if (isDrawCollisionShape() && entity instanceof HasCollisionShape) {
@@ -182,7 +187,7 @@ public interface AbstractCamera extends Camera {
 
 	default void drawCollisionPoints(final RendererAccess renderer, List<Point> collisionPoints) {
 		// Draw collision points
-		if (isDrawCollisionShape()) {
+		if (isDrawCollisionPoints()) {
 			collisionPoints.stream()
 			    .forEach(p -> drawPoint(renderer, p, 5, Color.RED));
 		}

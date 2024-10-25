@@ -8,174 +8,174 @@ import com.github.schuettec.cobra2d.math.HarmonicOscillation.Type;
 import com.github.schuettec.cobra2d.math.Math2D;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class WalkAnimationController
-    implements LegAnimationController {
+public class WalkAnimationController implements LegAnimationController {
 
-  protected HarmonicOscillation ellipsisOscilatorX;
-  protected HarmonicOscillation ellipsisOscilatorY;
+	protected HarmonicOscillation ellipsisOscilatorX;
+	protected HarmonicOscillation ellipsisOscilatorY;
 
-  protected double maxStep;
+	protected double maxStep;
 
-  protected double stepSize = 250d;
-  protected double stepHeight = 80d;
-  protected double stepHeightFast = 130d;
-  protected double crouchHeight = 80d;
+	protected double stepSize = 250d;
+	protected double stepHeight = 80d;
+	protected double stepHeightFast = 130d;
+	protected double crouchHeight = 80d;
 
-  protected double radius;
-  protected boolean crouch = false;
-  protected boolean fast = false;
+	protected double radius;
+	protected boolean crouch = false;
+	protected boolean fast = false;
 
-  public WalkAnimationController(double maxStep,
-      double legLength, double stepSize, double stepHeight,
-      double stepHeightFast, double crouchHeight) {
-    this.maxStep = maxStep;
-    this.radius = legLength;
+	public WalkAnimationController(double maxStep, double legLength, double stepSize, double stepHeight,
+	    double stepHeightFast, double crouchHeight) {
+		this.maxStep = maxStep;
+		this.radius = legLength;
 
-    this.stepSize = stepSize;
-    this.stepHeight = stepHeight;
-    this.stepHeightFast = stepHeightFast;
-    this.crouchHeight = crouchHeight;
+		this.stepSize = stepSize;
+		this.stepHeight = stepHeight;
+		this.stepHeightFast = stepHeightFast;
+		this.crouchHeight = crouchHeight;
 
-    this.ellipsisOscilatorX = new HarmonicOscillation(maxStep,
-        stepSize, 0.5d, Type.COSINUS, false);
-    this.ellipsisOscilatorY = new HarmonicOscillation(maxStep,
-        stepHeight, 0.5d, Type.SINUS, true);
-  }
+		this.ellipsisOscilatorX = new HarmonicOscillation(maxStep, stepSize, 0.5d, Type.COSINUS, false);
+		this.ellipsisOscilatorY = new HarmonicOscillation(maxStep, stepHeight, 0.5d, Type.SINUS, true);
+	}
 
-  @Override
-  public AnimationResult calculateTargetByStep(
-      Point worldCoordinates, double currentStep) {
+	@Override
+	public AnimationResult calculateTargetByStep(Point worldCoordinates, double currentStep) {
 
-    double radius = this.radius;
-    double stepSize = this.stepSize;
-    double stepHeight = this.stepHeight;
+		double radius = this.radius;
+		double stepSize = this.stepSize;
+		double stepHeight = this.stepHeight;
 
-    Point hip = worldCoordinates.clone();
+		Point hip = worldCoordinates.clone();
 
-    if (crouch) {
-      hip.translate(0, -crouchHeight);
-      radius = this.radius - crouchHeight;
-      stepHeight = crouchHeight
-          * (this.stepHeight / this.radius);
-    }
+		if (crouch) {
+			hip.translate(0, -crouchHeight);
+			radius = this.radius - crouchHeight;
+			stepHeight = crouchHeight * (this.stepHeight / this.radius);
+		}
 
-    if (fast) {
-      if (crouch) {
-        stepHeight = this.stepHeight - (this.stepHeight / 3.);
-        stepSize = this.stepSize + (this.stepSize / 5.);
-      } else {
-        stepHeight = this.stepHeightFast;
-      }
-    }
+		if (fast) {
+			if (crouch) {
+				stepHeight = this.stepHeight - (this.stepHeight / 3.);
+				stepSize = this.stepSize + (this.stepSize / 5.);
+			} else {
+				stepHeight = this.stepHeightFast;
+			}
+		}
 
-    ellipsisOscilatorX.setAmplitude(stepSize);
-    ellipsisOscilatorY.setAmplitude(stepHeight);
-    double sX = ellipsisOscilatorX.apply(currentStep);
-    double sY = ellipsisOscilatorY.apply(currentStep);
+		ellipsisOscilatorX.setAmplitude(stepSize);
+		ellipsisOscilatorY.setAmplitude(stepHeight);
+		double sX = ellipsisOscilatorX.apply(currentStep);
+		double sY = ellipsisOscilatorY.apply(currentStep);
 
-    Point positionSchwingungselipseZentrum = Math2D
-        .getCircle(hip.clone()
-            .translate(0, stepHeight / 2.), radius, 270d);
+		Point positionSchwingungselipseZentrum = Math2D.getCircle(hip.clone()
+		    .translate(0, stepHeight / 2.), radius, 270d);
 
-    Point schwingungsEllipsePunkt = new Point(sX, sY).clone()
-        .translate(positionSchwingungselipseZentrum);
+		Point unterschenkelTargetPoint = new Point(sX, sY).clone()
+		    .translate(positionSchwingungselipseZentrum);
 
-    List<Point> debugTargetPoints = debugTargetPoints(
-        positionSchwingungselipseZentrum, ellipsisOscilatorX,
-        ellipsisOscilatorY, maxStep);
+		List<Point> debugTargetPoints = debugTargetPoints(positionSchwingungselipseZentrum, ellipsisOscilatorX,
+		    ellipsisOscilatorY, maxStep);
 
-    return new AnimationResult(hip, schwingungsEllipsePunkt,
-        debugTargetPoints);
-  }
+		return new AnimationResult(hip, unterschenkelTargetPoint, debugTargetPoints);
+	}
 
-  private List<Point> debugTargetPoints(Point translation,
-      HarmonicOscillation ellipsisOscilatorX,
-      HarmonicOscillation ellipsisOscilatorY, double maxStep) {
-    List<Point> points = new LinkedList<>();
-    for (int i = 0; i < maxStep; i++) {
-      points.add(new Point(ellipsisOscilatorX.apply((double) i),
-          ellipsisOscilatorY.apply((double) i))
-              .translate(translation));
-    }
-    return points;
-  }
+	private double calculateFoodAngle(double currentStep) {
+		if (currentStep == 0) {
+			return 0d;
+		} else {
+			double bX = ellipsisOscilatorX.apply(currentStep - 1);
+			double bY = ellipsisOscilatorY.apply(currentStep - 1);
 
-  protected Point normalizePoint(Point hipPosition,
-      Point targetPoint, double radius) {
-    Point bodyPosition = hipPosition.clone();
-    double distance = Math2D.getEntfernung(bodyPosition,
-        targetPoint);
-    double angle = Math2D.getAngle(bodyPosition, targetPoint);
-    if (distance > radius) {
-      Point normalizedTarget = Math2D.getCircle(bodyPosition,
-          radius, angle);
-      return normalizedTarget;
-    }
-    return targetPoint;
-  }
+			double aX = ellipsisOscilatorX.apply(currentStep);
+			double aY = ellipsisOscilatorY.apply(currentStep);
 
-  public double getStepHeightFast() {
-    return stepHeightFast;
-  }
+			return Math2D.getAngle(new Point(aX, aY), new Point(bX, bY));
+		}
+	}
 
-  public void setStepHeightFast(double stepHeightFast) {
-    this.stepHeightFast = stepHeightFast;
-  }
+	private List<Point> debugTargetPoints(Point translation, HarmonicOscillation ellipsisOscilatorX,
+	    HarmonicOscillation ellipsisOscilatorY, double maxStep) {
+		List<Point> points = new LinkedList<>();
+		for (int i = 0; i < maxStep; i++) {
+			points.add(
+			    new Point(ellipsisOscilatorX.apply((double) i), ellipsisOscilatorY.apply((double) i)).translate(translation));
+		}
+		return points;
+	}
 
-  public double getCrouchHeight() {
-    return crouchHeight;
-  }
+	protected Point normalizePoint(Point hipPosition, Point targetPoint, double radius) {
+		Point bodyPosition = hipPosition.clone();
+		double distance = Math2D.getEntfernung(bodyPosition, targetPoint);
+		double angle = Math2D.getAngle(bodyPosition, targetPoint);
+		if (distance > radius) {
+			Point normalizedTarget = Math2D.getCircle(bodyPosition, radius, angle);
+			return normalizedTarget;
+		}
+		return targetPoint;
+	}
 
-  public void setCrouchHeight(double crouchHeight) {
-    this.crouchHeight = crouchHeight;
-  }
+	public double getStepHeightFast() {
+		return stepHeightFast;
+	}
 
-  public boolean isFast() {
-    return fast;
-  }
+	public void setStepHeightFast(double stepHeightFast) {
+		this.stepHeightFast = stepHeightFast;
+	}
 
-  public void setFast(boolean fast) {
-    this.fast = fast;
-  }
+	public double getCrouchHeight() {
+		return crouchHeight;
+	}
 
-  public boolean isCrouch() {
-    return crouch;
-  }
+	public void setCrouchHeight(double crouchHeight) {
+		this.crouchHeight = crouchHeight;
+	}
 
-  public void setCrouch(boolean crouch) {
-    this.crouch = crouch;
-  }
+	public boolean isFast() {
+		return fast;
+	}
 
-  public double getRadius() {
-    return radius;
-  }
+	public void setFast(boolean fast) {
+		this.fast = fast;
+	}
 
-  public void setRadius(double radius) {
-    this.radius = radius;
-  }
+	public boolean isCrouch() {
+		return crouch;
+	}
 
-  public double getStepSize() {
-    return stepSize;
-  }
+	public void setCrouch(boolean crouch) {
+		this.crouch = crouch;
+	}
 
-  public void setStepSize(double ellipsisWalkAnimMaxX) {
-    this.stepSize = ellipsisWalkAnimMaxX;
-  }
+	public double getRadius() {
+		return radius;
+	}
 
-  public double getStepHeight() {
-    return stepHeight;
-  }
+	public void setRadius(double radius) {
+		this.radius = radius;
+	}
 
-  public void setStepHeight(double ellipsisWalkAnimMaxY) {
-    this.stepHeight = ellipsisWalkAnimMaxY;
-  }
+	public double getStepSize() {
+		return stepSize;
+	}
 
-  public HarmonicOscillation getEllipsisOscilatorX() {
-    return ellipsisOscilatorX;
-  }
+	public void setStepSize(double ellipsisWalkAnimMaxX) {
+		this.stepSize = ellipsisWalkAnimMaxX;
+	}
 
-  public HarmonicOscillation getEllipsisOscilatorY() {
-    return ellipsisOscilatorY;
-  }
+	public double getStepHeight() {
+		return stepHeight;
+	}
+
+	public void setStepHeight(double ellipsisWalkAnimMaxY) {
+		this.stepHeight = ellipsisWalkAnimMaxY;
+	}
+
+	public HarmonicOscillation getEllipsisOscilatorX() {
+		return ellipsisOscilatorX;
+	}
+
+	public HarmonicOscillation getEllipsisOscilatorY() {
+		return ellipsisOscilatorY;
+	}
 
 }

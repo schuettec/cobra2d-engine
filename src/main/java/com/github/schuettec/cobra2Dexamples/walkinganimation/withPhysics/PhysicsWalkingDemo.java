@@ -32,20 +32,17 @@ public class PhysicsWalkingDemo {
 		world.createSkill(FloorStairSkill.class);
 
 		PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(new Point(0, 19), new Dimension(1600, 20));
-		System.out.println("Boden: " + boden.getId());
 
-		PhysicsWalkFloorEntity block1 = new PhysicsWalkFloorEntity(new Point(600, 55), new Dimension(50, 50));
-		System.out.println("Block 1: " + block1.getId());
+		PhysicsWalkFloorEntity block1 = new PhysicsWalkFloorEntity(new Point(100, 55), new Dimension(50, 50));
 
-		PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(new Point(100, 55), new Dimension(50, 50));
-		System.out.println("Block 2: " + block2.getId());
+		PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(new Point(350, 155), new Dimension(50, 50));
 
-		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(300, 400), new Dimension(50, 200), 100, 4, 0);
+		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(0, 400), new Dimension(50, 200), 100, 4, 0);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 400), new Dimension(1600, 799), false);
 		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(false);
-		camera.setDrawEntityPoints(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawCollisionPoints(true);
 		camera.setDrawMouse(true);
 		camera.setScreenPosition(new Point(400, 400));
 		engine.setCameraForInput(camera);

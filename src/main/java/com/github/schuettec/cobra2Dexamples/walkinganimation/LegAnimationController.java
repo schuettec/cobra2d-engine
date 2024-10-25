@@ -6,11 +6,9 @@ import com.github.schuettec.cobra2d.math.Point;
 
 public interface LegAnimationController {
 
-  public record AnimationResult(Point bodyPosition,
-      Point targetPoint, List<Point> debugPoints) {
-  }
+	public record AnimationResult(Point bodyPosition, Point targetPoint, List<Point> debugPoints) {
+	}
 
-  AnimationResult calculateTargetByStep(Point worldCoordinates,
-      double currentStep);
+	AnimationResult calculateTargetByStep(Point worldCoordinates, double currentStep);
 
 }

@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.math;
 
+import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
 import static java.util.Objects.isNull;
 
 import java.util.Arrays;
@@ -163,7 +164,7 @@ public class Line implements Shape, Cloneable {
 			// Lösungsansatz: Auf ungenauen Integer runden und auf
 			// Gleichheit
 			// prüfen
-			if (Math2D.saveRound(this.getValue(point.x)) == Math2D.saveRound(point.y)) {
+			if (saveRound(this.getValue(point.x)) == saveRound(point.y)) {
 				return true;
 			}
 		}

@@ -19,6 +19,7 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 
 	private boolean drawEntityPoints;
 	private boolean drawCollisionShape;
+	private boolean drawCollisionPoints;
 	private boolean drawCameraOutline;
 
 	private boolean centerOnScreen = true;
@@ -45,8 +46,8 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public void renderClippingMask(RendererAccess renderer) {
 		Point screenTranslation = getScreenPosition();
-		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(),
-				Math2D.saveRound(getRadius() + 1), Color.BLACK);
+		renderer.fillCircle(screenTranslation.getRoundX(), screenTranslation.getRoundY(), Math2D.saveRound(getRadius() + 1),
+		    Color.BLACK);
 	}
 
 	@Override
@@ -193,6 +194,16 @@ public class BasicCircleMapCamera extends BasicCircleEntity implements AbstractC
 	@Override
 	public void setFollowEntity(Entity entity) {
 		this.followEntity = entity;
+	}
+
+	@Override
+	public boolean isDrawCollisionPoints() {
+		return drawCollisionPoints;
+	}
+
+	@Override
+	public void setDrawCollisionPoints(boolean drawCollisionPoints) {
+		this.drawCollisionPoints = drawCollisionPoints;
 	}
 
 }

@@ -4,12 +4,10 @@ import java.util.Set;
 
 import com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics.FloorStairSkill;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics.PhysicsWalkingEntity;
-import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
 import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.Collision;
-import com.github.schuettec.cobra2d.world.CollisionDetail;
 import com.github.schuettec.cobra2d.world.CollisionMap;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
@@ -18,7 +16,7 @@ public class WalkController {
 	/**
 	 * Offset prevents sensor lines parallel to y-axis to touch the bottom floor.
 	 */
-	private static final double OFFSET_Y = 5;
+	private static final double OFFSET_Y = 1;
 
 	public enum WalkMode {
 		WALK,
@@ -48,29 +46,29 @@ public class WalkController {
 
 		Set<FloorStairSkill> floorOrStairEntities = worldAccess.getEntititesBySkill(FloorStairSkill.class);
 		CollisionMap collisionLeftSensor = worldAccess.getCollisions()
-		    .detectCollision(entity, (e) -> sensorLines[0], floorOrStairEntities,
-		        HasCollisionShape::getCollisionShapeInWorldCoordinates, true, false, false);
+		    .detectCollision(entity, (e) -> sensorLines[0], floorOrStairEntities, FloorStairSkill::getStepUpSensorRight,
+		        true, false, false);
 		CollisionMap collisionRightSensor = worldAccess.getCollisions()
-		    .detectCollision(entity, (e) -> sensorLines[1], floorOrStairEntities,
-		        HasCollisionShape::getCollisionShapeInWorldCoordinates, true, false, false);
+		    .detectCollision(entity, (e) -> sensorLines[1], floorOrStairEntities, FloorStairSkill::getStepUpSensorLeft,
+		        true, false, false);
 
 		if (collisionLeftSensor.hasCollision(entity)) {
 			// Step Up left
 			Collision collision = collisionLeftSensor.getCollisions()
 			    .getFirst();
-			CollisionDetail detail = collision.getCollisionDetails()
-			    .getFirst();
-			nextStepPointLeft = detail.getIntersection();
 			leftFloor = (FloorStairSkill) collision.getOpponent();
+			// Attention: The step up point from entity is right, the nextStepPoint is called left, because the latter is from
+			// the walking entities perspective and the former of floorStair-entity.
+			nextStepPointLeft = leftFloor.getStepUpPointRight();
 			mode = WalkMode.STEP_UP_LEFT;
 		} else if (collisionRightSensor.hasCollision(entity)) {
 			// Step Up right
 			Collision collision = collisionRightSensor.getCollisions()
 			    .getFirst();
-			CollisionDetail detail = collision.getCollisionDetails()
-			    .getFirst();
-			nextStepPointRight = detail.getIntersection();
 			rightFloor = (FloorStairSkill) collision.getOpponent();
+			// Attention: The step up point from entity is right, the nextStepPoint is called left, because the latter is from
+			// the walking entities perspective and the former of floorStair-entity.
+			nextStepPointRight = rightFloor.getStepUpPointLeft();
 			mode = WalkMode.STEP_UP_RIGHT;
 		}
 	}
@@ -88,13 +86,13 @@ public class WalkController {
 		Point leftStart = new Point(position.getX() - (dimension.getWidth() / 2d), position.getFloatY());
 		Point leftEnd = new Point(position.getX() - (dimension.getWidth() / 2d),
 		    // The offset is multiplied by 2 because the bottom floor uses 1 * Offset
-		    position.getFloatY() - (dimension.getHeight() / 2d));
+		    position.getFloatY() - (dimension.getHeight() / 2d) + OFFSET_Y);
 		Line left = new Line(leftStart, leftEnd);
 
 		Point rightStart = new Point(position.getX() + (dimension.getWidth() / 2d), position.getFloatY());
 		// The offset is multiplied by 2 because the bottom floor uses 1 * Offset
 		Point rightEnd = new Point(position.getX() + (dimension.getWidth() / 2d),
-		    position.getFloatY() - (dimension.getHeight() / 2d));
+		    position.getFloatY() - (dimension.getHeight() / 2d) + OFFSET_Y);
 		Line right = new Line(rightStart, rightEnd);
 
 		return new Line[] {
