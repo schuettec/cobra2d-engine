@@ -22,6 +22,7 @@ public class Polygon implements Shape, Cloneable {
 	 * polygon with non-crossing lines.
 	 */
 	protected List<EntityPoint> entityPoints;
+	protected boolean open;
 
 	public Polygon() {
 		super();
@@ -29,18 +30,40 @@ public class Polygon implements Shape, Cloneable {
 	}
 
 	public Polygon(EntityPoint... entityPoints) {
+		this(false, entityPoints);
+	}
+
+	public Polygon(boolean open, EntityPoint... entityPoints) {
 		this.entityPoints = new ArrayList<EntityPoint>(entityPoints.length);
 		for (EntityPoint p : entityPoints) {
 			this.entityPoints.add(p.clone());
 		}
 
 		Math2D.sortEntityPoints(this.entityPoints);
+		this.open = open;
 	}
 
+	/**
+	 * Constructs a closed polygon from entity points.
+	 * 
+	 * @param entityPoints Entity points.
+	 */
 	public Polygon(List<EntityPoint> entityPoints) {
+		this(entityPoints, false);
+	}
+
+	/**
+	 * Constructs a polygon from entity points.
+	 * 
+	 * @param entityPoints The entity points
+	 * @param open If <code>true</code> the polygon will not be automatically closed by creating a line from the
+	 *        last to the first point.
+	 */
+	public Polygon(List<EntityPoint> entityPoints, boolean open) {
 		this.entityPoints = new LinkedList<EntityPoint>();
 		this.entityPoints.addAll(entityPoints);
 		Math2D.sortEntityPoints(this.entityPoints);
+		this.open = open;
 	}
 
 	public List<EntityPoint> getEntityPoints() {
@@ -63,9 +86,11 @@ public class Polygon implements Shape, Cloneable {
 				lineList.add(new Line(start.getCoordinates(), end.getCoordinates()));
 			}
 
-			EntityPoint start = entityPoints.get(0);
-			EntityPoint end = entityPoints.get(entityPoints.size() - 1);
-			lineList.add(new Line(start.getCoordinates(), end.getCoordinates()));
+			if (!open) {
+				EntityPoint start = entityPoints.get(0);
+				EntityPoint end = entityPoints.get(entityPoints.size() - 1);
+				lineList.add(new Line(start.getCoordinates(), end.getCoordinates()));
+			}
 		}
 
 		return lineList;
@@ -82,6 +107,7 @@ public class Polygon implements Shape, Cloneable {
 		return new Polygon(clone);
 	}
 
+	@Override
 	public Polygon rotate(double degrees) {
 		for (EntityPoint point : entityPoints) {
 			point.rotate(degrees);
@@ -89,6 +115,7 @@ public class Polygon implements Shape, Cloneable {
 		return this;
 	}
 
+	@Override
 	public Polygon translate(Point translation) {
 		for (EntityPoint point : entityPoints) {
 			point.translate(translation);
@@ -96,6 +123,7 @@ public class Polygon implements Shape, Cloneable {
 		return this;
 	}
 
+	@Override
 	public Polygon scale(double scaleFactor) {
 		for (EntityPoint point : entityPoints) {
 			point.scale(scaleFactor);
@@ -103,6 +131,7 @@ public class Polygon implements Shape, Cloneable {
 		return this;
 	}
 
+	@Override
 	public List<Point> getPoints() {
 		return getEntityPoints().stream()
 		    .map(p -> p.getCoordinates())

@@ -70,8 +70,9 @@ public class CollisionMap implements Serializable {
 			collisions.get(identityHash)
 			    .add(collision);
 		} else {
-			List<Collision> collisons = new LinkedList<>();
-			collisions.put(identityHash, collisons);
+			List<Collision> newCollisionList = new LinkedList<>();
+			newCollisionList.add(collision);
+			collisions.put(identityHash, newCollisionList);
 		}
 		flatList.add(collision);
 	}

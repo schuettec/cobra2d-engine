@@ -93,4 +93,8 @@ public class WorldAccess implements WorldListener {
 		return world.getCollisions();
 	}
 
+	public <S extends Skill> Set<S> getEntititesBySkill(Class<S> skillType) {
+		return world.getEntititesBySkill(skillType);
+	}
+
 }

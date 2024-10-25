@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -77,6 +78,8 @@ public class Cobra2DWorld {
 
 	protected Set<NetworkActor> networkActors;
 
+	protected Map<Class<? extends Skill>, Set<Skill>> genericSkillMap = new Hashtable<>();
+
 	private transient List<WorldListener> listeners;
 
 	/**
@@ -116,8 +119,8 @@ public class Cobra2DWorld {
 
 		@Override
 		public void beginContact(Contact contact) {
-//			Skill entityA = (Skill) contact.getFixtureA().getUserData();
-//			Skill entityB = (Skill) contact.getFixtureB().getUserData();
+			// Skill entityA = (Skill) contact.getFixtureA().getUserData();
+			// Skill entityB = (Skill) contact.getFixtureB().getUserData();
 
 		}
 
@@ -233,6 +236,36 @@ public class Cobra2DWorld {
 		addOnDemand(PhysicJoint.class, this.physicJoints, entity);
 		addOnDemand(SoundEffect.class, this.soundEffects, entity);
 		addOnDemand(NetworkActor.class, this.networkActors, entity);
+
+		addByGenericSkillOnDemand(entity);
+	}
+
+	private void addByGenericSkillOnDemand(Skill entity) {
+		genericSkillMap.keySet()
+		    .stream()
+		    .filter(skill -> Skill.hasSkill(skill, entity))
+		    .forEach(skill -> {
+			    addToGenericSkillMapOnDemand(skill, entity);
+		    });
+	}
+
+	private void removeByGenericSkillOnDemand(Skill entity) {
+		genericSkillMap.keySet()
+		    .stream()
+		    .filter(skill -> Skill.hasSkill(skill, entity))
+		    .forEach(skill -> {
+			    removeFromGenericSkillMapOnDemand(skill, entity);
+		    });
+	}
+
+	private void addToGenericSkillMapOnDemand(Class<? extends Skill> skill, Skill entity) {
+		genericSkillMap.get(skill)
+		    .add(entity);
+	}
+
+	private void removeFromGenericSkillMapOnDemand(Class<? extends Skill> skill, Skill entity) {
+		genericSkillMap.get(skill)
+		    .remove(entity);
 	}
 
 	public void removeEntity(Skill... entities) {
@@ -256,12 +289,14 @@ public class Cobra2DWorld {
 		removeOnDemand(PhysicJoint.class, this.physicJoints, entity);
 		removeOnDemand(SoundEffect.class, this.soundEffects, entity);
 		removeOnDemand(NetworkActor.class, this.networkActors, entity);
+
+		removeByGenericSkillOnDemand(entity);
 	}
 
-	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> obstacles, Skill entity) {
+	private <S extends Skill> void addOnDemand(Class<S> skillType, Set<S> targetSet, Skill entity) {
 		Optional<S> asSkill = asSkill(skillType, entity);
 		if (asSkill.isPresent()) {
-			obstacles.add(asSkill.get());
+			targetSet.add(asSkill.get());
 			notifyAddBySkill(skillType, entity);
 		}
 		notifyAdded(entity);
@@ -296,7 +331,8 @@ public class Cobra2DWorld {
 
 	private void updateControllables() {
 		for (Controllable c : controllable) {
-			Controller controller = engine.getRenderer().getControllerForEntity(c);
+			Controller controller = engine.getRenderer()
+			    .getControllerForEntity(c);
 			c.processControllerState(worldAccess, controller);
 		}
 	}
@@ -322,16 +358,15 @@ public class Cobra2DWorld {
 
 	private List<Collision> getSoundCollisions(Camera soundCamera) {
 		CollisionMap soundCollisions = getCollisions().detectCollision((SoundCamera) soundCamera,
-				SoundCamera::getSoundRangeInWorlCoordinates, soundEffects, SoundEffect::getSoundRangeInWorldCoordinates,
-				false, false, false);
+		    SoundCamera::getSoundRangeInWorlCoordinates, soundEffects, SoundEffect::getSoundRangeInWorldCoordinates, false,
+		    false, false);
 		List<Collision> cameraCollisions = soundCollisions.getCollisions();
 		return cameraCollisions;
 	}
 
 	private List<Collision> getCameraCollisions(Camera camera) {
-		CollisionMap map = getCollisions().detectCollision(camera, Camera::getCollisionShapeInWorldCoordinates,
-				renderables, Renderable::getCollisionShapeInWorldCoordinates, false, calculateFullCameraCollisionPoints,
-				false);
+		CollisionMap map = getCollisions().detectCollision(camera, Camera::getCollisionShapeInWorldCoordinates, renderables,
+		    Renderable::getCollisionShapeInWorldCoordinates, false, calculateFullCameraCollisionPoints, false);
 		List<Collision> cameraCollisions = map.getCollisions();
 		return cameraCollisions;
 	}
@@ -372,7 +407,10 @@ public class Cobra2DWorld {
 		if (isNull(result)) {
 			return Collections.emptyList();
 		} else {
-			return result.stream().map(Collision::getOpponent).map(e -> (SoundEffect) e).collect(Collectors.toList());
+			return result.stream()
+			    .map(Collision::getOpponent)
+			    .map(e -> (SoundEffect) e)
+			    .collect(Collectors.toList());
 		}
 	}
 
@@ -428,7 +466,8 @@ public class Cobra2DWorld {
 	}
 
 	private void notifyAdded(Skill entity) {
-		listeners.stream().forEach(l -> l.entityAdded(entity));
+		listeners.stream()
+		    .forEach(l -> l.entityAdded(entity));
 	}
 
 	private <S extends Skill> void notifyRemovedBySkill(Class<S> skillType, Skill entity) {
@@ -436,15 +475,18 @@ public class Cobra2DWorld {
 	}
 
 	private void notifyRemoved(Skill entity) {
-		listeners.stream().forEach(l -> l.entityRemoved(entity));
+		listeners.stream()
+		    .forEach(l -> l.entityRemoved(entity));
 	}
 
 	private void notifyBeforeUpdate() {
-		listeners.stream().forEach(l -> l.beforeUpdate());
+		listeners.stream()
+		    .forEach(l -> l.beforeUpdate());
 	}
 
 	private void notifyAfterUpdate() {
-		listeners.stream().forEach(l -> l.afterUpdate());
+		listeners.stream()
+		    .forEach(l -> l.afterUpdate());
 	}
 
 	public void addEntities(Collection<Skill> toAdd) {
@@ -473,6 +515,17 @@ public class Cobra2DWorld {
 
 	public Collisions getCollisions() {
 		return collisions;
+	}
+
+	public void createSkill(Class<? extends Skill> skill) {
+		genericSkillMap.put(skill, new LinkedHashSet<>());
+	}
+
+	public <S extends Skill> Set<S> getEntititesBySkill(Class<S> skillType) {
+		return genericSkillMap.get(skillType)
+		    .stream()
+		    .map(e -> skillType.cast(e))
+		    .collect(Collectors.toSet());
 	}
 
 }

@@ -143,7 +143,7 @@ public class Collisions {
 	public <E1 extends Entity, E2 extends Entity> List<CollisionDetail> detectFirstCollision(Shape shape, Set<E1> map,
 	    Function<E1, Shape> shapeExtrator, boolean outlineOnly, boolean all) {
 		for (E1 c1 : new HashSet<>(map)) {
-			Shape opponent = shapeExtrator.apply(c1);
+			Shape opponent = convertLineToPolygonOnDemand(shapeExtrator.apply(c1));
 			List<CollisionDetail> collision = detectCollision(shape, opponent, outlineOnly, all);
 			// Collision may be null if there is none
 			if (collision != null) {
@@ -178,13 +178,22 @@ public class Collisions {
 	public <E1 extends Entity, E2 extends Entity> Collision detectCollision(E1 e1,
 	    Function<E1, Shape> firstShapeExtractor, E2 e2, Function<E2, Shape> secondShapeExtractor, boolean outlineOnly,
 	    boolean all) {
-		Shape s1 = firstShapeExtractor.apply(e1);
-		Shape s2 = secondShapeExtractor.apply(e2);
+		Shape s1 = convertLineToPolygonOnDemand(firstShapeExtractor.apply(e1));
+		Shape s2 = convertLineToPolygonOnDemand(secondShapeExtractor.apply(e2));
+
 		List<CollisionDetail> collisions = detectCollision(s1, s2, outlineOnly, all);
 		if (collisions.isEmpty()) {
 			return null;
 		} else {
 			return new Collision(e1, e2, collisions, all);
+		}
+	}
+
+	private Shape convertLineToPolygonOnDemand(Shape shape) {
+		if (shape instanceof Line) {
+			return ((Line) shape).toPolygon();
+		} else {
+			return shape;
 		}
 	}
 

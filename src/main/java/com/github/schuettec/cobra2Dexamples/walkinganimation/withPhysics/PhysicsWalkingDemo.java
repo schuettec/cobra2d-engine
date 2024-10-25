@@ -29,6 +29,7 @@ public class PhysicsWalkingDemo {
 
 		Cobra2DWorld world = engine.getWorld();
 		world.setGravity(0, -9.7f);
+		world.createSkill(FloorStairSkill.class);
 
 		PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(new Point(0, 19), new Dimension(1600, 20));
 		System.out.println("Boden: " + boden.getId());
@@ -43,7 +44,7 @@ public class PhysicsWalkingDemo {
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 400), new Dimension(1600, 799), false);
 		camera.setDrawCameraOutline(true);
-		camera.setDrawCollisionShape(true);
+		camera.setDrawCollisionShape(false);
 		camera.setDrawEntityPoints(true);
 		camera.setDrawMouse(true);
 		camera.setScreenPosition(new Point(400, 400));

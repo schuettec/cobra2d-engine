@@ -1,13 +1,11 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation;
 
-import static java.util.Objects.nonNull;
+import java.util.Set;
 
-import java.util.Optional;
-import java.util.function.Predicate;
-
-import com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics.PhysicsWalkFloorEntity;
+import com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics.FloorStairSkill;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics.PhysicsWalkingEntity;
 import com.github.schuettec.cobra2d.entity.skills.HasCollisionShape;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.math.Line;
 import com.github.schuettec.cobra2d.math.Point;
 import com.github.schuettec.cobra2d.world.Collision;
@@ -16,6 +14,11 @@ import com.github.schuettec.cobra2d.world.CollisionMap;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
 public class WalkController {
+
+	/**
+	 * Offset prevents sensor lines parallel to y-axis to touch the bottom floor.
+	 */
+	private static final double OFFSET_Y = 5;
 
 	public enum WalkMode {
 		WALK,
@@ -29,100 +32,74 @@ public class WalkController {
 	/**
 	 * In case of mode {@link WalkMode#STEP_UP}
 	 */
-	PhysicsWalkFloorEntity leftFloor;
-	PhysicsWalkFloorEntity rightFloor;
-	PhysicsWalkFloorEntity bottomFloor;
+	FloorStairSkill leftFloor;
+	FloorStairSkill rightFloor;
 
 	private Point nextStepPointLeft;
 
 	private Point nextStepPointRight;
 
+	private Line[] sensorLines;
+
 	public void updateWalk(PhysicsWalkingEntity entity, WorldAccess worldAccess) {
-		mode = null;
+		mode = WalkMode.WALK;
 
-		CollisionMap collisionMap = worldAccess.getCollisions()
-		    .detectCollision(entity, HasCollisionShape::getCollisionShapeInWorldCoordinates,
-		        worldAccess.getObstaclesExcept(entity), HasCollisionShape::getCollisionShapeInWorldCoordinates, true, true,
-		        false);
+		this.sensorLines = createSensorLines(entity.getPosition(), entity.getDimension(true, false));
 
-		for (Collision c : collisionMap.getCollisions()) {
-			if (c.getOpponent() instanceof PhysicsWalkFloorEntity) {
-				PhysicsWalkFloorEntity opponent = (PhysicsWalkFloorEntity) c.getOpponent();
-				Point oPosition = opponent.getPosition();
+		Set<FloorStairSkill> floorOrStairEntities = worldAccess.getEntititesBySkill(FloorStairSkill.class);
+		CollisionMap collisionLeftSensor = worldAccess.getCollisions()
+		    .detectCollision(entity, (e) -> sensorLines[0], floorOrStairEntities,
+		        HasCollisionShape::getCollisionShapeInWorldCoordinates, true, false, false);
+		CollisionMap collisionRightSensor = worldAccess.getCollisions()
+		    .detectCollision(entity, (e) -> sensorLines[1], floorOrStairEntities,
+		        HasCollisionShape::getCollisionShapeInWorldCoordinates, true, false, false);
 
-				Optional<CollisionDetail> lineParallelX = hasCollisionLineMatching(c, Line::isParallelX);
-				Optional<CollisionDetail> lineParallelY = hasCollisionLineMatching(c, Line::isParallelY);
-				// Here was also lineParallelX.isPresent() &&
-				if (!hasCollisionLineMatching(c, Line::isParallelY).isPresent() && isBottom(entity, oPosition)) {
-					// Walking on floor
-					bottomFloor = opponent;
-					mode = WalkMode.WALK;
-					break;
-				} else if (lineParallelY.isPresent() && isLeft(entity, oPosition)) {
-					// Step Up left
-					CollisionDetail detail = lineParallelY.get();
-					nextStepPointLeft = detail.getIntersection();
-					leftFloor = opponent;
-					mode = WalkMode.STEP_UP_LEFT;
-					break;
-				} else if (lineParallelY.isPresent() && isRight(entity, oPosition)) {
-					// Step Up right
-					CollisionDetail detail = lineParallelY.get();
-					nextStepPointRight = detail.getIntersection();
-					rightFloor = opponent;
-					mode = WalkMode.STEP_UP_RIGHT;
-					break;
-				}
-			}
+		if (collisionLeftSensor.hasCollision(entity)) {
+			// Step Up left
+			Collision collision = collisionLeftSensor.getCollisions()
+			    .getFirst();
+			CollisionDetail detail = collision.getCollisionDetails()
+			    .getFirst();
+			nextStepPointLeft = detail.getIntersection();
+			leftFloor = (FloorStairSkill) collision.getOpponent();
+			mode = WalkMode.STEP_UP_LEFT;
+		} else if (collisionRightSensor.hasCollision(entity)) {
+			// Step Up right
+			Collision collision = collisionRightSensor.getCollisions()
+			    .getFirst();
+			CollisionDetail detail = collision.getCollisionDetails()
+			    .getFirst();
+			nextStepPointRight = detail.getIntersection();
+			rightFloor = (FloorStairSkill) collision.getOpponent();
+			mode = WalkMode.STEP_UP_RIGHT;
 		}
 	}
 
-	private Optional<CollisionDetail> hasCollisionLineMatching(Collision c, Predicate<Line> predicate) {
-		return c.getCollisionDetails()
-		    .stream()
-		    .filter(detail -> {
-			    Line entityLine = detail.getEntityLine();
-			    if (nonNull(entityLine)) {
-				    if (predicate.test(entityLine)) {
-					    return true;
-				    } else {
-					    return false;
-				    }
-			    } else {
-				    return false;
-			    }
-		    })
-		    .findFirst();
-	}
+	/**
+	 * Creates the sensor lines to detect steps more precisely
+	 * 
+	 * @param position The entity position in world coordinates
+	 * @param dimension The entity's dimension
+	 * @return Returns the array of three sensor lines in order: bottom, left, right.
+	 */
+	private Line[] createSensorLines(Point position, Dimension dimension) {
+		// The offset is used to create an inset of the sensor lines relative to the collision shape
 
-	private boolean isLeft(PhysicsWalkingEntity entity, Point oPosition) {
-		// opponent position must be lover than entity.
-		double myX = entity.getPosition().x;
-		if (oPosition.x <= myX) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+		Point leftStart = new Point(position.getX() - (dimension.getWidth() / 2d), position.getFloatY());
+		Point leftEnd = new Point(position.getX() - (dimension.getWidth() / 2d),
+		    // The offset is multiplied by 2 because the bottom floor uses 1 * Offset
+		    position.getFloatY() - (dimension.getHeight() / 2d));
+		Line left = new Line(leftStart, leftEnd);
 
-	private boolean isRight(PhysicsWalkingEntity entity, Point oPosition) {
-		double myX = entity.getPosition().x;
-		if (oPosition.x >= myX) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+		Point rightStart = new Point(position.getX() + (dimension.getWidth() / 2d), position.getFloatY());
+		// The offset is multiplied by 2 because the bottom floor uses 1 * Offset
+		Point rightEnd = new Point(position.getX() + (dimension.getWidth() / 2d),
+		    position.getFloatY() - (dimension.getHeight() / 2d));
+		Line right = new Line(rightStart, rightEnd);
 
-	private boolean isBottom(PhysicsWalkingEntity entity, Point oPosition) {
-		double myY = entity.getPosition().y;
-		double myHeight = entity.getDimension(false, false)
-		    .getHeight();
-		if (oPosition.y <= myY + myHeight) {
-			return true;
-		} else {
-			return false;
-		}
+		return new Line[] {
+		    left, right
+		};
 	}
 
 	public Point getStepTarget() {
@@ -133,16 +110,12 @@ public class WalkController {
 		return mode;
 	}
 
-	public PhysicsWalkFloorEntity getLeftFloor() {
+	public FloorStairSkill getLeftFloor() {
 		return leftFloor;
 	}
 
-	public PhysicsWalkFloorEntity getRightFloor() {
+	public FloorStairSkill getRightFloor() {
 		return rightFloor;
-	}
-
-	public PhysicsWalkFloorEntity getBottomFloor() {
-		return bottomFloor;
 	}
 
 	public Point getNextStepPoint() {
@@ -173,6 +146,10 @@ public class WalkController {
 
 	public boolean isWalking() {
 		return WalkMode.WALK.equals(mode);
+	}
+
+	public Line[] getSensorLines() {
+		return sensorLines;
 	}
 
 	@Override
