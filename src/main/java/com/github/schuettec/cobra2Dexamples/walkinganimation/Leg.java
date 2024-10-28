@@ -157,7 +157,7 @@ public class Leg {
 		double unterschenkelwinkel = Double.isNaN(alpha) ? oberschenkelWinkel
 		    : normalizeAngle(toDegrees(alpha) + oberschenkelWinkel + 180d);
 
-		double fussWinkel = normalizeAngle(unterschenkelwinkel + (unterschenkelwinkel / 3d)); // or result.footAngle()
+		double fussWinkel = normalizeAngle(unterschenkelwinkel + (unterschenkelwinkel / 2.8d)); // or result.footAngle()
 
 		// Flip direction if left
 		if (left) {

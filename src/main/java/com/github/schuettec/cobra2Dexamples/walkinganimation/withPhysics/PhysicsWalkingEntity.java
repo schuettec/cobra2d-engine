@@ -1,6 +1,7 @@
 package com.github.schuettec.cobra2Dexamples.walkinganimation.withPhysics;
 
 import static com.github.schuettec.cobra2d.math.Math2D.saveRound;
+import static java.util.Objects.isNull;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
@@ -52,11 +53,14 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 	private WalkController walkController;
 
 	private WalkAnimationController walkAnimationController;
-	private StepUpAnimationController stepUpAnimationController;
+	private TargetStepAnimationController stepUpAnimationController;
+	private LiftLegAnimationController passiveStepUpAnimationController;
 
 	private Body body;
 
 	private double forceToApply;
+
+	private boolean drawDebugPoints;
 
 	/**
 	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world.
@@ -65,24 +69,30 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 	 */
 	private float renderScaleConversionFactor = 1 / 100f;
 
-	private double radius;
+	private Point hipTranslation;
 
 	public PhysicsWalkingEntity(Point worldCoordinates, Dimension dimension, double radius, double forceToApply,
 	    double degrees) {
+		this(worldCoordinates, dimension, radius, forceToApply, degrees, false);
+	}
+
+	public PhysicsWalkingEntity(Point worldCoordinates, Dimension dimension, double radius, double forceToApply,
+	    double degrees, boolean drawDebugPoints) {
 		super(worldCoordinates, dimension);
-		this.radius = radius;
+		this.drawDebugPoints = drawDebugPoints;
 		this.forceToApply = forceToApply;
 		this.setDegrees(degrees);
 
 		LegBuilder builder = Leg.newLeg()
-		    .setRenderDebugPoints(false)
+		    .setRenderDebugPoints(true)
 		    .setLegLength(radius)
 		    .setMaxStep(MAX_STEP);
 		this.leg1 = builder.build();
 		this.leg2 = builder.build();
 		this.walkController = new WalkController();
 		this.walkAnimationController = new WalkAnimationController(MAX_STEP, radius, 97, 40d, 80d, 30d);
-		this.stepUpAnimationController = new StepUpAnimationController(MAX_STEP, radius, 97, 40d, 80d, 30d);
+		this.stepUpAnimationController = new TargetStepAnimationController(MAX_STEP, radius, 97, 40d, 80d, 30d);
+		this.passiveStepUpAnimationController = new LiftLegAnimationController(MAX_STEP, radius, 97, 40d, 80d, 30d);
 	}
 
 	@Override
@@ -148,11 +158,32 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 
 		walkController.updateWalk(this, worldAccess);
 
-		if ((shouldLeft && walkController.isStepUpLeft()) || (!shouldLeft && walkController.isStepUpRight())) {
+		boolean leftStepUp = shouldLeft && walkController.isStepUpLeft();
+		boolean rightStepUp = !shouldLeft && walkController.isStepUpRight();
+		if (leftStepUp || rightStepUp) {
 			if (shouldRun) {
+				Point nextStepPoint = walkController.getNextStepPoint();
+
+				if (leftStepUp) {
+					if (nextStepPoint.x < getPosition().clone()
+					    .translate(hipTranslation).x) {
+						this.hipTranslation.translate(-1d, 0);
+					}
+				}
+
+				if (rightStepUp) {
+					if (nextStepPoint.x > getPosition().clone()
+					    .translate(hipTranslation).x) {
+						this.hipTranslation.translate(1d, 0);
+					}
+				}
+
 				body.setLinearVelocity(0, 1);
+			} else {
+				this.hipTranslation = new Point(0, 0);
 			}
 		} else {
+			this.hipTranslation = new Point(0, 0);
 
 			// if run
 			Vector2 currentVelocity = this.getBody()
@@ -194,21 +225,48 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 		}
 
 		// --- Calculate max point
-		Point bodyPosition = getPosition().clone();
+		Point hipPosition = getPosition().clone()
+		    .translate(hipTranslation);
 
 		if (walkController.isStepUpLeft() || walkController.isStepUpRight()) {
-			stepUpAnimationController.setSourcePoint(bodyPosition);
+			stepUpAnimationController.setSourcePoint(hipPosition);
+			passiveStepUpAnimationController.setSourcePoint(hipPosition);
+
 			Point nextStepPoint = walkController.getNextStepPoint();
 			stepUpAnimationController.setTargetPoint(nextStepPoint);
 
-			leg1.calculateStep(bodyPosition, stepUpAnimationController, shouldLeft, 0)
+			if (isNull(passiveStepUpAnimationController.getTargetPoint())) {
+				Point newPassiveStartPoint = getPosition().clone()
+				    .translate(0, -leg1.getLegLength());
+				passiveStepUpAnimationController.setTargetPoint(newPassiveStartPoint);
+				System.out.println("init passive");
+			} else {
+				if (shouldRun) {
+					Point targetPoint = passiveStepUpAnimationController.getTargetPoint();
+					if (targetPoint.getFloatY() < nextStepPoint.getFloatY()) {
+						targetPoint.translate(0, 2);
+					}
+				} else {
+					Point newPassiveStartPoint = getPosition().clone()
+					    .translate(0, -leg1.getLegLength());
+					passiveStepUpAnimationController.setTargetPoint(newPassiveStartPoint);
+				}
+				System.out.println("passive " + passiveStepUpAnimationController.getTargetPoint());
+				Point targetPoint = passiveStepUpAnimationController.getTargetPoint()
+				    .clone()
+				    .translate(position);
+				renderer.drawCircle(targetPoint.getFloatX(), targetPoint.getFloatY(), 4, Color.MAGENTA);
+			}
+
+			leg1.calculateStep(hipPosition, stepUpAnimationController, shouldLeft, 0)
 			    .render(renderer, position);
 
-			leg2.calculateStep(bodyPosition, walkAnimationController, shouldLeft, 0)
+			leg2.calculateStep(hipPosition, passiveStepUpAnimationController, shouldLeft, 0)
 			    .render(renderer, position);
 
-			setPosition(getPosition().x, getPosition().y + 1);
 		} else {
+
+			passiveStepUpAnimationController.setTargetPoint(null);
 
 			walkAnimationController.setCrouch(shouldCrouch);
 			walkAnimationController.setFast(shouldFast);
@@ -221,10 +279,10 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 				leg2CurrentStep = currentStep;
 			}
 
-			leg1.calculateStep(bodyPosition, walkAnimationController, shouldLeft, leg1CurrentStep)
+			leg1.calculateStep(hipPosition, walkAnimationController, shouldLeft, leg1CurrentStep)
 			    .render(renderer, position);
 
-			leg2.calculateStep(bodyPosition, walkAnimationController, shouldLeft, leg2CurrentStep)
+			leg2.calculateStep(hipPosition, walkAnimationController, shouldLeft, leg2CurrentStep)
 			    .render(renderer, position);
 
 			// Step control
@@ -235,25 +293,27 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 			}
 		}
 
-		// drawSensorLines(renderer, position);
+		drawSensorLines(renderer, position);
 	}
 
 	private void drawSensorLines(RendererAccess renderer, Point position) {
-		Line[] sensorLines = walkController.getSensorLines();
+		if (drawDebugPoints) {
+			Line[] sensorLines = walkController.getSensorLines();
 
-		Point leftSensor1 = sensorLines[0].getX1()
-		    .translate(position);
-		Point leftSensor2 = sensorLines[0].getX2()
-		    .translate(position);
-		renderer.drawLine(leftSensor1.getFloatX(), leftSensor1.getFloatY(), leftSensor2.getFloatX(),
-		    leftSensor2.getFloatY(), Color.GREEN);
+			Point leftSensor1 = sensorLines[0].getX1()
+			    .translate(position);
+			Point leftSensor2 = sensorLines[0].getX2()
+			    .translate(position);
+			renderer.drawLine(leftSensor1.getFloatX(), leftSensor1.getFloatY(), leftSensor2.getFloatX(),
+			    leftSensor2.getFloatY(), Color.GREEN);
 
-		Point rightSensor1 = sensorLines[1].getX1()
-		    .translate(position);
-		Point rightSensor2 = sensorLines[1].getX2()
-		    .translate(position);
-		renderer.drawLine(rightSensor1.getFloatX(), rightSensor1.getFloatY(), rightSensor2.getFloatX(),
-		    rightSensor2.getFloatY(), Color.GREEN);
+			Point rightSensor1 = sensorLines[1].getX1()
+			    .translate(position);
+			Point rightSensor2 = sensorLines[1].getX2()
+			    .translate(position);
+			renderer.drawLine(rightSensor1.getFloatX(), rightSensor1.getFloatY(), rightSensor2.getFloatX(),
+			    rightSensor2.getFloatY(), Color.GREEN);
+		}
 	}
 
 	@Override

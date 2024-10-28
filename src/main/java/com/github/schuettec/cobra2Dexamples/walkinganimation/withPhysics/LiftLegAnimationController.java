@@ -5,12 +5,12 @@ import static java.util.Objects.isNull;
 import com.github.schuettec.cobra2Dexamples.walkinganimation.WalkAnimationController;
 import com.github.schuettec.cobra2d.math.Point;
 
-public class StepUpAnimationController extends WalkAnimationController {
+public class LiftLegAnimationController extends WalkAnimationController {
 
 	private Point targetPoint;
 	private Point sourcePoint;
 
-	public StepUpAnimationController(double maxStep, double legLength, double stepSize, double stepHeight,
+	public LiftLegAnimationController(double maxStep, double legLength, double stepSize, double stepHeight,
 	    double stepHeightFast, double crouchHeight) {
 		super(maxStep, legLength, stepSize, stepHeight, stepHeightFast, crouchHeight);
 
@@ -40,12 +40,6 @@ public class StepUpAnimationController extends WalkAnimationController {
 		}
 		if (isNull(targetPoint)) {
 			throw new RuntimeException("Source step point is null!");
-		}
-
-		Point targetPoint = this.targetPoint;
-
-		if (liegtLinksVon(targetPoint, sourcePoint)) {
-			targetPoint = spiegeln(targetPoint, sourcePoint);
 		}
 
 		return new AnimationResult(worldCoordinates, targetPoint, null);

@@ -17,95 +17,91 @@ import com.github.schuettec.cobra2d.renderer.Color;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.world.WorldAccess;
 
-public class PhysicsObstacleEntity extends BasicRectangleEntity
-    implements PolygonRenderable, PhysicBody, Updatable {
+public class PhysicsObstacleEntity extends BasicRectangleEntity implements PolygonRenderable, PhysicBody, Updatable {
 
-  /**
-   * Unit conversion: 1 unit in Box2D is 1 Meter in real world.
-   * We want to show a
-   * 3cm radius ball on the screen that has 30 Pixels radius.
-   */
-  private static final float toRenderScale = 100f;
-  private static float toPhysxFactor = 1 / toRenderScale;
+	/**
+	 * Unit conversion: 1 unit in Box2D is 1 Meter in real world.
+	 * We want to show a
+	 * 3cm radius ball on the screen that has 30 Pixels radius.
+	 */
+	private static final float toRenderScale = 100f;
+	private static float toPhysxFactor = 1 / toRenderScale;
 
-  private Body body;
-  private Fixture fixture;
+	private Body body;
+	private Fixture fixture;
 
-  public PhysicsObstacleEntity(Point worldCoordinates,
-      Dimension dimension) {
-    super(worldCoordinates, dimension);
-  }
+	public PhysicsObstacleEntity(Point worldCoordinates, Dimension dimension) {
+		super(worldCoordinates, dimension);
+	}
 
-  @Override
-  public PolygonShape getBodyFromPolygonCollisionShape() {
-    PolygonShape polygonShape = new PolygonShape();
-    List<Point> entityPoints = getCollisionShape(false, false,
-        false)
-            // Scale down, so that collision detection works in
-            // combination with physics (which resolves to early
-            // collision)
-            .scale(0.9d)
-            .getPoints();
-    int numberOfPoints = entityPoints.size();
-    Vector2[] vertices = new Vector2[numberOfPoints];
-    for (int i = 0; i < numberOfPoints; i++) {
-      Point ep = entityPoints.get(i);
-      vertices[i] = new Vector2();
-      vertices[i].x = toPhysicsValue(ep.getX());
-      vertices[i].y = toPhysicsValue(ep.getY());
-    }
-    polygonShape.set(vertices);
-    return polygonShape;
-  }
+	@Override
+	public PolygonShape getBodyFromPolygonCollisionShape() {
+		PolygonShape polygonShape = new PolygonShape();
+		List<Point> entityPoints = getCollisionShape(false, false, false)
+		    // Scale down, so that collision detection works in
+		    // combination with physics (which resolves to early
+		    // collision) ??? Does not work with scaling, because its relative to the width/height of the object. Large
+		    // objects do have a large scaling.
+		    .scale(1)
+		    .getPoints();
+		int numberOfPoints = entityPoints.size();
+		Vector2[] vertices = new Vector2[numberOfPoints];
+		for (int i = 0; i < numberOfPoints; i++) {
+			Point ep = entityPoints.get(i);
+			vertices[i] = new Vector2();
+			vertices[i].x = toPhysicsValue(ep.getX());
+			vertices[i].y = toPhysicsValue(ep.getY());
+		}
+		polygonShape.set(vertices);
+		return polygonShape;
+	}
 
-  @Override
-  public void configureFixture(Fixture fixture) {
-    PhysicBody.super.configureFixture(fixture);
-    fixture.setFriction(1f);
-  }
+	@Override
+	public void configureFixture(Fixture fixture) {
+		PhysicBody.super.configureFixture(fixture);
+		fixture.setFriction(1f);
+	}
 
-  @Override
-  public void update(WorldAccess worldAccess, float deltaTime) {
-    Point newPosition = new Point(body.getPosition().x,
-        body.getPosition().y);
-    newPosition = newPosition.scale(toRenderScale);
-    this.setPosition(newPosition);
-  }
+	@Override
+	public void update(WorldAccess worldAccess, float deltaTime) {
+		Point newPosition = new Point(body.getPosition().x, body.getPosition().y);
+		newPosition = newPosition.scale(toRenderScale);
+		this.setPosition(newPosition);
+	}
 
-  @Override
-  public void render(RendererAccess renderer, Point position) {
-    renderPolygon(getCollisionShapeInWorldCoordinates(),
-        renderer, position);
-  }
+	@Override
+	public void render(RendererAccess renderer, Point position) {
+		renderPolygon(getCollisionShapeInWorldCoordinates(), renderer, position);
+	}
 
-  @Override
-  public int getLayer() {
-    return 0;
-  }
+	@Override
+	public int getLayer() {
+		return 0;
+	}
 
-  @Override
-  public Color getDrawColor() {
-    return Color.GRAY;
-  }
+	@Override
+	public Color getDrawColor() {
+		return Color.GRAY;
+	}
 
-  @Override
-  public Body getBody() {
-    return body;
-  }
+	@Override
+	public Body getBody() {
+		return body;
+	}
 
-  @Override
-  public float getDensity() {
-    return 5f;
-  }
+	@Override
+	public float getDensity() {
+		return 5f;
+	}
 
-  @Override
-  public BodyType getBodyType() {
-    return BodyType.StaticBody;
-  }
+	@Override
+	public BodyType getBodyType() {
+		return BodyType.StaticBody;
+	}
 
-  @Override
-  public void setBody(Body body) {
-    this.body = body;
-  }
+	@Override
+	public void setBody(Body body) {
+		this.body = body;
+	}
 
 }

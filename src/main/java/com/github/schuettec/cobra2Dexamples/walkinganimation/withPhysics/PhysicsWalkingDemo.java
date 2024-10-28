@@ -31,18 +31,27 @@ public class PhysicsWalkingDemo {
 		world.setGravity(0, -9.7f);
 		world.createSkill(FloorStairSkill.class);
 
-		PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(new Point(0, 19), new Dimension(1600, 20));
+		boolean drawDebugPoints = true;
 
-		PhysicsWalkFloorEntity block1 = new PhysicsWalkFloorEntity(new Point(100, 55), new Dimension(50, 50));
+		PhysicsWalkFloorEntity boden = new PhysicsWalkFloorEntity(new Point(0, 19), new Dimension(1600, 20),
+		    drawDebugPoints);
 
-		PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(new Point(350, 155), new Dimension(50, 50));
+		PhysicsWalkFloorEntity block1 = new PhysicsWalkFloorEntity(new Point(-100, 55), new Dimension(50, 50),
+		    drawDebugPoints);
 
-		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(0, 400), new Dimension(50, 200), 100, 4, 0);
+		PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(new Point(800, 55), new Dimension(1500, 50),
+		    drawDebugPoints);
+
+		PhysicsWalkFloorEntity block3 = new PhysicsWalkFloorEntity(new Point(900, 110), new Dimension(1500, 50),
+		    drawDebugPoints);
+
+		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(0, 400), new Dimension(50, 200), 100, 4, 0,
+		    drawDebugPoints);
 
 		BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 400), new Dimension(1600, 799), false);
-		camera.setDrawCameraOutline(false);
-		camera.setDrawCollisionShape(false);
-		camera.setDrawCollisionPoints(false);
+		camera.setDrawCameraOutline(true);
+		camera.setDrawCollisionShape(true);
+		camera.setDrawCollisionPoints(true);
 		camera.setDrawMouse(true);
 		camera.setScreenPosition(new Point(400, 400));
 		engine.setCameraForInput(camera);
@@ -51,7 +60,7 @@ public class PhysicsWalkingDemo {
 		// automatically
 		// camera.setScreenPosition(new Point(0, 0));
 
-		engine.addEntity(player, boden, block1, block2);
+		engine.addEntity(player, boden, block1, block2, block3);
 		// block);
 		engine.addEntity(camera);
 		engine.setCameraForInput(camera);
