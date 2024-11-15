@@ -243,8 +243,13 @@ public class PhysicsWalkingEntity extends BasicRectangleEntity
 			} else {
 				if (shouldRun) {
 					Point targetPoint = passiveStepUpAnimationController.getTargetPoint();
+					System.out.println("x gedingst: " + targetPoint.getFloatX() + " ~ " + nextStepPoint.getFloatX());
 					if (targetPoint.getFloatY() < nextStepPoint.getFloatY()) {
 						targetPoint.translate(0, 2);
+					} else {
+						if (!shouldLeft && targetPoint.getFloatX() < nextStepPoint.getFloatX()) {
+							targetPoint.translate(2, 0);
+						}
 					}
 				} else {
 					Point newPassiveStartPoint = getPosition().clone()

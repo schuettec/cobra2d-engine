@@ -42,7 +42,7 @@ public class PhysicsWalkingDemo {
 		PhysicsWalkFloorEntity block2 = new PhysicsWalkFloorEntity(new Point(800, 55), new Dimension(1500, 50),
 		    drawDebugPoints);
 
-		PhysicsWalkFloorEntity block3 = new PhysicsWalkFloorEntity(new Point(900, 110), new Dimension(1500, 50),
+		PhysicsWalkFloorEntity block3 = new PhysicsWalkFloorEntity(new Point(900, 130), new Dimension(1500, 100),
 		    drawDebugPoints);
 
 		PhysicsWalkingEntity player = new PhysicsWalkingEntity(new Point(0, 400), new Dimension(50, 200), 100, 4, 0,

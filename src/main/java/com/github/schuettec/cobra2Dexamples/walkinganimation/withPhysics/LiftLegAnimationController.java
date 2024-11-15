@@ -42,6 +42,10 @@ public class LiftLegAnimationController extends WalkAnimationController {
 			throw new RuntimeException("Source step point is null!");
 		}
 
+		if (liegtLinksVon(sourcePoint, targetPoint)) {
+			targetPoint = spiegeln(targetPoint, sourcePoint);
+		}
+
 		return new AnimationResult(worldCoordinates, targetPoint, null);
 	}
 
