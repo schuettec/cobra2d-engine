@@ -114,13 +114,12 @@ public class Cobra2DEngine {
 		for (DisplayMode mode : availableModes) {
 			System.out.println(mode.toString());
 			if (mode.getWidth() == resolutionX && mode.getHeight() == resolutionY
-					&& ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1)
-					&& mode.getRefreshRate() == refreshRate) {
+			    && ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1) && mode.getRefreshRate() == refreshRate) {
 				return mode;
 			}
 		}
 		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
-				+ "hz at " + bitDepth + " bit depth.");
+		    + "hz at " + bitDepth + " bit depth.");
 	}
 
 	/**
@@ -146,9 +145,10 @@ public class Cobra2DEngine {
 	}
 
 	public void addEntity(List<? extends Skill> entities) {
-		entities.stream().forEach(e -> {
-			world.addEntity(e);
-		});
+		entities.stream()
+		    .forEach(e -> {
+			    world.addEntity(e);
+		    });
 	}
 
 	public void addEntity(Skill... entities) {
@@ -191,11 +191,11 @@ public class Cobra2DEngine {
 				return new Dimension(img.getWidth(), img.getHeight());
 			} catch (IOException e) {
 				throw new RuntimeException(
-						"Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
+				    "Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
 			}
 		} else {
-			throw new RuntimeException("Texture with id " + textureId
-					+ " not found. Add the texture to engine before calling this method!");
+			throw new RuntimeException(
+			    "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
 		}
 	}
 
@@ -245,7 +245,7 @@ public class Cobra2DEngine {
 	 * each player.
 	 *
 	 * @param camera The camera that is used to translate screen input coordinates
-	 *               to world coordinates.
+	 *        to world coordinates.
 	 */
 	public void setCameraForInput(Camera camera) {
 		this.cameraForInput = camera;

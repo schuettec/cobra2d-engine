@@ -1,5 +1,7 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import static java.util.stream.Collectors.toList;
+
 import java.net.URL;
 import java.util.Hashtable;
 import java.util.List;
@@ -18,15 +20,21 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.schuettec.cobra2d.controller.Controller;
 import com.github.schuettec.cobra2d.engine.Cobra2DEngine;
 import com.github.schuettec.cobra2d.entity.skills.Camera;
+import com.github.schuettec.cobra2d.entity.skills.Camera3D;
 import com.github.schuettec.cobra2d.entity.skills.Renderable;
+import com.github.schuettec.cobra2d.entity.skills.Renderable3D;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
@@ -39,7 +47,9 @@ import com.github.schuettec.cobra2d.world.Collision;
 public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 	enum RendererState {
-		INITIALIZED, CREATED, FINISHED;
+		INITIALIZED,
+		CREATED,
+		FINISHED;
 	}
 
 	private Cobra2DEngine engine;
@@ -64,6 +74,9 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	private CountDownLatch waitForRenderer = new CountDownLatch(1);
 
 	private boolean started;
+	private PerspectiveCamera camera3d;
+	private Environment environment;
+	private ModelBatch modelBatch;
 
 	public LibGdxRenderer() {
 		this.state = RendererState.CREATED;
@@ -85,7 +98,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		config.useVsync(true);
 		if (engine.isFullscreen()) {
 			DisplayMode mode = getDisplayMode(engine.getResolutionX(), engine.getResolutionY(), engine.getBitDepth(),
-					engine.getRefreshRate());
+			    engine.getRefreshRate());
 			config.setFullscreenMode(mode);
 		} else {
 			config.setWindowedMode(engine.getResolutionX(), engine.getResolutionY());
@@ -138,7 +151,24 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		camera.viewportWidth = resolutionX;
 		camera.viewportHeight = resolutionY;
 
-		world.getRenderables().stream().forEach(r -> r.initialize(rendererAccess));
+		camera3d = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		camera3d.position.set(3f, 3f, 3f);
+		camera3d.lookAt(0f, 0f, 0f);
+		camera3d.near = 1f;
+		camera3d.far = 300f;
+		camera3d.update();
+
+		// Set up the environment
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.8f, 0.8f, 0.8f, 1f));
+		// environment.add(new DirectionalLight().set(Color.WHITE, -1f, -0.8f, -0.2f));
+
+		// Initialize ModelBatch
+		modelBatch = new ModelBatch();
+
+		world.getRenderables()
+		    .stream()
+		    .forEach(r -> r.initialize(rendererAccess));
 
 		waitForRenderer.countDown();
 	}
@@ -193,7 +223,20 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 
 		camera.render(rendererAccess, world, capturedEntities);
 
+		if (camera instanceof Camera3D) {
+			Camera3D camera3d = (Camera3D) camera;
+			List<Renderable3D> captured3D = to3DList(capturedEntities);
+			camera3d.render3D(modelBatch, captured3D);
+		}
+
 		shapeRenderer.flush();
+	}
+
+	private List<Renderable3D> to3DList(List<Collision> capturedEntities) {
+		return capturedEntities.stream()
+		    .filter(col -> col.getEntity() instanceof Renderable3D)
+		    .map(a -> (Renderable3D) a)
+		    .collect(toList());
 	}
 
 	private void renderClippingMask(Camera camera) {
@@ -217,7 +260,9 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	public void finish() {
 		this.state = RendererState.FINISHED;
 
-		world.getRenderables().stream().forEach(r -> r.dispose());
+		world.getRenderables()
+		    .stream()
+		    .forEach(r -> r.dispose());
 
 		shapeRenderer.dispose();
 		spriteRenderer.dispose();
@@ -231,13 +276,12 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 		DisplayMode[] availableModes = Lwjgl3ApplicationConfiguration.getDisplayModes(primary);
 		for (DisplayMode mode : availableModes) {
 			if (mode.width == resolutionX && mode.height == resolutionY
-					&& ((mode.bitsPerPixel == bitDepth) || mode.bitsPerPixel == -1)
-					&& mode.refreshRate == refreshRate) {
+			    && ((mode.bitsPerPixel == bitDepth) || mode.bitsPerPixel == -1) && mode.refreshRate == refreshRate) {
 				return mode;
 			}
 		}
 		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
-				+ "hz at " + bitDepth + " bit depth.");
+		    + "hz at " + bitDepth + " bit depth.");
 	}
 
 	ShapeRenderer getShapeRenderer() {
@@ -274,29 +318,37 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
 	}
 
 	private void loadTextures() {
-		textureLocations.keySet().stream().forEach(id -> {
-			URL url = textureLocations.get(id);
-			loadTexture(id, url);
-		});
+		textureLocations.keySet()
+		    .stream()
+		    .forEach(id -> {
+			    URL url = textureLocations.get(id);
+			    loadTexture(id, url);
+		    });
 	}
 
 	private void loadSounds() {
-		soundLocations.keySet().stream().forEach(id -> {
-			URL url = soundLocations.get(id);
-			loadSound(id, url);
-		});
+		soundLocations.keySet()
+		    .stream()
+		    .forEach(id -> {
+			    URL url = soundLocations.get(id);
+			    loadSound(id, url);
+		    });
 	}
 
 	private void disposeTextures() {
-		textures.values().stream().forEach(t -> {
-			t.dispose();
-		});
+		textures.values()
+		    .stream()
+		    .forEach(t -> {
+			    t.dispose();
+		    });
 	}
 
 	private void disposeSounds() {
-		sounds.values().stream().forEach(s -> {
-			s.dispose();
-		});
+		sounds.values()
+		    .stream()
+		    .forEach(s -> {
+			    s.dispose();
+		    });
 	}
 
 	Texture getTexture(String imageId) {
