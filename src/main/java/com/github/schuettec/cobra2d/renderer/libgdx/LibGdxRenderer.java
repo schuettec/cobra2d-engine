@@ -167,16 +167,16 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
     camera.viewportWidth = resolutionX;
     camera.viewportHeight = resolutionY;
 
-    camera3d = new PerspectiveCamera(67, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-    camera3d.position.set(0f, 50f, 0f);
+    camera3d = new PerspectiveCamera(67, resolutionX, resolutionY);
+    camera3d.position.set(0f, 0f, 100f);
     camera3d.lookAt(0f, 0f, 0f);
     camera3d.near = 1f;
-    camera3d.far = 500f;
+    camera3d.far = 100f;
     camera3d.update();
 
     // Umgebung mit Licht
     environment = new Environment();
-    environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -0.8f, -0.2f));
+    environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -1f, -1f));
 
     // ModelBatch initialisieren
     modelBatch = new ModelBatch();

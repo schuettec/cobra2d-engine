@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
 import com.github.schuettec.cobra2d.entity.BasicCircleEntity;
 import com.github.schuettec.cobra2d.entity.skills.CircleRenderable;
@@ -28,6 +29,9 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
   private float rotationX = 0f;
   private float rotationY = 0f;
   private float rotationZ = 0f;
+  private Vector3 modelTranslation;
+  private Vector3 modelScale;
+  private Quaternion modelRotation;
 
   public Entity3D(String modelAdress, Point worldCoordinates, double radius) {
     super(worldCoordinates, radius);
@@ -55,26 +59,29 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
     if (isNull(modelInstance)) {
       Model model = modelAccess.getModel(modelAdress);
       modelInstance = new ModelInstance(model);
-      // modelInstance.transform.scale(0.1f, 0.1f, 0.1f);
-      modelInstance.transform.setToScaling(0.01f, 0.01f, 0.01f);
-      // modelInstance.transform.idt();
-      // modelInstance.transform.setToTranslation(0f, 0f, 0.48989f);
+
+      // Position und Skalierung beibehalten
+      this.modelTranslation = new Vector3();
+      modelInstance.transform.getTranslation(modelTranslation); // Position sichern
+
+      this.modelScale = new Vector3();
+      modelInstance.transform.getScale(modelScale); // Skalierung sichern
+
+      this.modelRotation = new Quaternion();
+      modelInstance.transform.getRotation(modelRotation);
     }
-
-    // // Position und Skalierung beibehalten
-    Vector3 position = new Vector3();
-    modelInstance.transform.getTranslation(position); // Position sichern
-
-    Vector3 scale = new Vector3();
-    modelInstance.transform.getScale(scale); // Skalierung sichern
 
     // Transformation mit Rotation aktualisieren
     modelInstance.transform.idt() // Reset der Transformationsmatrix
-        .translate(position) // Position wiederherstellen
+        .translate(modelTranslation) // Position wiederherstellen
+        // .rotate(modelRotation)
+        .scale(modelScale.x, modelScale.y, modelScale.z)
+        .rotate(modelRotation)
+        // .scale(0.1f, 0.1f, 0.1f)
+        // .translate(35f, 35f, 35f)
         .rotate(Vector3.X, rotationX) // Rotation setzen
         .rotate(Vector3.Y, rotationY) // Rotation setzen
-        .rotate(Vector3.Z, rotationZ) // Rotation setzen
-        .scale(scale.x, scale.y, scale.z); // Skalierung wiederherstellen
+        .rotate(Vector3.Z, rotationZ); // Rotation setzen
 
     modelBatch.render(modelInstance, environment);
 

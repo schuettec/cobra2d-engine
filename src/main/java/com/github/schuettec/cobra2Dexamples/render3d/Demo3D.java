@@ -27,7 +27,7 @@ public class Demo3D {
 
     engine.initialize();
 
-    Entity3D e1 = new Entity3D("brickModel", new Point(250, 250), 40);
+    Entity3D e1 = new Entity3D("brickModel", new Point(350, 350), 40);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
     camera.setDrawCameraOutline(true);
