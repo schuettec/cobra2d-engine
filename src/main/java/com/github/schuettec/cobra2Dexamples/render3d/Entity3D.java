@@ -1,6 +1,5 @@
 package com.github.schuettec.cobra2Dexamples.render3d;
 
-import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 import static java.util.Objects.isNull;
 
 import java.util.function.Function;
@@ -56,10 +55,10 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
 
   @Override
   public void update(WorldAccess worldAccess, float deltaTime) {
-    this.rotationX = (float) Math2D.normalizeAngle(rotationX + 1f);
+    // this.rotationX = (float) Math2D.normalizeAngle(rotationX + 1f);
     // this.rotationY = (float) Math2D.normalizeAngle(rotationY + 1f);
 
-    setDegrees(normalizeAngle(getDegrees() + 1d));
+    setDegrees(Math2D.normalizeAngle(getDegrees() + 1d));
 
     animCount = Math2D.normalizeAngle(animCount + 1);
 
