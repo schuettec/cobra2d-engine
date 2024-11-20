@@ -50,8 +50,8 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
 
     animCount = Math2D.normalizeAngle(animCount + 1);
 
-    Point position = Math2D.getCircle(new Point(0, 0), 100, animCount);
-    setPosition(position);
+    // Point position = Math2D.getCircle(new Point(0, 0), 100, animCount);
+    // setPosition(position);
 
   }
 
