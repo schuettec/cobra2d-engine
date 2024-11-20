@@ -2,6 +2,8 @@ package com.github.schuettec.cobra2Dexamples.render3d;
 
 import static java.util.Objects.isNull;
 
+import java.util.function.Function;
+
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -33,6 +35,8 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
   private Vector3 modelScale;
   private Quaternion modelRotation;
 
+  private double animCount = 0;
+
   public Entity3D(String modelAdress, Point worldCoordinates, double radius) {
     super(worldCoordinates, radius);
     this.modelAdress = modelAdress;
@@ -43,6 +47,12 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
     // this.rotationX = (float) Math2D.normalizeAngle(rotationX + 1f);
     // this.rotationY = (float) Math2D.normalizeAngle(rotationY + 1f);
     this.rotationZ = (float) Math2D.normalizeAngle(rotationZ + 1f);
+
+    animCount = Math2D.normalizeAngle(animCount + 1);
+
+    Point position = Math2D.getCircle(new Point(0, 0), 100, animCount);
+    setPosition(position);
+
   }
 
   @Override
@@ -50,11 +60,15 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
     Circle collisionShape = getCollisionShapeInWorldCoordinates();
     renderCircle(collisionShape, renderer, screenTranslation);
 
+    // Point cameraPosition = getPosition().clone()
+    // .translate(screenTranslation);
+    // System.out.println("Camera position: " + cameraPosition);
+
   }
 
   @Override
   public void render3D(ModelAccess modelAccess, Environment environment, ModelBatch modelBatch,
-      Point screenTranslation) {
+      Function<Point, Point> worldTo3DScreen) {
 
     if (isNull(modelInstance)) {
       Model model = modelAccess.getModel(modelAdress);
@@ -71,14 +85,14 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
       modelInstance.transform.getRotation(modelRotation);
     }
 
+    Point position3d = worldTo3DScreen.apply(getPosition().clone());
+
     // Transformation mit Rotation aktualisieren
     modelInstance.transform.idt() // Reset der Transformationsmatrix
         .translate(modelTranslation) // Position wiederherstellen
-        // .rotate(modelRotation)
         .scale(modelScale.x, modelScale.y, modelScale.z)
         .rotate(modelRotation)
-        // .scale(0.1f, 0.1f, 0.1f)
-        // .translate(35f, 35f, 35f)
+        .translate(position3d.getFloatX(), position3d.getFloatY(), 0f)
         .rotate(Vector3.X, rotationX) // Rotation setzen
         .rotate(Vector3.Y, rotationY) // Rotation setzen
         .rotate(Vector3.Z, rotationZ); // Rotation setzen
@@ -91,13 +105,9 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
     modelTransform.mul(modelAccess.getCamera3D().combined);
     /* Extract the position as usual. */
 
-    Vector3 curPosition;
-    curPosition = modelTransform.getTranslation(new Vector3());
-    Point cameraPosition = getPosition().clone()
-        .translate(screenTranslation);
-    System.out.println(
-        "Modelposition: " + curPosition + " Entity Pos:" + getPosition() + " Camera position: " + cameraPosition);
-
+    // Vector3 curPosition;
+    // curPosition = modelTransform.getTranslation(new Vector3());
+    // System.out.println("Model Pos " + curPosition);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2d.renderer.libgdx;
 
+import static java.lang.Math.abs;
 import static java.util.stream.Collectors.toList;
 
 import java.net.URL;
@@ -35,6 +36,7 @@ import com.badlogic.gdx.graphics.g3d.loader.ObjLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.github.schuettec.cobra2d.controller.Controller;
@@ -46,6 +48,7 @@ import com.github.schuettec.cobra2d.entity.skills.Renderable3D;
 import com.github.schuettec.cobra2d.entity.skills.Skill;
 import com.github.schuettec.cobra2d.entity.skills.SoundEffect;
 import com.github.schuettec.cobra2d.entity.skills.sound.SoundCamera;
+import com.github.schuettec.cobra2d.math.Dimension;
 import com.github.schuettec.cobra2d.renderer.Renderer;
 import com.github.schuettec.cobra2d.renderer.RendererAccess;
 import com.github.schuettec.cobra2d.renderer.RendererException;
@@ -166,8 +169,12 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
     camera = new OrthographicCamera(resolutionX, resolutionY);
     camera.viewportWidth = resolutionX;
     camera.viewportHeight = resolutionY;
+    camera.update();
 
-    camera3d = new PerspectiveCamera(67, resolutionX, resolutionY);
+    // camera3d = new OrthographicCamera(resolutionX, resolutionY);
+    camera3d = new PerspectiveCamera(90, resolutionX, resolutionY);
+    camera3d.viewportWidth = resolutionX;
+    camera3d.viewportHeight = resolutionY;
     camera3d.position.set(0f, 0f, 100f);
     camera3d.lookAt(0f, 0f, 0f);
     camera3d.near = 1f;
@@ -264,13 +271,21 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
       modelBatch.begin(this.camera3d);
       Camera3D camera3d = (Camera3D) camera;
       List<Renderable3D> captured3D = to3DList(capturedEntities);
-      camera3d.render3D(accessObject, environment, modelBatch, captured3D);
+      Dimension viewFieldDimension = getCamera3DTranslation();
+      camera3d.render3D(accessObject, environment, modelBatch, captured3D, viewFieldDimension);
       // modelBatch.render(testmodelInstance, environment);
       modelBatch.end();
 
     }
 
     shapeRenderer.flush();
+  }
+
+  private Dimension getCamera3DTranslation() {
+    Vector3 ul = camera3d.unproject(new Vector3(0, 0, 1));
+    Vector3 or = camera3d.unproject(new Vector3(this.camera3d.viewportWidth, this.camera3d.viewportHeight, 1));
+
+    return new Dimension(abs(ul.x - or.x), abs(ul.y - or.y));
   }
 
   private List<Renderable3D> to3DList(List<Collision> capturedEntities) {

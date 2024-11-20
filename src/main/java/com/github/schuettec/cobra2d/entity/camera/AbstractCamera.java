@@ -5,6 +5,7 @@ import static java.util.Objects.isNull;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.function.Function;
 
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
@@ -97,10 +98,30 @@ public interface AbstractCamera extends Camera3D {
 
   @Override
   default void render3D(ModelAccess modelAccess, Environment environment, ModelBatch modelBatch,
-      List<Renderable3D> renderables3d) {
+      List<Renderable3D> renderables3d, Dimension viewFieldDimension) {
+
     Point screenTranslation = getWorldToScreenTranslation();
 
-    renderables3d.forEach(renderable -> renderable.render3D(modelAccess, environment, modelBatch, screenTranslation));
+    double w = -(viewFieldDimension.getWidth() / 2.0);
+    double h = -(viewFieldDimension.getHeight() / 2.0);
+
+    Dimension screenTo3DScaling = getScreenTo3DScaling(viewFieldDimension);
+
+    Function<Point, Point> worldTo3DScreen = (p) -> {
+      Point position3dScreen = p.clone()
+          .translate(screenTranslation)
+          .scale(screenTo3DScaling.getWidth(), screenTo3DScaling.getHeight())
+          .translate(w, h);
+      return position3dScreen;
+    };
+
+    renderables3d.forEach(renderable -> renderable.render3D(modelAccess, environment, modelBatch, worldTo3DScreen));
+  }
+
+  public default Dimension getScreenTo3DScaling(Dimension viewFieldDimension) {
+    Dimension cameraDimension = getCollisionShapeDimension();
+    return new Dimension(viewFieldDimension.getWidth() / cameraDimension.getWidth(),
+        viewFieldDimension.getHeight() / cameraDimension.getHeight());
   }
 
   default void centerOnScreen(final RendererAccess renderer) {
