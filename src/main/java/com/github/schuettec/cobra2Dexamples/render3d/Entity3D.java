@@ -1,5 +1,6 @@
 package com.github.schuettec.cobra2Dexamples.render3d;
 
+import static com.github.schuettec.cobra2d.math.Math2D.normalizeAngle;
 import static java.util.Objects.isNull;
 
 import java.util.function.Function;
@@ -28,9 +29,20 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
 
   private String modelAdress;
   private ModelInstance modelInstance;
+
+  /**
+   * The z offset applied before translating to entity position.
+   */
+  private float zOffset = 10f;
+
+  /**
+   * The default scaling of the model applied before the entities scaling factor.
+   */
+  private float scaleOffset = 6f;
+
   private float rotationX = 0f;
   private float rotationY = 0f;
-  private float rotationZ = 0f;
+
   private Vector3 modelTranslation;
   private Vector3 modelScale;
   private Quaternion modelRotation;
@@ -44,9 +56,10 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
 
   @Override
   public void update(WorldAccess worldAccess, float deltaTime) {
-    // this.rotationX = (float) Math2D.normalizeAngle(rotationX + 1f);
+    this.rotationX = (float) Math2D.normalizeAngle(rotationX + 1f);
     // this.rotationY = (float) Math2D.normalizeAngle(rotationY + 1f);
-    this.rotationZ = (float) Math2D.normalizeAngle(rotationZ + 1f);
+
+    setDegrees(normalizeAngle(getDegrees() + 1d));
 
     animCount = Math2D.normalizeAngle(animCount + 1);
 
@@ -59,11 +72,6 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
   public void render(RendererAccess renderer, Point screenTranslation) {
     Circle collisionShape = getCollisionShapeInWorldCoordinates();
     renderCircle(collisionShape, renderer, screenTranslation);
-
-    // Point cameraPosition = getPosition().clone()
-    // .translate(screenTranslation);
-    // System.out.println("Camera position: " + cameraPosition);
-
   }
 
   @Override
@@ -92,22 +100,18 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
         .translate(modelTranslation) // Position wiederherstellen
         .scale(modelScale.x, modelScale.y, modelScale.z)
         .rotate(modelRotation)
-        .translate(position3d.getFloatX(), position3d.getFloatY(), 0f)
+        .translate(position3d.getFloatX(), position3d.getFloatY(), zOffset)
+        .scale(scaleOffset, scaleOffset, scaleOffset)
+        .scale((float) getScale(), (float) getScale(), (float) getScale())
         .rotate(Vector3.X, rotationX) // Rotation setzen
         .rotate(Vector3.Y, rotationY) // Rotation setzen
-        .rotate(Vector3.Z, rotationZ); // Rotation setzen
+        .rotate(Vector3.Z, (float) getDegrees()); // Rotation setzen
 
     modelBatch.render(modelInstance, environment);
 
     Matrix4 modelTransform = new Matrix4();
     modelTransform.set(modelInstance.transform);
-    /* Multiply the transform with the combined matrix of the camera. */
     modelTransform.mul(modelAccess.getCamera3D().combined);
-    /* Extract the position as usual. */
-
-    // Vector3 curPosition;
-    // curPosition = modelTransform.getTranslation(new Vector3());
-    // System.out.println("Model Pos " + curPosition);
   }
 
   @Override

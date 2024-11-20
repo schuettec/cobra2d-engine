@@ -184,6 +184,7 @@ public class LibGdxRenderer extends ApplicationAdapter implements Renderer {
     // Umgebung mit Licht
     environment = new Environment();
     environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -1f, -1f));
+    environment.add(new DirectionalLight().set(1f, 1f, 1f, 1f, 1f, 1f));
 
     // ModelBatch initialisieren
     modelBatch = new ModelBatch();
