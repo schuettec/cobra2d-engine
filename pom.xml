@@ -27,7 +27,7 @@
 		</developer>
 	</developers>
 	<properties>
-		<gdx-box2d-version>1.12.1</gdx-box2d-version>
+		<gdx-box2d-version>1.9.9</gdx-box2d-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>21</maven.compiler.source>
 		<maven.compiler.target>21</maven.compiler.target>

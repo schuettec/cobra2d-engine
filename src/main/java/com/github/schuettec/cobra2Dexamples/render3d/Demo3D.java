@@ -27,12 +27,16 @@ public class Demo3D {
 
     engine.addModel("brickAnimation", new URL("resource:models/animation/brick-anim.g3dj"));
 
+    engine.addModel("uvCube", new URL("resource:models/uvmap/uvmap.g3dj"));
+
     engine.initialize();
 
     Entity3D e1 = new Entity3D("brickModel", new Point(350, 350), 40);
     e1.setScale(2d);
 
     AnimatedEntity3D e2 = new AnimatedEntity3D("brickAnimation", new Point(0, 0), 40);
+
+    Entity3D e3 = new Entity3D("uvCube", new Point(150, 150), 40);
 
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
     camera.setDrawCameraOutline(true);
@@ -42,7 +46,7 @@ public class Demo3D {
     // Set screen position or the camera is centered automatically
     // camera.setScreenPosition(new Point(0, 0));
 
-    engine.addEntity(camera, e1, e2);
+    engine.addEntity(camera, e1, e2, e3);
     engine.start();
   }
 

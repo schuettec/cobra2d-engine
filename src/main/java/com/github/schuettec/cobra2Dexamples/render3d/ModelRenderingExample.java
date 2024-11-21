@@ -4,16 +4,16 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
-import com.badlogic.gdx.graphics.VertexAttributes;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.utils.JsonReader;
 
 public class ModelRenderingExample extends ApplicationAdapter {
   private PerspectiveCamera camera;
@@ -39,10 +39,11 @@ public class ModelRenderingExample extends ApplicationAdapter {
     // ModelBatch initialisieren
     modelBatch = new ModelBatch();
 
-    // Beispielmodell erstellen (ein einfacher Würfel)
-    ModelBuilder modelBuilder = new ModelBuilder();
-    model = modelBuilder.createBox(2f, 2f, 2f, // Breite, Höhe, Tiefe
-        new Material(), VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+    String path = "./models/uvmap/uvmap.g3dj";// "models/simple/simple.g3dj";
+
+    FileHandle fileHandle = Gdx.files.internal(path);
+    G3dModelLoader loader = new G3dModelLoader(new JsonReader());
+    model = loader.loadModel(fileHandle);
 
     // ModelInstance erstellen
     modelInstance = new ModelInstance(model);
