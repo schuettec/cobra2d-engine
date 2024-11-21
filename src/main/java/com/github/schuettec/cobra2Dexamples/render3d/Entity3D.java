@@ -5,12 +5,9 @@ import static java.util.Objects.isNull;
 import java.util.function.Function;
 
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Material;
 import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.ModelInstance;
-import com.badlogic.gdx.graphics.g3d.attributes.FloatAttribute;
-import com.badlogic.gdx.graphics.g3d.attributes.IntAttribute;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Quaternion;
 import com.badlogic.gdx.math.Vector3;
@@ -83,14 +80,6 @@ public class Entity3D extends BasicCircleEntity implements CircleRenderable, Upd
     if (isNull(modelInstance)) {
       Model model = modelAccess.getModel(modelAdress);
       modelInstance = new ModelInstance(model);
-
-      for (Material mat : modelInstance.materials) {
-        mat.remove(IntAttribute.CullFace);
-      }
-
-      for (Material mat : modelInstance.materials) {
-        mat.remove(FloatAttribute.AlphaTest);
-      }
 
       // Position und Skalierung beibehalten
       this.modelTranslation = new Vector3();

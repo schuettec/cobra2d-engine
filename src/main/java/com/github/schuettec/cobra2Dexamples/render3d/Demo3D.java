@@ -24,10 +24,11 @@ public class Demo3D {
 
     Cobra2DEngine engine = new Cobra2DEngine(properties);
     engine.addModel("brickModel", new URL("resource:models/brick/brick.g3dj"));
+    engine.addModel("brickModelUV", new URL("resource:models/brick/brick-uvmap.g3dj"));
 
     engine.addModel("brickAnimation", new URL("resource:models/animation/brick-anim.g3dj"));
 
-    engine.addModel("uvCube", new URL("resource:models/uvmap/uvmap.g3dj"));
+    engine.addModel("uvCube", new URL("resource:models/uvmap/uvcube-blend-exporter.g3dj"));
 
     engine.initialize();
 
@@ -38,6 +39,9 @@ public class Demo3D {
 
     Entity3D e3 = new Entity3D("uvCube", new Point(150, 150), 40);
 
+    Entity3D e4 = new Entity3D("brickModelUV", new Point(250, 250), 40);
+    // e4.setScale(2d);
+
     BasicRectangleMapCamera camera = new BasicRectangleMapCamera(new Point(0, 0), new Dimension(799, 799), true);
     camera.setDrawCameraOutline(true);
     camera.setDrawCollisionShape(true);
@@ -46,7 +50,7 @@ public class Demo3D {
     // Set screen position or the camera is centered automatically
     // camera.setScreenPosition(new Point(0, 0));
 
-    engine.addEntity(camera, e1, e2, e3);
+    engine.addEntity(camera, e1, e2, e3, e4);
     engine.start();
   }
 
