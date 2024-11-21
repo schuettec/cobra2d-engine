@@ -1,0 +1,30 @@
+ When modeling in blender for use in LibGDX use the screenshots to avoid misconfiguration.
+
+ Material - important note!
+ --------------------------
+
+ Change the emission color to Black. LibGDX or fbx-conv or g3dj-exporter in Blender set the wrong emission texture. Something in the chain misintepret the emission.
+
+ See screenshot: blender-material-libgdx-emission-fix.png
+
+ If this does not work change the emission attribute while model loading:
+      for (Material material : modelInstance.materials) {
+        material.remove(ColorAttribute.Emissive);
+      }
+
+
+ Export Settings for Blender G3DJ-Exporter:
+ --------------------------
+ - Selected Only!
+ - Apply modifiers!
+ - Y-up!
+ - Normal!
+ - UV!
+ - Export Material!
+ - Do not copy textures (this references other image textures in other folders)
+ - Armature!
+ - Deform bones...!
+ - Bone Tip!
+ - Actions!
+
+  See screenshot: blender-g3dj-export-settings.png
