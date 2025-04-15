@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.github.schuettec.cobra2d</groupId>
@@ -36,7 +37,8 @@
 		<repository>
 			<id>bintray-schuettec-maven</id>
 			<name>schuettec-maven</name>
-			<url>https://api.bintray.com/maven/schuettec/maven/com.remondis.example/;publish=1</url>
+			<url>
+				https://api.bintray.com/maven/schuettec/maven/com.remondis.example/;publish=1</url>
 		</repository>
 	</distributionManagement>
 	<build>
@@ -58,7 +60,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-javadoc-plugin</artifactId>
-					<version>3.0.0</version>
+					<version>3.1.1</version>
 					<executions>
 						<execution>
 							<id>attach-javadocs</id>
@@ -66,8 +68,7 @@
 								<goal>jar</goal>
 							</goals>
 							<configuration>
-								<additionalparam>${javadoc.opts}</additionalparam>
-								<additionalJOption>-Xdoclint:none</additionalJOption>
+								<doclint>none</doclint>
 							</configuration>
 						</execution>
 					</executions>
@@ -121,7 +122,10 @@
 									<failWhenParentIsSnapshot>false</failWhenParentIsSnapshot>
 									<message>No Snapshots Allowed!</message>
 									<excludes>
-										<!-- We want to exclude child module dependencies from this check, as we're always using SNAPSHOT versions (except when performing a release) -->
+										<!-- We want to exclude child module
+										dependencies from this check, as we're
+										always using SNAPSHOT versions (except
+										when performing a release) -->
 										<exclude>${project.groupId}:*</exclude>
 									</excludes>
 								</requireReleaseDeps>
@@ -142,7 +146,8 @@
 					<archive>
 						<manifest>
 							<addClasspath>true</addClasspath>
-							<mainClass>com.github.schuettec.cobra2Dexamples.networking.textureEntity.NetworkClientDemo</mainClass>
+							<mainClass>
+								com.github.schuettec.cobra2Dexamples.networking.textureEntity.NetworkClientDemo</mainClass>
 							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
 							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
 						</manifest>
