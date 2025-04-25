@@ -36,6 +36,8 @@ public class Demo3D {
 
 		engine.addModel("uvCube", new URL("resource:models/uvmap/uvcube-blend-exporter.g3dj"));
 
+		engine.addModel("muelli", new URL("resource:models/muelli/muelli-04.g3dj"));
+
 		engine.initialize();
 
 		Entity3D e1 = new Entity3D("brickModel", new Point(350, 350), 40) {
@@ -56,7 +58,7 @@ public class Demo3D {
 
 		AnimatedEntity3D e2 = new AnimatedEntity3D("brickAnimation", new Point(0, 0), 40);
 
-		Entity3D e3 = new Entity3D("uvCube", new Point(150, 150), 40) {
+		Entity3D e3 = new Entity3D("muelli", new Point(150, 150), 40) {
 			@Override
 			public void update(WorldAccess worldAccess, float deltaTime) {
 				super.update(worldAccess, deltaTime);
