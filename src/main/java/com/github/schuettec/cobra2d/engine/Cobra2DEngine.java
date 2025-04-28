@@ -33,248 +33,257 @@ import com.github.schuettec.cobra2d.world.Cobra2DWorld;
 
 public class Cobra2DEngine {
 
-  private Cobra2DProperties cobra2DConfig;
-  private Renderer renderer;
-  private Cobra2DWorld world;
-  private Camera cameraForInput;
+	private Cobra2DProperties cobra2DConfig;
+	private Renderer renderer;
+	private Cobra2DWorld world;
+	private Camera cameraForInput;
 
-  private Map<String, URL> textures;
-  private Map<String, URL> models;
-  private Map<String, URL> sounds;
+	private Map<String, URL> textures;
+	private Map<String, URL> models;
+	private Map<String, URL> sounds;
 
-  private RendererType rendererType;
-  private int refreshRate;
-  private int resolutionX;
-  private int resolutionY;
-  private int bitDepth;
-  private boolean fullscreen;
-  private int tcpPort;
-  private int udpPort;
+	private RendererType rendererType;
+	private int refreshRate;
+	private int resolutionX;
+	private int resolutionY;
+	private int bitDepth;
+	private boolean fullscreen;
+	private int tcpPort;
+	private int udpPort;
 
-  public Cobra2DEngine(final Properties properties) {
-    super();
-    this.cobra2DConfig = new Cobra2DProperties(properties);
-    ResourceLocation resourceLocation = cobra2DConfig.getResourceLocation();
-    setupEnvironment(resourceLocation);
-    this.rendererType = cobra2DConfig.getRendererType();
+	public static void printDisplayModes() {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice display = ge.getDefaultScreenDevice();
+		DisplayMode[] availableModes = display.getDisplayModes();
+		for (DisplayMode mode : availableModes) {
+			System.out.println(mode.toString());
+		}
+	}
 
-    createRendererAndController();
+	public Cobra2DEngine(final Properties properties) {
+		super();
+		this.cobra2DConfig = new Cobra2DProperties(properties);
+		ResourceLocation resourceLocation = cobra2DConfig.getResourceLocation();
+		setupEnvironment(resourceLocation);
+		this.rendererType = cobra2DConfig.getRendererType();
 
-    boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
-    this.world = new Cobra2DWorld(this, doMapUpdate);
-    this.textures = new Hashtable<>();
-    this.models = new Hashtable<>();
-    this.sounds = new Hashtable<>();
-  }
+		createRendererAndController();
 
-  private void createRendererAndController() {
-    if (RendererType.LIBGDX.equals(rendererType)) {
-      this.renderer = createRenderer(rendererType);
-    } else if (RendererType.DEDICATED_SERVER.equals(rendererType)) {
-      this.renderer = new Cobra2DServer();
-    } else {
-      this.renderer = null;
-    }
-  }
+		boolean doMapUpdate = cobra2DConfig.isDoMapUpdate();
+		this.world = new Cobra2DWorld(this, doMapUpdate);
+		this.textures = new Hashtable<>();
+		this.models = new Hashtable<>();
+		this.sounds = new Hashtable<>();
+	}
 
-  public void initialize() {
-    this.refreshRate = cobra2DConfig.getRefreshRate();
-    this.resolutionX = cobra2DConfig.getResolutionX();
-    this.resolutionY = cobra2DConfig.getResolutionY();
-    this.bitDepth = cobra2DConfig.getBitDepth();
-    this.fullscreen = cobra2DConfig.getFullscreen();
-    this.tcpPort = cobra2DConfig.getTcpPort();
-    this.udpPort = cobra2DConfig.getUdpPort();
+	private void createRendererAndController() {
+		if (RendererType.LIBGDX.equals(rendererType)) {
+			this.renderer = createRenderer(rendererType);
+		} else if (RendererType.DEDICATED_SERVER.equals(rendererType)) {
+			this.renderer = new Cobra2DServer();
+		} else {
+			this.renderer = null;
+		}
+	}
 
-    renderer.initializeRenderer(this);
-  }
+	public void initialize() {
+		this.refreshRate = cobra2DConfig.getRefreshRate();
+		this.resolutionX = cobra2DConfig.getResolutionX();
+		this.resolutionY = cobra2DConfig.getResolutionY();
+		this.bitDepth = cobra2DConfig.getBitDepth();
+		this.fullscreen = cobra2DConfig.getFullscreen();
+		this.tcpPort = cobra2DConfig.getTcpPort();
+		this.udpPort = cobra2DConfig.getUdpPort();
 
-  public void start() {
-    this.renderer.start();
-  }
+		renderer.initializeRenderer(this);
+	}
 
-  private Renderer createRenderer(RendererType rendererType) {
-    Renderer renderer = null;
-    if (RendererType.LIBGDX.equals(rendererType)) {
-      renderer = new LibGdxRenderer();
-    }
-    return renderer;
-  }
+	public void start() {
+		this.renderer.start();
+	}
 
-  public Cobra2DWorld getWorld() {
-    return this.world;
-  }
+	private Renderer createRenderer(RendererType rendererType) {
+		Renderer renderer = null;
+		if (RendererType.LIBGDX.equals(rendererType)) {
+			renderer = new LibGdxRenderer();
+		}
+		return renderer;
+	}
 
-  public void shutdownEngine() {
-    this.renderer.finish();
-  }
+	public Cobra2DWorld getWorld() {
+		return this.world;
+	}
 
-  public DisplayMode getDisplayMode(int resolutionX, int resolutionY, int bitDepth, int refreshRate) {
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice display = ge.getDefaultScreenDevice();
-    DisplayMode[] availableModes = display.getDisplayModes();
-    for (DisplayMode mode : availableModes) {
-      System.out.println(mode.toString());
-      if (mode.getWidth() == resolutionX && mode.getHeight() == resolutionY
-          && ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1) && mode.getRefreshRate() == refreshRate) {
-        return mode;
-      }
-    }
-    throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
-        + "hz at " + bitDepth + " bit depth.");
-  }
+	public void shutdownEngine() {
+		this.renderer.finish();
+	}
 
-  /**
-   * Use this static method at the beginning of your application to setup the JVM
-   * Properties used by this engine. Use the resource type to determine where
-   * resources are loaded from.
-   */
-  private void setupEnvironment(ResourceLocation resourceLocation) {
-    // Prepare VM configurations:
-    URLStreamHandlerRegistry registry = new URLStreamHandlerRegistry();
-    registry.addHandler("resource", new URLResourceTypeHandler(resourceLocation.toString()));
-    registry.addHandler("classpath", new URLClasspathHandler());
-    registry.addHandler("install-dir", new URLInstallDirectoryHandler());
-    URL.setURLStreamHandlerFactory(registry);
-  }
+	public DisplayMode getDisplayMode(int resolutionX, int resolutionY, int bitDepth, int refreshRate) {
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsDevice display = ge.getDefaultScreenDevice();
+		DisplayMode[] availableModes = display.getDisplayModes();
+		for (DisplayMode mode : availableModes) {
+			System.out.println(mode.toString());
+			if (mode.getWidth() == resolutionX && mode.getHeight() == resolutionY
+			    && ((mode.getBitDepth() == bitDepth) || mode.getBitDepth() == -1) && mode.getRefreshRate() == refreshRate) {
+				return mode;
+			}
+		}
+		throw new RuntimeException("Cannot find display mode: " + resolutionX + "x" + resolutionY + ":" + refreshRate
+		    + "hz at " + bitDepth + " bit depth.");
+	}
 
-  public void addImage(String address, URL ressourceURL) {
-    this.textures.put(address, ressourceURL);
-  }
+	/**
+	 * Use this static method at the beginning of your application to setup the JVM
+	 * Properties used by this engine. Use the resource type to determine where
+	 * resources are loaded from.
+	 */
+	private void setupEnvironment(ResourceLocation resourceLocation) {
+		// Prepare VM configurations:
+		URLStreamHandlerRegistry registry = new URLStreamHandlerRegistry();
+		registry.addHandler("resource", new URLResourceTypeHandler(resourceLocation.toString()));
+		registry.addHandler("classpath", new URLClasspathHandler());
+		registry.addHandler("install-dir", new URLInstallDirectoryHandler());
+		URL.setURLStreamHandlerFactory(registry);
+	}
 
-  public void addModel(String address, URL ressourceURL) {
-    this.models.put(address, ressourceURL);
-  }
+	public void addImage(String address, URL ressourceURL) {
+		this.textures.put(address, ressourceURL);
+	}
 
-  public void addSound(String address, URL ressourceURL) {
-    this.sounds.put(address, ressourceURL);
-  }
+	public void addModel(String address, URL ressourceURL) {
+		this.models.put(address, ressourceURL);
+	}
 
-  public void addEntity(List<? extends Skill> entities) {
-    entities.stream()
-        .forEach(e -> {
-          world.addEntity(e);
-        });
-  }
+	public void addSound(String address, URL ressourceURL) {
+		this.sounds.put(address, ressourceURL);
+	}
 
-  public void addEntity(Skill... entities) {
-    world.addEntity(entities);
-  }
+	public void addEntity(List<? extends Skill> entities) {
+		entities.stream()
+		    .forEach(e -> {
+			    world.addEntity(e);
+		    });
+	}
 
-  public void addEntity(Skill entity) {
-    world.addEntity(entity);
-  }
+	public void addEntity(Skill... entities) {
+		world.addEntity(entities);
+	}
 
-  public void removeEntity(Skill... entities) {
-    world.removeEntity(entities);
-  }
+	public void addEntity(Skill entity) {
+		world.addEntity(entity);
+	}
 
-  public void removeEntity(Skill entity) {
-    world.removeEntity(entity);
-  }
+	public void removeEntity(Skill... entities) {
+		world.removeEntity(entities);
+	}
 
-  public Renderer getRenderer() {
-    return renderer;
-  }
+	public void removeEntity(Skill entity) {
+		world.removeEntity(entity);
+	}
 
-  /**
-   * This is a util method to get the size of a texture before the renderer was
-   * started. This method reads the specified texture and analyzes the size.
-   *
-   * Note: This method requires, that the texture was added to the engine before.
-   *
-   * Note: Do not use this method during rendering. Use {@link RendererAccess} for
-   * efficient renderer interaction.
-   *
-   * @param textureId The texture id added to the engine before.
-   * @return Returns the dimension.
-   */
-  public Dimension dimensionOf(String textureId) {
-    if (this.textures.containsKey(textureId)) {
-      URL url = this.textures.get(textureId);
-      try (InputStream ressource = RessourceUtil.getRessource(url)) {
-        BufferedImage img = ImageIO.read(ressource);
-        return new Dimension(img.getWidth(), img.getHeight());
-      } catch (IOException e) {
-        throw new RuntimeException(
-            "Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
-      }
-    } else {
-      throw new RuntimeException(
-          "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
-    }
-  }
+	public Renderer getRenderer() {
+		return renderer;
+	}
 
-  public RendererType getRendererType() {
-    return rendererType;
-  }
+	/**
+	 * This is a util method to get the size of a texture before the renderer was
+	 * started. This method reads the specified texture and analyzes the size.
+	 *
+	 * Note: This method requires, that the texture was added to the engine before.
+	 *
+	 * Note: Do not use this method during rendering. Use {@link RendererAccess} for
+	 * efficient renderer interaction.
+	 *
+	 * @param textureId The texture id added to the engine before.
+	 * @return Returns the dimension.
+	 */
+	public Dimension dimensionOf(String textureId) {
+		if (this.textures.containsKey(textureId)) {
+			URL url = this.textures.get(textureId);
+			try (InputStream ressource = RessourceUtil.getRessource(url)) {
+				BufferedImage img = ImageIO.read(ressource);
+				return new Dimension(img.getWidth(), img.getHeight());
+			} catch (IOException e) {
+				throw new RuntimeException(
+				    "Texture with id " + textureId + " and URL " + url.toString() + " could not be loaded.", e);
+			}
+		} else {
+			throw new RuntimeException(
+			    "Texture with id " + textureId + " not found. Add the texture to engine before calling this method!");
+		}
+	}
 
-  public int getRefreshRate() {
-    return refreshRate;
-  }
+	public RendererType getRendererType() {
+		return rendererType;
+	}
 
-  public int getResolutionX() {
-    return resolutionX;
-  }
+	public int getRefreshRate() {
+		return refreshRate;
+	}
 
-  public int getResolutionY() {
-    return resolutionY;
-  }
+	public int getResolutionX() {
+		return resolutionX;
+	}
 
-  public Map<String, URL> getTextures() {
-    return textures;
-  }
+	public int getResolutionY() {
+		return resolutionY;
+	}
 
-  public Map<String, URL> getSounds() {
-    return sounds;
-  }
+	public Map<String, URL> getTextures() {
+		return textures;
+	}
 
-  public Map<String, URL> getModels() {
-    return models;
-  }
+	public Map<String, URL> getSounds() {
+		return sounds;
+	}
 
-  public int getBitDepth() {
-    return bitDepth;
-  }
+	public Map<String, URL> getModels() {
+		return models;
+	}
 
-  public boolean isFullscreen() {
-    return fullscreen;
-  }
+	public int getBitDepth() {
+		return bitDepth;
+	}
 
-  public int getTcpPort() {
-    return tcpPort;
-  }
+	public boolean isFullscreen() {
+		return fullscreen;
+	}
 
-  public int getUdpPort() {
-    return udpPort;
-  }
+	public int getTcpPort() {
+		return tcpPort;
+	}
 
-  /**
-   * Sets a single camera for input. Only used in a single player environment. In
-   * a multiplayer environment {@link Cobra2DServer} manages the controller for
-   * each player.
-   *
-   * @param camera The camera that is used to translate screen input coordinates
-   *        to world coordinates.
-   */
-  public void setCameraForInput(Camera camera) {
-    this.cameraForInput = camera;
-  }
+	public int getUdpPort() {
+		return udpPort;
+	}
 
-  /**
-   * @return Returns the camera specified for input.
-   */
-  public Camera getCameraForInput() {
-    return this.cameraForInput;
-  }
+	/**
+	 * Sets a single camera for input. Only used in a single player environment. In
+	 * a multiplayer environment {@link Cobra2DServer} manages the controller for
+	 * each player.
+	 *
+	 * @param camera The camera that is used to translate screen input coordinates
+	 *        to world coordinates.
+	 */
+	public void setCameraForInput(Camera camera) {
+		this.cameraForInput = camera;
+	}
 
-  /**
-   * @return Returns <code>true</code> if there is a single camera translating the
-   *         input coordinates to world coordinates. Otherwise <code>false</code>
-   *         is returned.
-   */
-  public boolean hasCameraForInput() {
-    return nonNull(this.cameraForInput);
-  }
+	/**
+	 * @return Returns the camera specified for input.
+	 */
+	public Camera getCameraForInput() {
+		return this.cameraForInput;
+	}
+
+	/**
+	 * @return Returns <code>true</code> if there is a single camera translating the
+	 *         input coordinates to world coordinates. Otherwise <code>false</code>
+	 *         is returned.
+	 */
+	public boolean hasCameraForInput() {
+		return nonNull(this.cameraForInput);
+	}
 
 }

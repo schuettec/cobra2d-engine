@@ -23,22 +23,24 @@ public class Physx3DCarDemo {
 
 		int xRes = 1920;
 		float xResHalf = xRes / 2.0f;
-		int yRes = 1080;
+		int yRes = 1200;
 		float yResHalf = yRes / 2.0f;
 
 		final Properties properties = new Properties();
-		properties.put(Cobra2DProperties.RESOLUTION_X, valueOf(xRes)); // 1920
-		properties.put(Cobra2DProperties.RESOLUTION_Y, valueOf(yRes)); // 1080
-		properties.put(Cobra2DProperties.BIT_DEPHT, "32");
-		properties.put(Cobra2DProperties.REFRESH_REATE, "59");
-		properties.put(Cobra2DProperties.REQUESTED_FPS, "59");
-		properties.put(Cobra2DProperties.FULLSCREEN, "false");
+		properties.put(Cobra2DProperties.RESOLUTION_X, valueOf(2560)); // 1920
+		properties.put(Cobra2DProperties.RESOLUTION_Y, valueOf(1440)); // 1080
+		properties.put(Cobra2DProperties.BIT_DEPHT, "24");
+		properties.put(Cobra2DProperties.REFRESH_REATE, "60");
+		properties.put(Cobra2DProperties.REQUESTED_FPS, "60");
+		properties.put(Cobra2DProperties.FULLSCREEN, "true");
 		properties.put(Cobra2DProperties.MAP_UPDATE, "true");
 		properties.put(Cobra2DProperties.RENDERER, RendererType.LIBGDX.toString());
 		properties.put(Cobra2DProperties.CREATE_CONTROLLER, "true");
 		properties.put(Cobra2DProperties.RESOURCE_LOCATION, "classpath");
 
 		Cobra2DEngine engine = new Cobra2DEngine(properties);
+		engine.printDisplayModes();
+
 		engine.addImage("floor", new URL("resource:floor.png"));
 		engine.addImage("police", new URL("resource:cars/police.png"));
 		engine.addImage("police-red-alarm-light", new URL("resource:cars/police-red-alarm-light.png"));
@@ -50,7 +52,7 @@ public class Physx3DCarDemo {
 		engine.addImage("brake-light-color", new URL("resource:cars/brake-light-color.png"));
 		engine.addImage("light", new URL("resource:light.png"));
 
-		engine.addModel("muelli", new URL("resource:models/muelli/muelli-04.g3dj"));
+		engine.addModel("muelli", new URL("resource:models/muelli/mülli-low-poly-01.g3dj"));
 
 		engine.initialize();
 
